@@ -65,7 +65,7 @@ public class JSpeexDecoderTask
   extends Task
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.4 ($Revision$)";
+  public static final String VERSION = "Java Speex Decoder Task v0.9.4 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 

@@ -60,10 +60,10 @@ import org.xiph.speex.SpeexEncoder;
  * @version $Revision$
  */
 public class JSpeexEncoderTask
- extends Task
+  extends Task
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.9.4 ($Revision$)";
+  public static final String VERSION = "Java Speex Encoder Task v0.9.4 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
@@ -287,8 +287,86 @@ public class JSpeexEncoderTask
     this.printlevel = DEBUG;
   }
 
+  /**
+   * Handles the <code>quality</code> attribute.
+   * @param quality the attribute value converted to a float.
+   */
+  public void setQuality(float quality)
+  {
+    if (quality < 0)
+      quality = 0;
+    if (quality > 10)
+      quality = 10;
+    this.quality = (int) quality;
+    this.vbr_quality = quality;
+  }
+
+  /**
+   * Handles the <code>complexity</code> attribute.
+   * @param complexity the attribute value converted to an integer.
+   */
+  public void setComplexity(int complexity)
+  {
+    this.complexity = complexity;
+  }
+
+  /**
+   * Handles the <code>nframes</code> attribute.
+   * @param nframes the attribute value converted to an integer.
+   */
+  public void setNframes(int nframes)
+  {
+    this.nframes = nframes;
+  }
+
+  /**
+   * Handles the <code>vbr</code> attribute.
+   * @param vbr the attribute value converted to a boolean.
+   */
+  public void setVbr(boolean vbr)
+  {
+    this.vbr = vbr;
+  }
+
+  /**
+   * Handles the <code>vad</code> attribute.
+   * @param vad the attribute value converted to a boolean.
+   */
+  public void setVad(boolean vad)
+  {
+    this.vad = vad;
+  }
+
+  /**
+   * Handles the <code>dtx</code> attribute.
+   * @param dtx the attribute value converted to a boolean.
+   */
+  public void setDtx(boolean dtx)
+  {
+    this.dtx = dtx;
+  }
+
+  /**
+   * Handles the <code>mode</code> attribute.
+   * @param mode the attribute value converted to a String.
+   */
+  public void setMode(String mode)
+  {
+    if ("ultrawideband".equalsIgnoreCase(mode) ||
+        "uwb".equalsIgnoreCase(mode) ||
+        "2".equals(mode))
+      this.mode = 2;
+    else if ("wideband".equalsIgnoreCase(mode) ||
+             "wb".equalsIgnoreCase(mode) ||
+             "1".equals(mode))
+      this.mode = 1;
+    else {
+      this.mode = 0;
+    }
+  }
+
   //-------------------------------------------------------------------------
-  // Decoder
+  // Encoder
   //-------------------------------------------------------------------------
 
   /**
