@@ -195,7 +195,7 @@ public class JSpeexDecoderTask
    * @param srcFile
    * @return
    */
-  private File buildDestFile(File srcFile)
+  private File buildDestFile(final File srcFile)
   {
     String srcFilename = srcFile.getName();
     String destFilename;
@@ -219,7 +219,7 @@ public class JSpeexDecoderTask
    * @param srcPath the Speex encoded source file.
    * @param destPath the destination file.
    */
-  private void setupTask(File srcPath, File destPath)
+  private void setupTask(final File srcPath, final File destPath)
   {
     // Setup source and destination formats
     if (srcPath.toString().toLowerCase().endsWith(".spx")) {
@@ -248,7 +248,7 @@ public class JSpeexDecoderTask
    * Handles the <code>fileset</code> child element.
    * @param set
    */
-  public void addFileset(FileSet set)
+  public void addFileset(final FileSet set)
   {
     srcFileset.addElement(set);
   }
@@ -257,7 +257,7 @@ public class JSpeexDecoderTask
    * Handles the <code>srcfile</code> attribute.
    * @param file the attribute value converted to a File.
    */
-  public void setSrcfile(File file)
+  public void setSrcfile(final File file)
   {
     this.srcFile = file;
   }
@@ -266,7 +266,7 @@ public class JSpeexDecoderTask
    * Handles the <code>destfile</code> attribute.
    * @param file the attribute value converted to a File.
    */
-  public void setDestfile(File file)
+  public void setDestfile(final File file)
   {
     this.destFile = file;
   }
@@ -275,7 +275,7 @@ public class JSpeexDecoderTask
    * Handles the <code>destdir</code> attribute.
    * @param dir the attribute value converted to a File.
    */
-  public void setDestdir(File dir)
+  public void setDestdir(final File dir)
   {
     this.destDir = dir;
   }
@@ -284,7 +284,7 @@ public class JSpeexDecoderTask
    * Handles the <code>failonerror</code> attribute.
    * @param failOnError the attribute value converted to a boolean.
    */
-  public void setFailonerror(boolean failOnError)
+  public void setFailonerror(final boolean failOnError)
   {
     this.failOnError = failOnError;
   }
@@ -293,7 +293,7 @@ public class JSpeexDecoderTask
    * Handles the <code>quiet</code> attribute.
    * @param quiet the attribute value converted to a boolean.
    */
-  public void setQuiet(boolean quiet)
+  public void setQuiet(final boolean quiet)
   {
     this.quiet = quiet;
     this.printlevel = WARN;
@@ -303,7 +303,7 @@ public class JSpeexDecoderTask
    * Handles the <code>verbose</code> attribute.
    * @param verbose the attribute value converted to a boolean.
    */
-  public void setVerbose(boolean verbose)
+  public void setVerbose(final boolean verbose)
   {
     this.verbose = verbose;
     this.printlevel = DEBUG;
@@ -313,7 +313,7 @@ public class JSpeexDecoderTask
    * Handles the <code>enhanced</code> attribute.
    * @param enhanced the attribute value converted to a boolean.
    */
-  public void setEnhanced(boolean enhanced)
+  public void setEnhanced(final boolean enhanced)
   {
     this.enhanced = enhanced;
   }
@@ -338,7 +338,7 @@ public class JSpeexDecoderTask
    * @param destPath the destination file.
    * @exception IOException
    */
-  public void decode(File srcPath, File destPath)
+  public void decode(final File srcPath, final File destPath)
     throws IOException
   {
     byte[] header    = new byte[2048];
@@ -642,7 +642,9 @@ public class JSpeexDecoderTask
    * @param bytes
    * @return
    */
-  private boolean readSpeexHeader(byte[] packet, int offset, int bytes)
+  private boolean readSpeexHeader(final byte[] packet,
+                                  final int offset,
+                                  final int bytes)
   {
     if (bytes!=80) {
       log("Oooops");
@@ -664,7 +666,7 @@ public class JSpeexDecoderTask
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readInt(byte[] data, int offset)
+  protected static int readInt(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |
@@ -678,7 +680,7 @@ public class JSpeexDecoderTask
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readShort(byte[] data, int offset)
+  protected static int readShort(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            (data[offset+1] << 8); // no 0xff on the last one to keep the sign

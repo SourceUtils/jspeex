@@ -197,7 +197,7 @@ public class JSpeexEncoderTask
    * @param srcFile
    * @return
    */
-  private File buildDestFile(File srcFile)
+  private File buildDestFile(final File srcFile)
   {
     String srcFilename = srcFile.getName();
     String destFilename;
@@ -221,7 +221,7 @@ public class JSpeexEncoderTask
    * @param srcPath the Speex encoded source file.
    * @param destPath the destination file.
    */
-  private void setupTask(File srcPath, File destPath)
+  private void setupTask(final File srcPath, final File destPath)
   {
     if (!modeset) {
       mode = -1;
@@ -251,7 +251,7 @@ public class JSpeexEncoderTask
    * Handles the <code>fileset</code> child element.
    * @param set
    */
-  public void addFileset(FileSet set)
+  public void addFileset(final FileSet set)
   {
     srcFileset.addElement(set);
   }
@@ -260,7 +260,7 @@ public class JSpeexEncoderTask
    * Handles the <code>srcfile</code> attribute.
    * @param file the attribute value converted to a File.
    */
-  public void setSrcfile(File file)
+  public void setSrcfile(final File file)
   {
     this.srcFile = file;
   }
@@ -269,7 +269,7 @@ public class JSpeexEncoderTask
    * Handles the <code>destfile</code> attribute.
    * @param file the attribute value converted to a File.
    */
-  public void setDestfile(File file)
+  public void setDestfile(final File file)
   {
     this.destFile = file;
   }
@@ -278,7 +278,7 @@ public class JSpeexEncoderTask
    * Handles the <code>destdir</code> attribute.
    * @param dir the attribute value converted to a File.
    */
-  public void setDestdir(File dir)
+  public void setDestdir(final File dir)
   {
     this.destDir = dir;
   }
@@ -287,7 +287,7 @@ public class JSpeexEncoderTask
    * Handles the <code>failonerror</code> attribute.
    * @param failOnError the attribute value converted to a boolean.
    */
-  public void setFailonerror(boolean failOnError)
+  public void setFailonerror(final boolean failOnError)
   {
     this.failOnError = failOnError;
   }
@@ -296,7 +296,7 @@ public class JSpeexEncoderTask
    * Handles the <code>quiet</code> attribute.
    * @param quiet the attribute value converted to a boolean.
    */
-  public void setQuiet(boolean quiet)
+  public void setQuiet(final boolean quiet)
   {
     this.quiet = quiet;
     this.printlevel = WARN;
@@ -306,7 +306,7 @@ public class JSpeexEncoderTask
    * Handles the <code>verbose</code> attribute.
    * @param verbose the attribute value converted to a boolean.
    */
-  public void setVerbose(boolean verbose)
+  public void setVerbose(final boolean verbose)
   {
     this.verbose = verbose;
     this.printlevel = DEBUG;
@@ -330,7 +330,7 @@ public class JSpeexEncoderTask
    * Handles the <code>complexity</code> attribute.
    * @param complexity the attribute value converted to an integer.
    */
-  public void setComplexity(int complexity)
+  public void setComplexity(final int complexity)
   {
     this.complexity = complexity;
   }
@@ -339,7 +339,7 @@ public class JSpeexEncoderTask
    * Handles the <code>nframes</code> attribute.
    * @param nframes the attribute value converted to an integer.
    */
-  public void setNframes(int nframes)
+  public void setNframes(final int nframes)
   {
     this.nframes = nframes;
   }
@@ -348,7 +348,7 @@ public class JSpeexEncoderTask
    * Handles the <code>vbr</code> attribute.
    * @param vbr the attribute value converted to a boolean.
    */
-  public void setVbr(boolean vbr)
+  public void setVbr(final boolean vbr)
   {
     this.vbr = vbr;
   }
@@ -357,7 +357,7 @@ public class JSpeexEncoderTask
    * Handles the <code>vad</code> attribute.
    * @param vad the attribute value converted to a boolean.
    */
-  public void setVad(boolean vad)
+  public void setVad(final boolean vad)
   {
     this.vad = vad;
   }
@@ -366,7 +366,7 @@ public class JSpeexEncoderTask
    * Handles the <code>dtx</code> attribute.
    * @param dtx the attribute value converted to a boolean.
    */
-  public void setDtx(boolean dtx)
+  public void setDtx(final boolean dtx)
   {
     this.dtx = dtx;
   }
@@ -375,7 +375,7 @@ public class JSpeexEncoderTask
    * Handles the <code>mode</code> attribute.
    * @param mode the attribute value converted to a String.
    */
-  public void setMode(String mode)
+  public void setMode(final String mode)
   {
     modeset = true;
     if ("ultrawideband".equalsIgnoreCase(mode) ||
@@ -415,7 +415,7 @@ public class JSpeexEncoderTask
    * @param destPath
    * @exception IOException
    */
-  public void encode(File srcPath, File destPath)
+  public void encode(final File srcPath, final File destPath)
     throws IOException
   {
     byte[] temp    = new byte[2560]; // stereo UWB requires one to read 2560b
@@ -591,7 +591,7 @@ public class JSpeexEncoderTask
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readInt(byte[] data, int offset)
+  protected static int readInt(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |
@@ -605,7 +605,7 @@ public class JSpeexEncoderTask
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readShort(byte[] data, int offset)
+  protected static int readShort(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            (data[offset+1] << 8); // no 0xff on the last one to keep the sign
