@@ -138,7 +138,7 @@ public class Stereo
     int i;
     float e_tot=0, e_left, e_right, e_sum;
 
-    for (i=frameSize-1;i>=0;i--) {
+    for (i=frameSize-1; i>=0; i--) {
       e_tot += data[i]*data[i];
     }
     e_sum=e_tot/e_ratio;
