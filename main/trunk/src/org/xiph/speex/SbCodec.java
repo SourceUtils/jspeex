@@ -156,8 +156,9 @@ public class SbCodec
   }
 
   /**
-   * Returns the size of a frame.
-   * @return the size of a frame.
+   * Returns the size of a frame (ex: 160 samples for a narrowband frame,
+   * 320 for wideband and 640 for ultra-wideband).
+   * @return the size of a frame (number of audio samples in a frame).
    */
   public int  getFrameSize()
   {
