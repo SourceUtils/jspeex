@@ -80,7 +80,7 @@ public class LtpForcedPitch
 {
   /**
    * Long Term Prediction Quantification (Forced Pitch).
-   * @return
+   * @return pitch
    */
   public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 

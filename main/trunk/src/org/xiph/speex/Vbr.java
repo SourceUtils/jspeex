@@ -176,7 +176,7 @@ public class Vbr
    * @param len - signal length.
    * @param pitch - signal pitch.
    * @param pitch_coef - pitch coefficient.
-   * @return
+   * @return quality
    */
   public float analysis(float[] sig, int len, int pitch, float pitch_coef)
   {

@@ -106,7 +106,7 @@ public class Ltp3Tap
     
   /**
    * Long Term Prediction Quantification (3Tap).
-   * @return
+   * @return pitch
    */
   public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 

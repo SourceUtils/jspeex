@@ -89,7 +89,7 @@
 package org.xiph.speex;
 
 /**
- * LPC - and Reflection Coefficients
+ * LPC - and Reflection Coefficients.
  *
  * <p>The next two functions calculate linear prediction coefficients
  * and/or the related reflection coefficients from the first P_MAX+1
