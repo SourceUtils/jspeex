@@ -84,6 +84,12 @@ public interface Encoder
    */
   public int encode(Bits bits, float[] in);
 
+  /**
+   * Returns the size in bits of an audio frame encoded with the current mode.
+   * @return the size in bits of an audio frame encoded with the current mode.
+   */
+  public int getEncodedFrameSize();
+
   //--------------------------------------------------------------------------
   // Speex Control Functions
   //--------------------------------------------------------------------------

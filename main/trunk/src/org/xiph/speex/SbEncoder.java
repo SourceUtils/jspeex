@@ -590,13 +590,24 @@ public class SbEncoder
     for (i=0; i<fullFrameSize; i++)
       in[i]=2*(y0[i]-y1[i]);
 //#endif
-   for (i=0; i<lpcSize; i++)
-     old_lsp[i] = lsp[i];
-   for (i=0; i<lpcSize; i++)
-     old_qlsp[i] = qlsp[i];
-   first=0;
-   return 1;
- }
+    for (i=0; i<lpcSize; i++)
+      old_lsp[i] = lsp[i];
+    for (i=0; i<lpcSize; i++)
+      old_qlsp[i] = qlsp[i];
+    first=0;
+    return 1;
+  }
+  
+  /**
+   * Returns the size in bits of an audio frame encoded with the current mode.
+   * @return the size in bits of an audio frame encoded with the current mode.
+   */
+  public int getEncodedFrameSize()
+  {
+    int size = SB_FRAME_SIZE[submodeID];
+    size += lowenc.getEncodedFrameSize();
+    return size;
+  }
 
   //---------------------------------------------------------------------------
   // Speex Control Functions

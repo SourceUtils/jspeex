@@ -795,6 +795,15 @@ public class NbEncoder
     return 1;
   }
     
+  /**
+   * Returns the size in bits of an audio frame encoded with the current mode.
+   * @return the size in bits of an audio frame encoded with the current mode.
+   */
+  public int getEncodedFrameSize()
+  {
+    return NB_FRAME_SIZE[submodeID];
+  }
+
   //---------------------------------------------------------------------------
   // Speex Control Functions
   //---------------------------------------------------------------------------
