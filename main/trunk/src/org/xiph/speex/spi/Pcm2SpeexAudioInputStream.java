@@ -371,17 +371,20 @@ public class Pcm2SpeexAudioInputStream
       switch (mode) {
         case 0: // Narrowband
           packetsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
           avail += (in.available() / 320) * packetsize; // 20ms = 160ech = 320bytes
           return avail;
         case 1: // Wideband
           packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
           avail += (in.available() / 640) * packetsize; // 20ms = 320ech = 640bytes
           return avail;
         case 2: // Ultra wideband
           packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
           avail += (in.available() / 1280) * packetsize; // 20ms = 640ech = 1280bytes
           return avail;
         default:
