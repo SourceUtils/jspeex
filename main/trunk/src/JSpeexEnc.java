@@ -79,7 +79,7 @@ public class JSpeexEnc
   /**
    * Version of the Speex Encoder
    */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.8.1 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Encoder v0.8.2 ($Revision$)";
   
   private static int mode       = 0;
   private static int quality    = 8;

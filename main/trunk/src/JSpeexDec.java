@@ -89,7 +89,7 @@ import org.xiph.speex.*;
  */
 public class JSpeexDec
 {
-  public static final String VERSION = "Java Speex Command Line Decoder v0.8.1 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.8.2 ($Revision$)";
 
   private static Random random = new Random();
   private static PcmWaveWriter waveWriter;
