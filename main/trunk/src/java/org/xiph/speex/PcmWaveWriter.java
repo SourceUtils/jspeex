@@ -56,7 +56,7 @@ import java.io.RandomAccessFile;
  * </pre>
  *
  * @author Jim Lawrence, helloNetwork.com
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class PcmWaveWriter

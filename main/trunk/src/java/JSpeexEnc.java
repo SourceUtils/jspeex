@@ -81,7 +81,7 @@ import org.xiph.speex.RawWriter;
  * 
  * Currently this code has been updated to be compatible with release 1.0.3.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class JSpeexEnc

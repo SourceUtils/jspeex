@@ -55,7 +55,7 @@ import javax.sound.sampled.spi.FormatConversionProvider;
  * data. This is the format of the data that can be read from the stream
  * returned by one of the getAudioInputStream methods.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexFormatConvertionProvider

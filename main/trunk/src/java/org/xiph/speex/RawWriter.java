@@ -44,7 +44,7 @@ import java.io.FileOutputStream;
 /**
  * Raw Audio File Writer.
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class RawWriter

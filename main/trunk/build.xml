@@ -83,6 +83,12 @@
       <include name="org/xiph/speex/**/*.java"/>
     </javac>
     <javac srcdir="${src.test}" destdir="${build.test}">
+      <classpath>
+        <pathelement location="${build.java}"/>
+        <fileset dir="${lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
       <include name="*.java"/>
       <include name="org/xiph/speex/**/*.java"/>
     </javac>
@@ -199,6 +205,7 @@
     <mkdir dir="${doc}/junit"/>
     <junit printsummary="yes" haltonfailure="no">
       <classpath>
+        <pathelement location="${build.java}"/>
         <pathelement location="${build.test}"/>
         <fileset dir="${lib}">
           <include name="**/*.jar"/>

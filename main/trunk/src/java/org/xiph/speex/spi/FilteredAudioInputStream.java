@@ -49,7 +49,7 @@ import javax.sound.sampled.AudioInputStream;
  * A second byte array can hold the transcoded audio data, ready to be read out
  * by the stream user.
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public abstract class FilteredAudioInputStream

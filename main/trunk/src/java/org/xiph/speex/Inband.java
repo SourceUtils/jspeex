@@ -41,7 +41,7 @@ import java.io.StreamCorruptedException;
 /**
  * Speex in-band and User in-band controls.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Inband

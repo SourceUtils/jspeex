@@ -85,35 +85,51 @@ import javax.swing.Timer;
  *          +----+
  * </pre>
  * 
- * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Player 
   extends JPanel
   implements ActionListener
 {
-  /** */
+  /** Build Number */
   public static final String BUILD = "@BUILD@";
+  /** Version Number */
   public static final String VERSION = "@VERSION@";
+  /** Revision Number */
   public static final String REVISION = "$Revision$";
 
-  // Possible States for the Finite State Machine 
+  // Possible States for the Finite State Machine
+  /** Finite State Machine State: Initialised */
   protected static final int STATE_INIT      = 0;
+  /** Finite State Machine State: Stopped */
   protected static final int STATE_STOPPED   = 1;
+  /** Finite State Machine State: Playing */
   protected static final int STATE_PLAYING   = 2;
+  /** Finite State Machine State: Paused */
   protected static final int STATE_PAUSED    = 3;
+  /** Finite State Machine State: Buffering */
   protected static final int STATE_BUFFERING = 4;
+  /** Finite State Machine State: Error */
   protected static final int STATE_ERROR     = 5;
 
+  /** The Players Scroll Panel */
   protected JPanel playerScrollPane;
+  /** The Players Button Panel */
   protected JPanel playerButtonPane;
+  /** Play Button */
   protected JButton playButton;
+  /** Pause Button */
   protected JButton pauseButton;
+  /** Stop Button */
   protected JButton stopButton;
+  /** Progress Bar */
   protected JSlider progressBar;
   protected Timer timer;
 
+  /** Current State of the Finite State Machine */
   protected int state;
+  /** Previous State of the Finite State Machine */
   protected int oldstate;
   protected String audioFilename;
   protected URL audioFile;
@@ -196,7 +212,7 @@ public class Player
 
   /**
    * Returns an InputSteam containing the Audio to playback.
-   * @return
+   * @return an InputSteam containing the Audio to playback.
    * @throws IOException
    */
   protected InputStream getAudioStream()
@@ -375,6 +391,7 @@ public class Player
   /**
    * Process Actions when button are pressed.
    * Implemented from ActionListener interface.
+   * @param e
    */
   public void actionPerformed(final ActionEvent e) {
     if (e.getSource() == timer) {
@@ -460,7 +477,7 @@ public class Player
 
   /**
    * Return the progress of the playback.
-   * @return
+   * @return the progress of the playback.
    */
   protected int getProgress()
   {
@@ -569,7 +586,7 @@ public class Player
    * @param pathIconDisabled
    * @param pathIconRollover
    * @param listener
-   * @return
+   * @return the Button that was built.
    */
   protected static JButton buildButton(final String actionCommand,
                                        final String toolTip,

@@ -107,5 +107,7 @@ fi
 # Changelogs
 #--------------------------------------------------------------------
 %changelog
+* Tue Aug 5 2003 Marc Gimpel <mgimpel@horizonwimba.com> 0.9.5-1
+- bug fixes
 * Tue Aug 5 2003 Marc Gimpel <marc.gimpel@wimba.com> 0.8.1-1
 - release

@@ -70,7 +70,7 @@ import org.xiph.speex.SpeexDecoder;
  * </target>
  * </pre>
  * 
- * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class JSpeexDecoderTask
@@ -193,7 +193,7 @@ public class JSpeexDecoderTask
   /**
    * Builds and returns the destination file.
    * @param srcFile
-   * @return
+   * @return the destination file.
    */
   private File buildDestFile(final File srcFile)
   {
@@ -640,7 +640,7 @@ public class JSpeexDecoderTask
    * @param packet
    * @param offset
    * @param bytes
-   * @return
+   * @return true if the Speex header was successfully parsed, false otherwise.
    */
   private boolean readSpeexHeader(final byte[] packet,
                                   final int offset,

@@ -49,7 +49,7 @@ import  javax.sound.sampled.spi.AudioFileWriter;
  * Provider for Speex audio file writing services.
  * This implementation can write Speex audio files from an audio stream.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexAudioFileWriter

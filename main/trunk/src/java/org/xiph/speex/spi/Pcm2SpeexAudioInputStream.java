@@ -50,7 +50,7 @@ import org.xiph.speex.SpeexEncoder;
 /**
  * Converts a PCM 16bits/sample mono audio stream to Ogg Speex
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Pcm2SpeexAudioInputStream

@@ -70,7 +70,7 @@ import org.xiph.speex.SpeexEncoder;
  * </target>
  * </pre>
  * 
- * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class JSpeexEncoderTask
@@ -195,7 +195,7 @@ public class JSpeexEncoderTask
   /**
    * Builds and returns the destination file.
    * @param srcFile
-   * @return
+   * @return the destination file.
    */
   private File buildDestFile(final File srcFile)
   {

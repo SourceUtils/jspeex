@@ -72,7 +72,7 @@ package org.xiph.speex;
  * Long Term Prediction Quantisation and Unquantisation (3Tap)
  * 
  * @author Jim Lawrence, helloNetwork.com
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Ltp3Tap
@@ -248,7 +248,7 @@ public class Ltp3Tap
   }
   
   /**
-   * Finds the best quantized 3-tap pitch predictor by analysis by synthesis
+   * Finds the best quantized 3-tap pitch predictor by analysis by synthesis.
    * @param target  Target vector
    * @param ak      LPCs for this subframe
    * @param awk1    Weighted LPCs #1 for this subframe
@@ -263,7 +263,7 @@ public class Ltp3Tap
    * @param e2s
    * @param r
    * @param cdbk_index
-   * @return
+   * @return the best quantized 3-tap pitch predictor by analysis by synthesis.
    */
   private float pitch_gain_search_3tap(final float[] target,
                                        final float[] ak,

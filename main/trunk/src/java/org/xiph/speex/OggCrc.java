@@ -66,7 +66,7 @@ package org.xiph.speex;
  * unreflected alg and an init/final of 0, not 0xffffffff.
  * 
  * @author Jim Lawrence, helloNetwork.com
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class OggCrc

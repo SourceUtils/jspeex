@@ -60,12 +60,13 @@ import org.xiph.speex.spi.SpeexEncoding;
 /**
  * JavaSound Recorder.
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Recorder
   extends Player
 {
+  /** Revision Number */
   public static final String REVISION = "$Revision$";
 
   /** Audio sampled at 8 kHz (telephone quality). */
@@ -86,9 +87,12 @@ public class Recorder
   public static final String CHANNELS_STEREO  = "stereo";
 
   // Possible States for the Finite State Machine 
+  /** Finite State Machine State: Recording */
   protected static final int STATE_RECORDING  = 6;
+  /** Finite State Machine State: Recording Paused */
   protected static final int STATE_REC_PAUSED = 7;
 
+  /** Record Button */
   protected JButton recordButton;
 
   protected Capture capture;
@@ -142,7 +146,7 @@ public class Recorder
 
   /**
    * Returns an InputSteam containing the Audio to playback.
-   * @return
+   * @return an InputSteam containing the Audio to playback.
    * @throws IOException
    */
   protected InputStream getAudioStream()
@@ -415,7 +419,7 @@ System.out.println("size="+audio.length);
 
   /**
    * Return the progress of the playback.
-   * @return
+   * @return the progress of the playback.
    */
   protected int getProgress()
   {

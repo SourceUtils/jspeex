@@ -75,7 +75,7 @@ import java.io.StreamCorruptedException;
  * decoders.
  * 
  * @author Jim Lawrence, helloNetwork.com
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public interface Decoder

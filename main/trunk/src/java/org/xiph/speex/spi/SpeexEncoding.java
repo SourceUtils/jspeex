@@ -41,7 +41,7 @@ import javax.sound.sampled.AudioFormat;
 /**
  * Encodings used by the Speex audio decoder.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexEncoding

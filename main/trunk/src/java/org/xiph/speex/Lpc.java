@@ -97,7 +97,7 @@ package org.xiph.speex;
  * 
  * <p>Invented by N. Levinson in 1947, modified by J. Durbin in 1959.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Lpc

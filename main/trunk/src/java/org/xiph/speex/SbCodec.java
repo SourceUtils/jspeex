@@ -42,7 +42,7 @@ package org.xiph.speex;
  * This class contains all the basic structures needed by the Sideband
  * encoder and decoder.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SbCodec

@@ -60,7 +60,7 @@ import  org.xiph.speex.OggCrc;
  * This implementation can parse the format information from Speex audio file,
  * and can produce audio input streams from files of this type.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexAudioFileReader

@@ -74,7 +74,7 @@ package org.xiph.speex;
  * This class analyses the signal to help determine what bitrate to use when
  * the Varible BitRate option has been selected.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Vbr

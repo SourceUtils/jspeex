@@ -12,5 +12,5 @@ MISCELLANEOUS
 =============
 - Test capacity to read and write Speex Wav files (compatible with Speex ACM)
 - Write a Simple JavaSound Player/Recorder to demonstrate the SPI working.
-- Build a test suit using JUnit to test and validate the code and SPI when
+- Improve the JUnit test suit to test and validate the code and SPI when
 changes are made.

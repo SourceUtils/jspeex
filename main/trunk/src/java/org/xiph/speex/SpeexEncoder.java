@@ -71,7 +71,7 @@ package org.xiph.speex;
  * Main Speex Encoder class.
  * This class encodes the given PCM 16bit samples into Speex packets.
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexEncoder

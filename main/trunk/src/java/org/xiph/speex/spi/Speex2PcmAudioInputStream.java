@@ -49,7 +49,7 @@ import org.xiph.speex.SbDecoder;
 /**
  * Converts an Ogg Speex bitstream into a PCM 16bits/sample audio stream.
  *
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class Speex2PcmAudioInputStream

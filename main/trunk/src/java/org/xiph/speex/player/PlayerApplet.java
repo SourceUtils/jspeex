@@ -43,7 +43,7 @@ import javax.swing.SwingUtilities;
  * JavaSound Player Applet.
  * This is simply a Player Panel placed inside an applet.
  * 
- * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class PlayerApplet

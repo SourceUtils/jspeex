@@ -94,7 +94,7 @@ import org.xiph.speex.RawWriter;
  * --  Can't force decoder to run at another rate, mode, or channel count. 
  * 
  * @author Jim Lawrence, helloNetwork.com
- * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class JSpeexDec
