@@ -205,7 +205,7 @@
     <mkdir dir="${doc}/junit"/>
     <junit printsummary="yes" haltonfailure="no">
       <classpath>
-        <pathelement location="${build.java}"/>
+        <pathelement location="${dist}/jspeex.jar"/>
         <pathelement location="${build.test}"/>
         <fileset dir="${lib}">
           <include name="**/*.jar"/>
