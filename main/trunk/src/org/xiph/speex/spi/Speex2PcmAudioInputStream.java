@@ -199,8 +199,8 @@ public class Speex2PcmAudioInputStream
   {
     makeSpace();
     while (true) {
-      int n = in.read(prebuf, precount, prebuf.length - precount);
-      if (n < 0) { // inputstream has ended
+      int read = in.read(prebuf, precount, prebuf.length - precount);
+      if (read < 0) { // inputstream has ended
         if (first) {
           throw new StreamCorruptedException("Incomplete Ogg Headers");
         }
@@ -208,7 +208,7 @@ public class Speex2PcmAudioInputStream
           if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
             readOggPageHeader();
           }
-          n = packetSizes[packetCount++];
+          int n = packetSizes[packetCount++];
           if ((precount-prepos) < n) { // we don't have enough data for a complete speex frame
             throw new StreamCorruptedException("Incompleted last Speex packet");
           }
@@ -226,8 +226,8 @@ public class Speex2PcmAudioInputStream
         }
         return;
       }
-      else if (n > 0) {
-        precount += n;
+      else if (read > 0) {
+        precount += read;
         // do stuff here
         if (first) {
           if (decoder==null && precount>=108) { // we can process the speex header
@@ -257,7 +257,7 @@ public class Speex2PcmAudioInputStream
             if ((precount-prepos) >= packetSizes[packetCount]) { // we have enough data, lets start decoding
               while (((precount-prepos) >= packetSizes[packetCount]) &&
                      (packetCount < packetsPerOggPage)) { // lets decode all we can
-                n = packetSizes[packetCount++];
+                int n = packetSizes[packetCount++];
                 decode(prebuf, prepos, n);
                 prepos += n;
                 while ((buf.length - count) < outputData.length) { // grow buffer
@@ -280,7 +280,7 @@ public class Speex2PcmAudioInputStream
           }
         }
       }
-      else { // n == 0
+      else { // read == 0
         // read 0 bytes from underlying stream yet it is not finished.
       }
     }
@@ -321,6 +321,66 @@ public class Speex2PcmAudioInputStream
         outputData[outputSize++] = (byte) (val & 0xff);
         outputData[outputSize++] = (byte) ((val >> 8) &  0xff );
       }
+    }
+  }
+
+  /**
+   * See the general contract of the <code>skip</code> method of
+   * <code>InputStream</code>.
+   *
+   * @param      n   the number of bytes to be skipped.
+   * @return     the actual number of bytes skipped.
+   * @exception  IOException  if an I/O error occurs.
+   */
+  public synchronized long skip(long n)
+    throws IOException
+  {
+    checkIfStillOpen();
+    // Sanity check
+    if (n <= 0) {
+      return 0;
+    }
+    // Skip buffered data if there is any
+    if (pos < count) {
+      return super.skip(n);
+    }
+    // Nothing in the buffers to skip
+    else {
+      int decodedPacketSize = 2*framesPerPacket*frameSize*channelCount;
+      if (markpos < 0 && n >= decodedPacketSize) {
+        // We aren't buffering and skipping more than a complete Speex packet:
+        // Lets try to skip complete Speex packets without decoding
+        if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
+          readOggPageHeader();
+        }
+        if (packetCount < packetsPerOggPage) { // read the next packet
+          int skipped = 0;
+          if ((precount-prepos) < packetSizes[packetCount]) { // we don't have enough data
+            int read = in.read(prebuf, precount, prebuf.length - precount);
+            if (read < 0) { // inputstream has ended
+              throw new IOException("End of stream but there are still supposed to be packets to decode");
+            }
+            precount += read;
+          }
+          while (((precount-prepos) >= packetSizes[packetCount]) &&
+                 (packetCount < packetsPerOggPage) &&
+                 (n >= decodedPacketSize)) { // lets skip all we can
+            prepos += packetSizes[packetCount++];
+            skipped += decodedPacketSize;
+            n -= decodedPacketSize;
+            if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
+              readOggPageHeader();
+            }
+          }
+          System.arraycopy(prebuf, prepos, prebuf, 0, precount-prepos);
+          precount -= prepos;
+          prepos = 0;
+          return skipped; // we have skipped some data (all that we could), so we can leave now, otherwise we return to a potentially blocking read of the underlying inputstream.
+        }
+      }
+      // We are buffering, or couldn't skip a complete Speex packet:
+      // Read (decode) into buffers and skip (this is potentially blocking)
+      return super.skip(n);
     }
   }
 

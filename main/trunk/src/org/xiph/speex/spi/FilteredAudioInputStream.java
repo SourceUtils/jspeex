@@ -162,7 +162,7 @@ public abstract class FilteredAudioInputStream
    * Check to make sure that this stream has not been closed
    * @exception IOException
    */
-  private void checkIfStillOpen()
+  protected void checkIfStillOpen()
     throws IOException
   {
     if (in == null)
@@ -242,14 +242,14 @@ public abstract class FilteredAudioInputStream
   {
     makeSpace();
     while (true) {
-      int n = in.read(prebuf, precount, prebuf.length - precount);
-      if (n < 0) { // inputstream has ended
+      int read = in.read(prebuf, precount, prebuf.length - precount);
+      if (read < 0) { // inputstream has ended
         // do last stuff here
         break;
       }
-      else if (n > 0) {
+      else if (read > 0) {
         // do stuff here
-        precount += n;
+        precount += read;
         break;
       }
       else { // n == 0
@@ -308,29 +308,6 @@ public abstract class FilteredAudioInputStream
   }
 
   /**
-   * Read characters into a portion of an array, reading from the underlying
-   * stream at most once if necessary.
-   */
-  private int read1(byte[] b, int off, int len)
-    throws IOException
-  {
-    int avail = count - pos;
-    if (avail <= 0) {
-      /* If the requested length is at least as large as the buffer, and
-         if there is no mark/reset activity, do not bother to copy the
-         bytes into the local buffer.  In this way buffered streams will
-         cascade harmlessly. */
-      fill();
-      avail = count - pos;
-      if (avail <= 0) return -1;
-    }
-    int cnt = (avail < len) ? avail : len;
-    System.arraycopy(buf, pos, b, off, cnt);
-    pos += cnt;
-    return cnt;
-  }
-
-  /**
    * Reads bytes from this byte-input stream into the specified byte array,
    * starting at the given offset.
    *
@@ -376,14 +353,16 @@ public abstract class FilteredAudioInputStream
     else if (len == 0) {
       return 0;
     }
-    int n = read1(b, off, len);
-    if (n <= 0) return n;
-    while ((n < len) && (available() > 0)) {
-      int n1 = read1(b, off + n, len - n);
-      if (n1 <= 0) break;
-      n += n1;
+    int avail = count - pos;
+    if (avail <= 0) {
+      fill();
+      avail = count - pos;
+      if (avail <= 0) return -1;
     }
-    return n;
+    int cnt = (avail < len) ? avail : len;
+    System.arraycopy(buf, pos, b, off, cnt);
+    pos += cnt;
+    return cnt;
   }
 
   /**
@@ -404,13 +383,14 @@ public abstract class FilteredAudioInputStream
     }
     // Skip buffered data if there is any
     if (pos < count) {
-      if (count - pos > n) {
+      int avail = count - pos;
+      if (avail > n) {
         pos += n;
         return n;
       }
       else {
         pos = count;
-        return count - pos;
+        return avail;
       }
     }
     // Read into buffers and skip
