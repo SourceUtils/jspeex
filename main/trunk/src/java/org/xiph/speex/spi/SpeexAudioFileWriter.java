@@ -166,6 +166,15 @@ public class SpeexAudioFileWriter
       out.write(data, 0, temp);
       read += temp;
     }
+    /*
+    According to jsresources.org, the write() method is supposed to close the
+    File or FileOutputStream on completion.
+    Without it, people passing in a File parameter are not able to close the
+    file on their own, and hence can't delete the audio file (especially on
+    FAT32 systems), since it's still technically open.
+    */
+    out.flush();
+    out.close();
     return read;
   }
 }
