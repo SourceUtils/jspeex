@@ -421,9 +421,9 @@ System.out.println("size="+audio.length);
   protected void createButtonPanel()
   {
     recordButton = buildButton("Record", "Record",
-                               "images/player_record.gif",
-                               "images/player_record2.gif",
-                               "images/player_record3.gif", this);
+                               "/images/player_record.gif",
+                               "/images/player_record2.gif",
+                               "/images/player_record3.gif", this);
     playerButtonPane.add(recordButton);
     super.createButtonPanel();
   }

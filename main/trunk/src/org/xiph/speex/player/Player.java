@@ -508,19 +508,19 @@ public class Player
   protected void createButtonPanel()
   {
     playButton = buildButton("Play", "Play",
-                             "images/player_play.gif",
-                             "images/player_play2.gif",
-                             "images/player_play3.gif", this);
+                             "/images/player_play.gif",
+                             "/images/player_play2.gif",
+                             "/images/player_play3.gif", this);
     playerButtonPane.add(playButton);
     pauseButton = buildButton("Pause", "Pause",
-                              "images/player_pause.gif",
-                              "images/player_pause2.gif",
-                              "images/player_pause3.gif", this);
+                              "/images/player_pause.gif",
+                              "/images/player_pause2.gif",
+                              "/images/player_pause3.gif", this);
     playerButtonPane.add(pauseButton);
     stopButton = buildButton("Stop", "Stop",
-                             "images/player_stop.gif",
-                             "images/player_stop2.gif",
-                             "images/player_stop3.gif", this);
+                             "/images/player_stop.gif",
+                             "/images/player_stop2.gif",
+                             "/images/player_stop3.gif", this);
     playerButtonPane.add(stopButton);
     playerButtonPane.setBackground(Color.WHITE);
     // Make the player panel the content pane.
