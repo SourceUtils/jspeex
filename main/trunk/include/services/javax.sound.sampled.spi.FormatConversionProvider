@@ -1,2 +1,2 @@
-# Providers of sound conversion services
+# Providers of Speex sound conversion services
 org.xiph.speex.spi.SpeexFormatConvertionProvider

@@ -2,6 +2,7 @@ DECODER
 =======
 - DTX implemented but untested.
 - Can't force decoder to run at another rate, mode, or channel count.
+- Packet loss simulation implemented but untested
 
 ENCODER
 =======
@@ -9,4 +10,6 @@ ENCODER
 
 MISCELLANEOUS
 =============
-- implement all those options in the C command line encoder and decoder.
+- Build a test suit using JUnit to test and validate the code and SPI when
+changes are made.
+- Write a Simple JavaSound Player/Recorder to demonstrate the SPI working.

@@ -1,2 +1,2 @@
-# Providers of sound file-reading services
+# Providers of Speex sound file-reading services
 org.xiph.speex.spi.SpeexAudioFileReader
