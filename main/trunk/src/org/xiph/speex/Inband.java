@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import java.io.StreamCorruptedException;
+
 /**
  * Speex in-band and User in-band controls.
  * 
@@ -58,73 +60,74 @@ public class Inband
   /**
    * Speex in-band request (submode=14).
    * @param bits - Speex bits buffer.
-   * @return 0 is successful, 1 otherwise.
+   * @throws StreamCorruptedException If stream seems corrupted.
    */
-  public int speexInbandRequest(Bits bits)
+  public void speexInbandRequest(Bits bits)
+    throws StreamCorruptedException
   {
     int code = bits.unpack(4);
-    int tmp;
     switch (code) {
       case 0: // asks the decoder to set perceptual enhancment off (0) or on (1)
-        tmp = bits.unpack(1);
+        bits.advance(1);
         break;
       case 1: // asks (if 1) the encoder to be less "aggressive" due to high packet loss
-        tmp = bits.unpack(1);
+        bits.advance(1);
         break;
       case 2: // asks the encoder to switch to mode N
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 3: // asks the encoder to switch to mode N for low-band
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 4: // asks the encoder to switch to mode N for high-band
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 5: // asks the encoder to switch to quality N for VBR
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 6: // request acknowledgement (0=no, 1=all, 2=only for inband data)
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 7: // asks the encoder to set CBR(0), VAD(1), DTX(3), VBR(5), VBR+DTX(7)
-        tmp = bits.unpack(4);
+        bits.advance(4);
         break;
       case 8: // transmit (8-bit) character to the other end
-        tmp = bits.unpack(8);
+        bits.advance(8);
         break;
       case 9: // intensity stereo information
         // setup the stereo decoder; to skip: tmp = bits.unpack(8); break;
-        return stereo.init(bits); // read 8 bits
+        stereo.init(bits); // read 8 bits
       case 10: // announce maximum bit-rate acceptable (N in byets/second)
-        tmp = bits.unpack(16);
+        bits.advance(16);
         break;
       case 11: // reserved
-        tmp = bits.unpack(16);
+        bits.advance(16);
         break;
       case 12: // Acknowledge receiving packet N
-        tmp = bits.unpack(32);
+        bits.advance(32);
         break;
       case 13: // reserved
-        tmp = bits.unpack(32);
+        bits.advance(32);
         break;
       case 14: // reserved
-        tmp = bits.unpack(64);
+        bits.advance(64);
         break;
       case 15: // reserved
-        tmp = bits.unpack(64);
+        bits.advance(64);
         break;
       default:
     }
-    return 1;
   }
   
   /**
    * User in-band request (submode=13).
    * @param bits - Speex bits buffer.
-   * @return 0 is successful, 1 otherwise.
+   * @throws StreamCorruptedException If stream seems corrupted.
    */
-  public int userInbandRequest(Bits bits)
+  public void userInbandRequest(Bits bits)
+    throws StreamCorruptedException
   {
-    return 1;
+    int req_size = bits.unpack(4);
+    bits.advance(5+8*req_size);
   }
 }

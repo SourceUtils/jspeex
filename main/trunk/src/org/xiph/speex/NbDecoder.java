@@ -68,6 +68,7 @@
 
 package org.xiph.speex;
 
+import java.io.StreamCorruptedException;
 import java.util.Random;
 
 /**
@@ -134,9 +135,12 @@ public class NbDecoder
    * Decode the given input bits.
    * @param bits - Speex bits buffer.
    * @param out - the decoded mono audio frame.
-   * @return 0 if successful.
+   * @return 1 if a terminator was found, 0 if not.
+   * @throws StreamCorruptedException If there is an error detected in the
+   * data stream.
    */
   public int decode(Bits bits, float[] out)
+    throws StreamCorruptedException
   {
     int i, sub, pitch, ol_pitch=0, m;
     float[] pitch_gain = new float[3];
@@ -162,8 +166,8 @@ public class NbDecoder
           m = bits.unpack(SbCodec.SB_SUBMODE_BITS);
           int advance = SbCodec.SB_FRAME_SIZE[m];
           if (advance < 0) {
-            // Invalid sideband mode encountered. Wideband Corrupted stream?
-            return -2;
+            throw new StreamCorruptedException("Invalid sideband mode encountered (1st sideband): " + m);
+            //return -2;
           } 
           advance -= (SbCodec.SB_SUBMODE_BITS+1);
           bits.advance(advance);
@@ -172,14 +176,14 @@ public class NbDecoder
             m = bits.unpack(SbCodec.SB_SUBMODE_BITS);
             advance = SbCodec.SB_FRAME_SIZE[m];
             if (advance < 0) {
-              // Invalid sideband mode encountered. Ultra-wideband Corrupted stream?
-              return -2;
+              throw new StreamCorruptedException("Invalid sideband mode encountered. (2nd sideband): " + m);
+              //return -2;
             } 
             advance -= (SbCodec.SB_SUBMODE_BITS+1);
             bits.advance(advance);
             if (bits.unpack(1)!=0) { /* Sanity check */
-              // More than two sideband layers found: corrupted stream??
-              return -2;
+              throw new StreamCorruptedException("More than two sideband layers found");
+              //return -2;
             }
           }
 //*/
@@ -191,18 +195,14 @@ public class NbDecoder
           return 1;
         }
         else if (m==14) { /* Speex in-band request */
-          int ret = inband.speexInbandRequest(bits);
-          if (ret != 0)
-            return ret;
+          inband.speexInbandRequest(bits);
         }
         else if (m==13) { /* User in-band request */
-          int ret = inband.userInbandRequest(bits);
-          if (ret != 0)
-            return ret;
+          inband.userInbandRequest(bits);
         }
         else if (m>8) { /* Invalid mode */
-          System.err.println("Invalid mode encountered: corrupted stream?");
-          return 2;
+          throw new StreamCorruptedException("Invalid mode encountered: " + m);
+          //return -2;
         }
       }
       while (m>8);
@@ -234,7 +234,7 @@ public class NbDecoder
         out[i]=frmBuf[frmIdx+i] + preemph*out[i-1];
       pre_mem=out[frameSize-1];
       count_lost=0;
-      return (0);
+      return 0;
     }
 
     /* Unquantize LSPs */

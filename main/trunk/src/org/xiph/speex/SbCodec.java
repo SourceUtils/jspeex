@@ -52,7 +52,7 @@ public class SbCodec
   // Constants
   //---------------------------------------------------------------------------
   /** The Sideband Frame Size gives the size in bits of a Sideband frame for a given sideband submode. */
-  public static final int[] SB_FRAME_SIZE = {4, 36, 112, 192, 352, 1, 1, 1};
+  public static final int[] SB_FRAME_SIZE = {4, 36, 112, 192, 352, -1, -1, -1};
   /** The Sideband Submodes gives the number of submodes possible for the Sideband codec. */
   public static final int SB_SUBMODES     = 8;
   /** The Sideband Submodes Bits gives the number bits used to encode the Sideband Submode*/

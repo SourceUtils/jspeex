@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
  
+import java.io.StreamCorruptedException;
+
 /**
  * Main Speex Decoder class.
  * This class decodes the given Speex packets into PCM 16bit samples.
@@ -89,7 +91,7 @@ public class SpeexDecoder
   /**
    * Version of the Speex Decoder
    */
-  public static final String VERSION = "Java Speex Decoder v0.9 ($Revision$)";
+  public static final String VERSION = "Java Speex Decoder v0.9.1 ($Revision$)";
 
   private int     sampleRate;
   private int     channels;
@@ -226,26 +228,28 @@ public class SpeexDecoder
    * If it is null, the packet is supposed lost.
    * @param offset - the offset from which to start reading the data.
    * @param len - the length of data to read (Speex frame size).
-   * @return true if successful.
+   * @throws StreamCorruptedException If the input stream is invalid.
    */
-  public boolean processData(byte[] data, int offset, int len)
+  public void processData(byte[] data, int offset, int len)
+    throws StreamCorruptedException
   {
     if (data == null) {
-      return processData(true);
+      processData(true);
     }
     else {
       /* read packet bytes into bitstream */
       bits.read_from(data, offset, len);
-      return processData(false);
+      processData(false);
     }
   }
 
   /**
    * This is where the actual decoding takes place.
    * @param lost - true if the Speex packet has been lost.
-   * @return true if successful.
+   * @throws StreamCorruptedException If the input stream is invalid.
    */
-  public boolean processData(boolean lost)
+  public void processData(boolean lost)
+    throws StreamCorruptedException
   {
     int i;
     /* decode the bitstream */
@@ -270,6 +274,5 @@ public class SpeexDecoder
                                (short) (decodedData[i]+.5) :
                                (short) (decodedData[i]-.5);
     } 
-    return true;
   }
 }

@@ -161,9 +161,8 @@ public class Stereo
   /**
    * Callback handler for intensity stereo info
    * @param bits - Speex bits buffer.
-   * @return
    */
-  public int init(Bits bits)
+  public void init(Bits bits)
   {
     float sign=1;
     int tmp;
@@ -173,6 +172,5 @@ public class Stereo
     balance = (float) Math.exp(sign*.25*tmp);
     tmp = bits.unpack(2);
     e_ratio = e_ratio_quant[tmp];
-    return 0;
   }
 }

@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import java.io.StreamCorruptedException;
+
 /**
  * Speex Decoder inteface, used as a base for the Narrowband and sideband
  * decoders.
@@ -82,9 +84,12 @@ public interface Decoder
    * Decode the given input bits.
    * @param bits - Speex bits buffer.
    * @param out - the decoded mono audio frame.
-   * @return 0 if successful.
+   * @return 1 if a terminator was found, 0 if not.
+   * @throws StreamCorruptedException If there is an error detected in the
+   * data stream.
    */
-  public int decode(Bits bits, float[] out);
+  public int decode(Bits bits, float[] out)
+    throws StreamCorruptedException;
   
   /**
    * Decode the given bits to stereo.

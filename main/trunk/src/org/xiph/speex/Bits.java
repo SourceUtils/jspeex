@@ -105,10 +105,8 @@ public class Bits
    */
   public void advance(int n)
   {
-    int nbytes= n >> 3, nbits= n & 7;
-    bytePtr += nbytes;
-    bitPtr += nbits;
-    
+    bytePtr += n >> 3;
+    bitPtr += n & 7;
     if (bitPtr>7) {
       bitPtr-=8;
       bytePtr++;
@@ -119,7 +117,8 @@ public class Bits
    * Sets the buffer to the given value.
    * @param newBuffer
    */
-  protected void setBuffer(byte[] newBuffer){
+  protected void setBuffer(byte[] newBuffer)
+  {
     bytes = newBuffer;
   }  
   
@@ -129,7 +128,7 @@ public class Bits
    */
   public int peek()
   {
-    return ((bytes[bytePtr] & 0xFF)>>(7-bitPtr))&1;
+    return ((bytes[bytePtr] & 0xFF) >> (7-bitPtr)) & 1;
   }
 
   /**
@@ -177,7 +176,8 @@ public class Bits
     int d=data;
 
     while (bytePtr+((nbBits+bitPtr)>>3) >= bytes.length) {
-      System.err.println("Buffer too small to pack bits");
+      // System.err.println("Buffer too small to pack bits");
+      /* Expand the buffer as needed. */
       int size = bytes.length*2;
       byte[] tmp = new byte[size];
       System.arraycopy(bytes, 0, tmp, 0, bytes.length);
