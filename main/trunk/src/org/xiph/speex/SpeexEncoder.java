@@ -98,10 +98,10 @@ public class SpeexEncoder
 
   /**
    * Initialisation
-   * @param mode
-   * @param quality
-   * @param sampleRate
-   * @param channels
+   * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
+   * @param quality    the quality setting of the encoder (between 0 and 10).
+   * @param sampleRate the number of samples per second.
+   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
    * @return true if initialisation successful.
    */
   public boolean init(int mode, int quality, int sampleRate, int channels)

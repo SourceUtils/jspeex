@@ -114,10 +114,10 @@ public class SpeexDecoder
   
   /**
    * Initialise the Speex Decoder.
-   * @param mode
-   * @param sampleRate
-   * @param channels
-   * @param enhanced
+   * @param mode       the mode of the decoder (0=NB, 1=WB, 2=UWB).
+   * @param sampleRate the number of samples per second.
+   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+   * @param enhanced   whether to enable perceptual enhancement or not.
    * @return true if initialisation successful.
    */
   public boolean init(int mode, int sampleRate, int channels, boolean enhanced)
