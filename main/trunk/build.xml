@@ -250,7 +250,7 @@
     <property name="rpmbuilddir" location="/usr/src/redhat/"/>
     <copy file="../jspeex-${version}.zip"
           todir="${rpmbuilddir}/SOURCES" overwrite="true"/>
-    <copy file="jspeex.spec"
+    <copy file="${src}/jspeex.spec"
           todir="${rpmbuilddir}/SPECS" overwrite="true">
       <filterset>
         <filter token="VERSION" value="${version}"/>
