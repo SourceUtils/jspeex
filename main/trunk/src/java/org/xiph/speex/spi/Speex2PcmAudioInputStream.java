@@ -270,7 +270,9 @@ public class Speex2PcmAudioInputStream
         }
         return;
       }
-      else if (read > 0) {
+      // if read=0 but the prebuffer contains data, it is decoded and returned.
+      // if read=0 but the prebuffer is almost empty, it loops back to read.
+      else if (read >= 0) {
         precount += read;
         // do stuff here
         if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
@@ -301,9 +303,6 @@ public class Speex2PcmAudioInputStream
             return; // we have decoded some data (all that we could), so we can leave now, otherwise we return to a potentially blocking read of the underlying inputstream.
           }
         }
-      }
-      else { // read == 0
-        // read 0 bytes from underlying stream yet it is not finished.
       }
     }
   }
@@ -469,6 +468,8 @@ public class Speex2PcmAudioInputStream
   /**
    * Read the Ogg Page header and extract the speex packet sizes.
    * Note: the checksum is ignores.
+   * Note: the method should no block on a read because it will not read more
+   * then is available
    */
   private void readOggPageHeader()
     throws IOException
