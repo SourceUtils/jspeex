@@ -309,7 +309,7 @@ public class JSpeexDec
     System.out.println("Where:");
     System.out.println("  input_file can be:");
     System.out.println("    filename.spx  an Ogg Speex file");
-    System.out.println("    filename.wav  a Wave Speex file");
+    System.out.println("    filename.wav  a Wave Speex file (beta!!!)");
     System.out.println("    filename.*    a raw Speex file");
     System.out.println("  output_file can be:");
     System.out.println("    filename.wav  a PCM wav file");

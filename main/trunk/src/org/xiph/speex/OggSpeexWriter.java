@@ -181,65 +181,27 @@ public class OggSpeexWriter
   public void writeHeader(String comment)
     throws IOException
   {
-    // writes the OGG header page
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(108);
-    baos.write("OggS".getBytes(), 0, 4); //  0 -  3: capture_pattern
-    baos.write(0xff & 0);                //       4: stream_structure_version
-    baos.write(0xff & 2);                //       5: header_type_flag (2=bos: beginning of sream)
-    writeLong(baos, 0);                  //  6 - 13: absolute granule position
-    writeInt(baos, streamSerialNumber);  // 14 - 17: stream serial number
-    writeInt(baos, pageCount++);         // 18 - 21: page sequence no
-    writeInt(baos, 0);                   // 22 - 25: page checksum
-    baos.write(0xff & 1);                //      26: page_segments
-    baos.write(0xff & 80);               //      27: segment_table (1 segment, size 80 = Speex Header)
-    /* writes the Speex header */
-    baos.write("Speex   ".getBytes(), 0, 8);  //  0 -  7: speex_string
-    baos.write("speex-1.0".getBytes(), 0, 9); //  8 - 27: speex_version
-    baos.write(new byte[11], 0, 11);          //        : speex_version (fill in up to 20 bytes)
-    writeInt(baos, 1);                        // 28 - 31: speex_version_id
-    writeInt(baos, 80);                       // 32 - 35: header_size
-    writeInt(baos, sampleRate);               // 36 - 39: rate
-    writeInt(baos, mode);                     // 40 - 43: mode (0=narrowband, 1=wb, 2=uwb)
-    writeInt(baos, 4);                        // 44 - 47: mode_bitstream_version
-    writeInt(baos, channels);                 // 48 - 51: nb_channels
-    writeInt(baos, -1);                       // 52 - 55: bitrate
-    writeInt(baos, mode==0?160:mode==1?320:640); // 56 - 59: frame_size
-    writeInt(baos, vbr?1:0);                  // 60 - 63: vbr
-    writeInt(baos, nframes);                  // 64 - 67: frames_per_packet
-    writeInt(baos, 0);                        // 68 - 71: extra_headers
-    writeInt(baos, 0);                        // 72 - 75: reserved1
-    writeInt(baos, 0);                        // 76 - 79: reserved2
-    /* Calculate Checksum */
-    byte[] ogg = baos.toByteArray();
-    int chksum = OggCrc.checksum(0, ogg, 0, ogg.length);
-    ogg[22] = (byte)(0xff & chksum);
-    ogg[23] = (byte)(0xff & (chksum >>>  8));
-    ogg[24] = (byte)(0xff & (chksum >>> 16));
-    ogg[25] = (byte)(0xff & (chksum >>> 24));
-    out.write(ogg);
+    int chksum;
+    byte[] header;
+    byte[] data;
+    /* writes the OGG header page */
+    header = buildOggPageHeader(2, 0, streamSerialNumber, pageCount++, 1,
+                              new byte[] {80});
+    data = buildSpeexHeader(sampleRate, mode, channels, vbr, nframes);
+    chksum = OggCrc.checksum(0, header, 0, header.length);
+    chksum = OggCrc.checksum(chksum, data, 0, data.length);
+    writeInt(header, 22, chksum);
+    out.write(header);
+    out.write(data);
     /* writes the OGG comment page */
-    baos = new ByteArrayOutputStream(64);
-    baos.write("OggS".getBytes(), 0, 4); //  0 -  3: capture_pattern
-    baos.write(0xff & 0);                //       4: stream_structure_version
-    baos.write(0xff & 0);                //       5: header_type_flag
-    writeLong(baos, 0);                  //  6 - 13: absolute granule position
-    writeInt(baos, streamSerialNumber);  // 14 - 17: stream serial number
-    writeInt(baos, pageCount++);         // 18 - 21: page sequence no
-    writeInt(baos, 0);                   // 22 - 25: page checksum
-    baos.write(0xff & 1);                //      26: page_segments
-    baos.write(0xff & (comment.length()+8)); //  27: segment_table (1 segment, size 80 = Speex Header)
-    /* writes the Comment */
-    writeInt(baos, comment.length());                    // vendor comment size
-    baos.write(comment.getBytes(), 0, comment.length()); // vendor comment
-    writeInt(baos, 0);                                   // user comment list length
-    /* Calculate Checksum */
-    ogg = baos.toByteArray();
-    chksum = OggCrc.checksum(0, ogg, 0, ogg.length);
-    ogg[22] = (byte)(0xff & chksum);
-    ogg[23] = (byte)(0xff & (chksum >>>  8));
-    ogg[24] = (byte)(0xff & (chksum >>> 16));
-    ogg[25] = (byte)(0xff & (chksum >>> 24));
-    out.write(ogg);
+    header = buildOggPageHeader(0, 0, streamSerialNumber, pageCount++, 1,
+                              new byte[] {(byte) (comment.length() + 8)});
+    data = buildSpeexComment(comment);
+    chksum = OggCrc.checksum(0, header, 0, header.length);
+    chksum = OggCrc.checksum(chksum, data, 0, data.length);
+    writeInt(header, 22, chksum);
+    out.write(header);
+    out.write(data);
   }
   
   /**
@@ -273,26 +235,15 @@ public class OggSpeexWriter
   private void flush(boolean eos)
     throws IOException
   {
+    int chksum;
+    byte[] header;
     /* writes the OGG header page */
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(284);
-    baos.write("OggS".getBytes(), 0, 4); //  0 -  3: capture_pattern
-    baos.write(0xff & 0);                //       4: stream_structure_version
-    baos.write(0xff & (eos ? 4 : 0));    //       5: header_type_flag (4=eos: end of sream)
-    writeLong(baos, granulepos);         //  6 - 13: absolute granule position
-    writeInt(baos, streamSerialNumber);  // 14 - 17: stream serial number
-    writeInt(baos, pageCount++);         // 18 - 21: page sequence no
-    writeInt(baos, 0);                   // 22 - 25: page checksum
-    baos.write(0xff & packetCount);      //      26: page_segments
-    baos.write(headerBuffer, 0, packetCount); // 27 -  x: segment_table (1 segment, size 80 = Speex Header)
-    /* Calculate Checksum */
-    byte[] ogg = baos.toByteArray();
-    int chksum = OggCrc.checksum(0, ogg, 0, ogg.length);
+    header = buildOggPageHeader((eos ? 4 : 0), granulepos, streamSerialNumber,
+                                pageCount++, packetCount, headerBuffer);
+    chksum = OggCrc.checksum(0, header, 0, header.length);
     chksum = OggCrc.checksum(chksum, dataBuffer, 0, dataBufferPtr);
-    ogg[22] = (byte)(0xff & chksum);
-    ogg[23] = (byte)(0xff & (chksum >>>  8));
-    ogg[24] = (byte)(0xff & (chksum >>> 16));
-    ogg[25] = (byte)(0xff & (chksum >>> 24));
-    out.write(ogg);
+    writeInt(header, 22, chksum);
+    out.write(header);
     out.write(dataBuffer, 0, dataBufferPtr);
     dataBufferPtr   = 0;
     headerBufferPtr = 0;

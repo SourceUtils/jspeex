@@ -69,7 +69,7 @@ public class PcmWaveWriter
    * and the quality setting (0 to 10).
    * See end of file for exerpt from SpeexACM code for more explanations.
    */
-  public static final int[][][] WAVE_FRAME_SIZES = new int[3][2][11]
+  public static final int[][][] WAVE_FRAME_SIZES = new int[][][]
     { { {8, 8, 8, 1, 1, 2, 2, 2, 2, 2, 2},     // NB mono
         {2, 1, 1, 7, 7, 8, 8, 8, 8, 3, 3} },   // NB stereo
       { {8, 8, 8, 2, 1, 1, 2, 2, 2, 2, 2},     // WB mono

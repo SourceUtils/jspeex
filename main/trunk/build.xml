@@ -51,7 +51,7 @@
   <property name="log"     location="log"/>
   <property name="doc"     location="doc"/>
 
-  <property name="version" value="0.9.2"/>
+  <property name="version" value="0.9.3"/>
 
   <!-- Define additional tasks -->
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
@@ -73,10 +73,12 @@
   <target name="compile" depends="init"
           description="Compile JSpeex" >
     <javac srcdir="${src}" destdir="${build}">
+      <include name="*.java"/>
       <include name="JSpeexEnc.java"/>
       <include name="JSpeexDec.java"/>
       <include name="org/xiph/speex/*.java"/>
       <include name="org/xiph/speex/spi/*.java"/>
+      <include name="org/xiph/speex/**/*.java"/>
     </javac>
   </target>
 
@@ -239,6 +241,32 @@
         <exclude name="proguard/**"/>
       </zipfileset>
     </zip>
+  </target>
+
+  <target name="rpm" description="Builds the release RPMS" depends="release">
+    <echo>
+!!! You must be root to run this target !!!
+    </echo>
+    <property name="rpmbuilddir" location="/usr/src/redhat/"/>
+    <copy file="../jspeex-${version}.zip"
+          todir="${rpmbuilddir}/SOURCES" overwrite="true"/>
+    <copy file="jspeex.spec"
+          todir="${rpmbuilddir}/SPECS" overwrite="true">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+      </filterset>
+    </copy>
+    <!--<rpm specFile="${rpmbuilddir}/SPECS/jspeex.spec"
+         topDir="${rpmbuilddir}" />-->
+    <exec executable="rpmbuild" os="Linux" dir="${rpmbuilddir}" taskname="rpm">
+      <arg line="-ba ${rpmbuilddir}/SPECS/jspeex.spec"/>
+    </exec>
+    <copy todir="../" overwrite="true">
+      <fileset dir="${rpmbuilddir}/RPMS/noarch/"
+               includes="jspeex*${version}-1.noarch.rpm"/>
+    </copy>
+    <copy file="${rpmbuilddir}/SRPMS/jspeex-${version}-1.src.rpm"
+          todir="../" overwrite="true"/>
   </target>
 
   <target name="usage" description="Display usage information" >

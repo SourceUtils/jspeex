@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.StreamCorruptedException;
 import javax.sound.sampled.AudioFormat;
 
+import org.xiph.speex.AudioFileWriter;
 import org.xiph.speex.OggCrc;
 import org.xiph.speex.Encoder;
 import org.xiph.speex.SpeexEncoder;
@@ -88,7 +89,7 @@ public class Pcm2SpeexAudioInputStream
   /** The comment String that will appear in the Ogg comment packet. */
   private String  comment = null;
   /** A counter for the number of PCM samples that have been encoded. */
-  private int     granulpos;
+  private int     granulepos;
   /** A unique serial number that identifies the Ogg stream. */
   private int     streamSerialNumber;
   /** The number of Ogg packets that will be put in each Ogg page. */
@@ -157,7 +158,7 @@ public class Pcm2SpeexAudioInputStream
   {
     super(in, format, length, size);
     // Ogg initialisation
-    granulpos = 0;
+    granulepos = 0;
     if (streamSerialNumber == 0)
       streamSerialNumber = new Random().nextInt();
     packetsPerOggPage = DEFAULT_PACKETS_PER_OGG_PAGE;
@@ -299,8 +300,7 @@ public class Pcm2SpeexAudioInputStream
   {
     makeSpace();
     if (first) {
-      writeHeaderFrame();
-      writeCommentFrame();
+      writeHeaderFrames();
       first = false;
     }
     while (true) {
@@ -512,17 +512,9 @@ public class Pcm2SpeexAudioInputStream
       System.arraycopy(buf, 0, nbuf, 0, count);
       buf = nbuf;
     }
-    writeString(buf, count, "OggS");             //  0 -  3: capture_pattern
-    buf[count+4] = 0;                            //       4: stream_structure_version
-    buf[count+5] = (byte) headertype;            //       5: header_type_flag (2=bos: beginning of stream, 4=eos: end of stream)
-    writeLong(buf, count+6, granulpos);          //  6 - 13: absolute granule position
-    writeInt(buf, count+14, streamSerialNumber); // 14 - 17: stream serial number
-    writeInt(buf, count+18, pageCount++);        // 18 - 21: page sequence no
-    writeInt(buf, count+22, 0);                  // 22 - 25: page checksum
-    buf[count+26] = (byte)(0xff & packets);      //      26: page_segments
-    for (int i=0; i<packets; i++) {
-      buf[count+27+i] = 0;                       // 27 -...: segment_table
-    }
+    AudioFileWriter.writeOggPageHeader(buf, count, headertype, granulepos,
+                                       streamSerialNumber, pageCount++,
+                                       packets, new byte[packets]);
     oggCount = count + 27 + packets;
   }
 
@@ -532,23 +524,28 @@ public class Pcm2SpeexAudioInputStream
   private void writeOggPageChecksum()
   {
     // write the granulpos
-    granulpos += framesPerPacket * frameSize * packetCount / 2;
-    writeLong(buf, count+6, granulpos);
+    granulepos += framesPerPacket * frameSize * packetCount / 2;
+    AudioFileWriter.writeLong(buf, count+6, granulepos);
     // write the checksum
     int chksum = OggCrc.checksum(0, buf, count, oggCount-count);
-    writeInt(buf, count+22, chksum);
+    AudioFileWriter.writeInt(buf, count+22, chksum);
     // reset variables for a new page.
     count = oggCount;
     packetCount = 0;
   }
   
   /**
-   * Write the OGG Speex header.
+   * Write the OGG Speex header then the comment header.
    */
-  private void writeHeaderFrame()
+  private void writeHeaderFrames()
   {
-    while ((buf.length - count) < 108) {
+    if (comment.length() > 247) {
+      comment = comment.substring(0, 247);
+    }
+    int length = comment.length();
+    while ((buf.length - count) < length + 144) {
       // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
+      //             (length + 8 + 28 = size of Comment Frame) 
       int nsz = buf.length * 2;
       byte[] nbuf = new byte[nsz];
       System.arraycopy(buf, 0, nbuf, 0, count);
@@ -558,94 +555,26 @@ public class Pcm2SpeexAudioInputStream
     writeOggPageHeader(1, 2);
     buf[count+27] = 80; // size of SpeexHeader
     /* writes the Speex header */
-    writeString(buf, oggCount, "Speex   ");               //  0 -  7: speex_string
-    writeString(buf, oggCount+8, "speex-1.0           "); //  8 - 27: speex_version
-    writeInt(buf, oggCount+28, 1);                        // 28 - 31: speex_version_id
-    writeInt(buf, oggCount+32, 80);                       // 32 - 35: header_size
-    writeInt(buf, oggCount+36, encoder.getSampleRate());  // 36 - 39: rate
-    writeInt(buf, oggCount+40, mode);                     // 40 - 43: mode (0=narrowband, 1=wb, 2=uwb)
-    writeInt(buf, oggCount+44, 4);                        // 44 - 47: mode_bitstream_version
-    writeInt(buf, oggCount+48, encoder.getChannels());    // 48 - 51: nb_channels
-    writeInt(buf, oggCount+52, -1);                       // 52 - 55: bitrate
-    writeInt(buf, oggCount+56, encoder.getFrameSize());   // 56 - 59: frame_size
-    writeInt(buf, oggCount+60, (encoder.getEncoder().getVbr() ? 1 : 0)); // 60 - 63: vbr
-    writeInt(buf, oggCount+64, framesPerPacket);          // 64 - 67: frames_per_packet
-    writeInt(buf, oggCount+68, 0);                        // 68 - 71: extra_headers
-    writeInt(buf, oggCount+72, 0);                        // 72 - 75: reserved1
-    writeInt(buf, oggCount+76, 0);                        // 76 - 79: reserved2
-    /* Calculate Checksum */
+    AudioFileWriter.writeSpeexHeader(buf, oggCount, encoder.getSampleRate(),
+                                     mode, encoder.getChannels(),
+                                     encoder.getEncoder().getVbr(),
+                                     framesPerPacket);
     oggCount += 80;
-    writeOggPageChecksum();
-  }
-  
-  /**
-   * Write the OGG Speex Comment header.
-   */
-  private void writeCommentFrame()
-  {
-    if (comment.length() > 247) {
-      comment = comment.substring(0, 247);
-    }
-    int length = comment.length();
-    while ((buf.length - count) < length + 8 + 28) { // grow buffer
-      int nsz = buf.length * 2;
-      byte[] nbuf = new byte[nsz];
-      System.arraycopy(buf, 0, nbuf, 0, count);
-      buf = nbuf;
-    }
+    /* Calculate Checksum */
+    int chksum = OggCrc.checksum(0, buf, count, oggCount-count);
+    AudioFileWriter.writeInt(buf, count+22, chksum);
+    count = oggCount;
     // writes the OGG header page
     writeOggPageHeader(1, 0);
     buf[count+27] = (byte)(0xff & length+8); // size of CommentHeader
     /* writes the OGG comment page */
-    writeInt(buf, oggCount, length);       // vendor comment size
-    writeString(buf, oggCount+4, comment); // vendor comment
-    writeInt(buf, oggCount+length+4, 0);   // user comment list length
-    /* Calculate Checksum */
+    AudioFileWriter.writeSpeexComment(buf, oggCount, comment);
     oggCount += length+8;
-    writeOggPageChecksum();
-  }
-
-  /**
-   * Writes a Little-endian int.
-   * @param data   the array into which the data should be written.
-   * @param offset the offset from which to start writing in the array.
-   * @param v      the value to write.
-   */
-  private static void writeInt(byte[] data, int offset, int v)
-  {
-    data[offset]   = (byte) (0xff & v);
-    data[offset+1] = (byte) (0xff & (v >>>  8));
-    data[offset+2] = (byte) (0xff & (v >>> 16));
-    data[offset+3] = (byte) (0xff & (v >>> 24));
-  }
-
-  /**
-   * Writes a Little-endian long.
-   * @param data   the array into which the data should be written.
-   * @param offset the offset from which to start writing in the array.
-   * @param v      the value to write.
-   */
-  private static void writeLong(byte[] data, int offset, long v)
-  {
-    data[offset]   = (byte) (0xff & v);
-    data[offset+1] = (byte) (0xff & (v >>>  8));
-    data[offset+2] = (byte) (0xff & (v >>> 16));
-    data[offset+3] = (byte) (0xff & (v >>> 24));
-    data[offset+4] = (byte) (0xff & (v >>> 32));
-    data[offset+5] = (byte) (0xff & (v >>> 40));
-    data[offset+6] = (byte) (0xff & (v >>> 48));
-    data[offset+7] = (byte) (0xff & (v >>> 56));
-  }
-
-  /**
-   * Writes a String.
-   * @param data   the array into which the data should be written.
-   * @param offset the offset from which to start writing in the array.
-   * @param v      the value to write.
-   */
-  private static void writeString(byte[] data, int offset, String v)
-  {
-    byte[] str = v.getBytes();
-    System.arraycopy(str, 0, data, offset, str.length);
+    /* Calculate Checksum */
+    chksum = OggCrc.checksum(0, buf, count, oggCount-count);
+    AudioFileWriter.writeInt(buf, count+22, chksum);
+    count = oggCount;
+    // reset variables for a new page.
+    packetCount = 0;
   }
 }

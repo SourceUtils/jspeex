@@ -184,6 +184,9 @@ public class JSpeexEnc
     if (outfile.toLowerCase().endsWith(".spx")) {
       outputFormat = FILE_FORMAT_OGG;
     }
+    if (outfile.toLowerCase().endsWith(".wav")) {
+      outputFormat = FILE_FORMAT_WAVE;
+    }
     else {
       outputFormat = FILE_FORMAT_RAW;
     }
@@ -289,6 +292,7 @@ public class JSpeexEnc
     System.out.println("    filename.*    a raw PCM file (any extension other than .wav)");
     System.out.println("  output_file can be:");
     System.out.println("    filename.spx  an Ogg Speex file");
+    System.out.println("    filename.wav  a Wave Speex file (beta!!!)");
     System.out.println("    filename.*    a raw Speex file");
     System.out.println("Options: -h, --help     This help");
     System.out.println("         -v, --version  Version information");
@@ -468,6 +472,9 @@ public class JSpeexEnc
     // Open the file writer
     AudioFileWriter writer;
     if (outputFormat == FILE_FORMAT_OGG) {
+      writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
+    }
+    else if (outputFormat == FILE_FORMAT_WAVE) {
       writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
     }
     else {
