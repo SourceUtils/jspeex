@@ -81,7 +81,7 @@ public class LtpForcedPitch
   /**
    * Long Term Prediction Quantification (Forced Pitch).
    */
-  public final int quant(float[] target, float sw[], int sws, float[] ak, float[] awk1, float awk2[],
+  public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 
                          int nsf, Bits bits, float[] exc2, int e2s, float[] r, int complexity)
   {
@@ -108,8 +108,8 @@ public class LtpForcedPitch
    * @param last_pitch_gain
    * @return pitch
    */
-  public final int unquant(float exc[], int es, int start, float pitch_coef,  
-                           int nsf, float gain_val[], Bits bits,
+  public final int unquant(float[] exc, int es, int start, float pitch_coef,  
+                           int nsf, float[] gain_val, Bits bits,
                            int count_lost, int subframe_offset, float last_pitch_gain)
   {
     int i;

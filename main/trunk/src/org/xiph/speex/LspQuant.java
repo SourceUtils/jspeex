@@ -98,7 +98,7 @@ public abstract class LspQuant
    * @param order
    * @param bits - Speex bits buffer.
    */
-  public abstract void quant(float lsp[], float qlsp[], int order, Bits bits); 
+  public abstract void quant(float[] lsp, float[] qlsp, int order, Bits bits); 
   
   /**
    * Line Spectral Pair Unquantification.
@@ -106,7 +106,7 @@ public abstract class LspQuant
    * @param order
    * @param bits - Speex bits buffer.
    */
-  public abstract void unquant(float lsp[], int order, Bits bits); 
+  public abstract void unquant(float[] lsp, int order, Bits bits); 
   
   /**
    * Read the next 6 bits from the buffer, and using the value read and the
@@ -114,8 +114,11 @@ public abstract class LspQuant
    * @param lsp
    * @param tab
    * @param bits - Speex bits buffer.
+   * @param k
+   * @param ti
+   * @param li
    */
-  protected void unpackPlus(float lsp[], int tab[], Bits bits, float k, int ti, int li)
+  protected void unpackPlus(float[] lsp, int[] tab, Bits bits, float k, int ti, int li)
   {
     int id=bits.unpack(6);
     for (int i=0;i<ti;i++)
@@ -125,30 +128,34 @@ public abstract class LspQuant
   /**
    * LSP quantification
    * Note: x is modified
+   * @param x
+   * @param xs
+   * @param cdbk
+   * @param nbVec
+   * @param nbDim
+   * @return the index of the best match in the codebook
+   * (NB x is also modified).
    */
   protected static int lsp_quant(float[] x, int xs, int[] cdbk, int nbVec, int nbDim)
   {
-    int i,j;
+    int i, j;
     float dist, tmp;
     float best_dist=0;
     int best_id=0;
     int ptr=0;
-    for (i=0;i<nbVec;i++)
-    {
+    for (i=0; i<nbVec; i++) {
       dist=0;
-      for (j=0;j<nbDim;j++)
-      {
+      for (j=0; j<nbDim; j++) {
         tmp=(x[xs+j]-cdbk[ptr++]);
         dist+=tmp*tmp;
       }
-      if (dist<best_dist || i==0)
-      {
+      if (dist<best_dist || i==0) {
         best_dist=dist;
         best_id=i;
       }
     }
 
-    for (j=0;j<nbDim;j++)
+    for (j=0; j<nbDim; j++)
       x[xs+j] -= cdbk[best_id*nbDim+j];
     
     return best_id;
@@ -157,6 +164,15 @@ public abstract class LspQuant
   /**
    * LSP weighted quantification
    * Note: x is modified
+   * @param x
+   * @param xs
+   * @param weight
+   * @param ws
+   * @param cdbk
+   * @param nbVec
+   * @param nbDim
+   * @return the index of the best match in the codebook
+   * (NB x is also modified).
    */
   protected static int lsp_weight_quant(float[] x, int xs, float[] weight, int ws, int[] cdbk, int nbVec, int nbDim)
   {

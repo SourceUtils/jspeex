@@ -81,7 +81,7 @@ public class SbDecoder
 {
   protected Decoder lowdec;
   
-  private float innov2[];
+  private float[] innov2;
 
   protected Stereo  stereo;
   protected Inband  inband;
@@ -127,6 +127,11 @@ public class SbDecoder
 
   /**
    * Initialisation
+   * @param frameSize
+   * @param subFrameSize
+   * @param lpcSize
+   * @param bufSize
+   * @param foldingGain
    */
   public void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
   {
@@ -139,14 +144,16 @@ public class SbDecoder
    * Decode the given input bits.
    * @param bits - Speex bits buffer.
    * @param out - the decoded mono audio frame.
+   * @return 0 if successful.
    */
   public int decode(Bits bits, float[] out)
   {
     int i, sub, wideband, ret;
-    float low_pi_gain[], low_exc[], low_innov[];
+    float[] low_pi_gain, low_exc, low_innov;
 
     /* Decode the low-band */
-    if ((ret = lowdec.decode(bits, x0d))!=0) {
+    ret = lowdec.decode(bits, x0d);
+    if (ret != 0) {
       return ret;
     }
     boolean dtx = lowdec.getDtx();
@@ -312,6 +319,8 @@ public class SbDecoder
   /**
    * Decode when packets are lost.
    * @param out - the generated mono audio frame.
+   * @param dtx
+   * @return 0 if successful.
    */
   public int decodeLost(float[] out, boolean dtx)
   {

@@ -100,6 +100,11 @@ public class SbCodec
 
   /**
    * Initialisation
+   * @param frameSize
+   * @param subFrameSize
+   * @param lpcSize
+   * @param bufSize
+   * @param foldingGain
    */
   protected void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
   {
@@ -118,7 +123,8 @@ public class SbCodec
 }
   
   /**
-   * Build wideband submodes
+   * Build wideband submodes.
+   * @return the wideband submodes.
    */
   protected static SubMode[] buildWbSubModes()
   {
@@ -128,16 +134,17 @@ public class SbCodec
     SplitShapeSearch ssCbHighLbrSearch = new SplitShapeSearch(40, 10, 4, hexc_10_32_table, 5, 0);
     SplitShapeSearch ssCbHighSearch    = new SplitShapeSearch(40, 8, 5, hexc_table, 7, 1);
     /* Initialize wide-band modes */
-    SubMode[] wbSubModes  = new SubMode[SB_SUBMODES];
-    wbSubModes[1]  = new SubMode(0, 0, 1, 0, highLU, null, null, .75f, .75f, -1, 36);
-    wbSubModes[2]  = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighLbrSearch, .85f, .6f, -1, 112);
-    wbSubModes[3]  = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighSearch, .75f, .7f, -1, 192);
-    wbSubModes[4]  = new SubMode(0, 0, 1, 1, highLU, null, ssCbHighSearch, .75f, .75f, -1, 352);
+    SubMode[] wbSubModes = new SubMode[SB_SUBMODES];
+    wbSubModes[1] = new SubMode(0, 0, 1, 0, highLU, null, null, .75f, .75f, -1, 36);
+    wbSubModes[2] = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighLbrSearch, .85f, .6f, -1, 112);
+    wbSubModes[3] = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighSearch, .75f, .7f, -1, 192);
+    wbSubModes[4] = new SubMode(0, 0, 1, 1, highLU, null, ssCbHighSearch, .75f, .75f, -1, 352);
     return wbSubModes;
   }
 
   /**
-   * Build ultra-wideband submodes
+   * Build ultra-wideband submodes.
+   * @return the ultra-wideband submodes.
    */
   protected static SubMode[] buildUwbSubModes()
   {

@@ -45,9 +45,10 @@ package org.xiph.speex;
 public class Misc
 {
   /**
-   * Builds an Asymmetric "pseudo-Hamming" window
+   * Builds an Asymmetric "pseudo-Hamming" window.
    * @param windowSize
    * @param subFrameSize
+   * @return an Asymmetric "pseudo-Hamming" window.
    */
   public static float[] window(int windowSize, int subFrameSize)
   {
@@ -63,9 +64,10 @@ public class Misc
   }
   
   /**
-   * Create the window for autocorrelation (lag-windowing)
+   * Create the window for autocorrelation (lag-windowing).
    * @param lpcSize
    * @param lagFactor
+   * @return the window for autocorrelation.
    */
   public static float[] lagWindow(int lpcSize, float lagFactor)
   {

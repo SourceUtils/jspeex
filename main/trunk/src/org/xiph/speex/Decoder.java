@@ -82,8 +82,9 @@ public interface Decoder
    * Decode the given input bits.
    * @param bits - Speex bits buffer.
    * @param out - the decoded mono audio frame.
+   * @return 0 if successful.
    */
-  public int  decode(Bits bits, float out[]);
+  public int decode(Bits bits, float[] out);
   
   /**
    * Decode the given bits to stereo.
@@ -92,7 +93,7 @@ public interface Decoder
    * array will contain the interlaced stereo audio samples.
    * @param frameSize - the size of a frame of mono audio samples.
    */
-  public void decodeStereo(float data[], int frameSize);
+  public void decodeStereo(float[] data, int frameSize);
 
   /**
    * Enables or disables perceptual enhancement.

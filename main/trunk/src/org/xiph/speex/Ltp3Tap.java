@@ -87,7 +87,7 @@ public class Ltp3Tap
   /**
    * Constructor
    */
-  public Ltp3Tap(int gain_cdbk[], int gain_bits, int pitch_bits)
+  public Ltp3Tap(int[] gain_cdbk, int gain_bits, int pitch_bits)
   {
     this.gain       = new float[3];
     this.gain_cdbk  = gain_cdbk;
@@ -99,7 +99,7 @@ public class Ltp3Tap
   /**
    * Long Term Prediction Quantification (3Tap).
    */
-  public final int quant(float[] target, float sw[], int sws, float[] ak, float[] awk1, float awk2[],
+  public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 
                          int nsf, Bits bits, float[] exc2, int e2s, float[] r, int complexity)
   {
@@ -268,11 +268,9 @@ public class Ltp3Tap
     x = new float[3][nsf];
     e = new float[3][nsf];
 
-    for (i=2;i>=0;i--)
-    {
+    for (i=2; i>=0; i--) {
       int pp=pitch+1-i;
-      for (j=0;j<nsf;j++)
-      {
+      for (j=0; j<nsf; j++) {
         if (j-pp<0)
           e[i][j]=exc2[e2s+j-pp];
         else if (j-pp-pitch<0)
@@ -292,12 +290,12 @@ public class Ltp3Tap
       }
     }
 
-    for (i=0;i<3;i++)
-      corr[i]=inner_prod(x[i],0,target,0,nsf);
+    for (i=0; i<3; i++)
+      corr[i] = inner_prod(x[i], 0, target, 0, nsf);
 
-    for (i=0;i<3;i++)
-      for (j=0;j<=i;j++)
-        A[i][j]=A[j][i]=inner_prod(x[i],0,x[j],0,nsf);
+    for (i=0; i<3; i++)
+      for (j=0; j<=i; j++)
+        A[i][j] = A[j][i] = inner_prod(x[i], 0, x[j], 0, nsf);
 
     {
       float[] C = new float[9];
@@ -314,8 +312,7 @@ public class Ltp3Tap
       C[7]=A[1][1];
       C[8]=A[0][0];
       
-      for (i=0;i<gain_cdbk_size;i++)
-      {
+      for (i=0; i<gain_cdbk_size; i++) {
         float sum=0;
         float g0,g1,g2;
         ptr = 3*i;
@@ -357,14 +354,14 @@ public class Ltp3Tap
       cdbk_index[0]=best_cdbk;
     }
     
-    for (i=0;i<nsf;i++)
+    for (i=0; i<nsf; i++)
       exc[es+i]=gain[0]*e[2][i]+gain[1]*e[1][i]+gain[2]*e[0][i];
     
     err1=0;
     err2=0;
-    for (i=0;i<nsf;i++)
+    for (i=0; i<nsf; i++)
       err1+=target[i]*target[i];
-    for (i=0;i<nsf;i++)
+    for (i=0; i<nsf; i++)
       err2+=(target[i]-gain[2]*x[0][i]-gain[1]*x[1][i]-gain[0]*x[2][i])
             * (target[i]-gain[2]*x[0][i]-gain[1]*x[1][i]-gain[0]*x[2][i]);
 

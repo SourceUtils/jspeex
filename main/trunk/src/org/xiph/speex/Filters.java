@@ -77,10 +77,10 @@ package org.xiph.speex;
  */
 public class Filters
 {
-  private int   last_pitch;
-  private float last_pitch_gain[];
-  private float smooth_gain;
-  private float xx[];    
+  private int     last_pitch;
+  private float[] last_pitch_gain;
+  private float   smooth_gain;
+  private float[] xx;
    
   /**
    * Constructor
@@ -102,9 +102,13 @@ public class Filters
   }
 
   /**
-   *
+   * bw_lpc
+   * @param gamma
+   * @param lpc_in
+   * @param lpc_out
+   * @param order
    */
-  public static final void bw_lpc(float gamma, float lpc_in[], float lpc_out[], int order)
+  public static final void bw_lpc(float gamma, float[] lpc_in, float[] lpc_out, int order)
   {
     float tmp=1;
     for (int i=0; i<order+1; i++) {
@@ -114,12 +118,20 @@ public class Filters
   }
 
   /**
-   *
+   * filter_mem2
+   * @param x
+   * @param xs
+   * @param num
+   * @param den
+   * @param N
+   * @param ord
+   * @param mem
+   * @param ms
    */
-  public static final void filter_mem2(float x[], int xs, float num[], float den[], int N, int ord, float mem[], int ms)
+  public static final void filter_mem2(float[] x, int xs, float[] num, float[] den, int N, int ord, float[] mem, int ms)
   {
-    int i,j;
-    float xi,yi;
+    int i, j;
+    float xi, yi;
     for (i=0; i<N; i++) {
       xi      = x[xs+i];
       x[xs+i] = num[0]*xi + mem[ms+0];
@@ -132,12 +144,22 @@ public class Filters
   }
 
   /**
-   *
+   * filter_mem2
+   * @param x
+   * @param xs
+   * @param num
+   * @param den
+   * @param y
+   * @param ys
+   * @param N
+   * @param ord
+   * @param mem
+   * @param ms
    */
-  public static final void filter_mem2(float x[], int xs, float num[], float den[], float[] y, int ys, int N, int ord, float mem[], int ms)
+  public static final void filter_mem2(float[] x, int xs, float[] num, float[] den, float[] y, int ys, int N, int ord, float[] mem, int ms)
   {
-    int i,j;
-    float xi,yi;
+    int i, j;
+    float xi, yi;
     for (i=0; i<N; i++) {
       xi = x[xs + i];
       y[ys + i] = num[0]*xi + mem[0];
@@ -150,11 +172,19 @@ public class Filters
   }
 
   /**
-   *
+   * iir_mem2
+   * @param x
+   * @param xs
+   * @param den
+   * @param y
+   * @param ys
+   * @param N
+   * @param ord
+   * @param mem
    */
-  public static final void iir_mem2(float x[], int xs, float den[], float y[], int ys, int N, int ord, float mem[])
+  public static final void iir_mem2(float[] x, int xs, float[] den, float[] y, int ys, int N, int ord, float[] mem)
   {
-    int i,j;
+    int i, j;
     for (i=0; i<N; i++) {
       y[ys+i] = x[xs+i] + mem[0];
       for (j=0; j<ord-1; j++) {
@@ -165,7 +195,15 @@ public class Filters
   }
 
   /**
-   * 
+   * fir_mem2
+   * @param x
+   * @param xs
+   * @param num
+   * @param y
+   * @param ys
+   * @param N
+   * @param ord
+   * @param mem
    */
   public static final void fir_mem2(float[] x, int xs, float[] num, float[] y, int ys, int N, int ord, float[] mem)
   {
@@ -182,7 +220,15 @@ public class Filters
   }
 
   /**
-   * 
+   * syn_percep_zero
+   * @param xx
+   * @param xxs
+   * @param ak
+   * @param awk1
+   * @param awk2
+   * @param y
+   * @param N
+   * @param ord
    */
   public static final void syn_percep_zero(float[] xx, int xxs, float[] ak, float[] awk1, float[] awk2, float[] y, int N, int ord)
   {
@@ -197,7 +243,15 @@ public class Filters
   }
 
   /**
-   * 
+   * residue_percep_zero
+   * @param xx
+   * @param xxs
+   * @param ak
+   * @param awk1
+   * @param awk2
+   * @param y
+   * @param N
+   * @param ord
    */
   public static final void residue_percep_zero(float[] xx, int xxs, float[] ak, float[] awk1, float[] awk2, float[] y, int N, int ord)
   {
@@ -212,9 +266,15 @@ public class Filters
   }
 
   /**
-   *
+   * fir_mem_up
+   * @param x
+   * @param a
+   * @param y
+   * @param N
+   * @param M
+   * @param mem
    */
-  public void fir_mem_up(float x[], float a[], float y[], int N, int M, float mem[])
+  public void fir_mem_up(float[] x, float[] a, float[] y, int N, int M, float[] mem)
   {
     int i, j;
 
@@ -326,6 +386,13 @@ public class Filters
    * Quadrature Mirror Filter to Split the band in two.
    * A 16kHz signal is thus divided into two 8kHz signals representing the low and high bands.
    * (used by wideband encoder)
+   * @param xx
+   * @param aa
+   * @param y1
+   * @param y2
+   * @param N
+   * @param M
+   * @param mem
    */
   public static final void qmf_decomp(float[] xx, float[] aa, float[] y1, float[] y2, int N, int M, float[] mem)
   {

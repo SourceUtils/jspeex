@@ -82,7 +82,7 @@ public class NoiseSearch
    * Codebook Search Quantification (Noise).
    */
   public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
-                          int p, int nsf, float exc[], int es, float[] r,
+                          int p, int nsf, float[] exc, int es, float[] r,
                           Bits bits, int complexity)
   {
     int i;
@@ -102,10 +102,9 @@ public class NoiseSearch
    * @param nsf - number of samples in subframe.
    * @param bits - Speex bits buffer.
    */
-  public final void unquant(float exc[], int es, int nsf, Bits bits)
+  public final void unquant(float[] exc, int es, int nsf, Bits bits)
   {
-    for (int i=0;i<nsf;i++)
-    {
+    for (int i=0; i<nsf; i++) {
       exc[es+i]+= (float) (3.0*(Math.random()-.5));
     }
   }

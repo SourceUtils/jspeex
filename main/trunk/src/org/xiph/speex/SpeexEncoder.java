@@ -76,25 +76,33 @@ package org.xiph.speex;
  */
 public class SpeexEncoder
 {
+  /**
+   * Version of the Speex Encoder
+   */
   public static final String VERSION = "Java Speex Encoder v0.8 ($Revision$)";
 
-  private Encoder       encoder;
-  private Bits          bits;
-  private float[]       rawData;
-  private int           sampleRate;
-  private int           channels;
-  private int           frameSize;
+  private Encoder encoder;
+  private Bits    bits;
+  private float[] rawData;
+  private int     sampleRate;
+  private int     channels;
+  private int     frameSize;
     
   /**
    * Constructor
    */
   public SpeexEncoder() 
-  {	    
+  {
     bits = new Bits();
   }
 
   /**
    * Initialisation
+   * @param mode
+   * @param quality
+   * @param sampleRate
+   * @param channels
+   * @return true if initialisation successful.
    */
   public boolean init(int mode, int quality, int sampleRate, int channels)
   {
@@ -131,7 +139,8 @@ public class SpeexEncoder
   }
 
   /**
-   * Returns the Encoder being used (Narrowband, Wideband or Ultrawideband)
+   * Returns the Encoder being used (Narrowband, Wideband or Ultrawideband).
+   * @return the Encoder being used (Narrowband, Wideband or Ultrawideband).
    */
   public Encoder getEncoder() 
   {
@@ -139,7 +148,8 @@ public class SpeexEncoder
   }
 
   /**
-   * Returns the sample rate
+   * Returns the sample rate.
+   * @return the sample rate.
    */
   public int getSampleRate() 
   {
@@ -147,7 +157,8 @@ public class SpeexEncoder
   }
 
   /**
-   * Returns the number of channels
+   * Returns the number of channels.
+   * @return the number of channels.
    */
   public int getChannels() 
   {
@@ -155,9 +166,10 @@ public class SpeexEncoder
   }
 
   /**
-   * Returns the size of a frame
+   * Returns the size of a frame.
+   * @return the size of a frame.
    */
-  public int getFrameSize() 
+  public int getFrameSize()
   {
     return frameSize;
   }
@@ -165,8 +177,11 @@ public class SpeexEncoder
   /**
    * Pull the decoded data out into a byte array at the given offset
    * and returns the number of bytes of encoded data just read.
+   * @param data
+   * @param offset
+   * @return the number of bytes of encoded data just read.
    */
-  public int getProcessedData(byte data[], int offset) 
+  public int getProcessedData(byte[] data, int offset) 
   {
     int size = bits.getBufferSize();
     System.arraycopy(bits.getBuffer(), 0, data, offset, size);
@@ -176,16 +191,21 @@ public class SpeexEncoder
 
   /**
    * Returns the number of bytes of encoded data ready to be read.
+   * @return the number of bytes of encoded data ready to be read.
    */
   public int getProcessedDataByteSize() 
   {
-    return bits.getBufferSize();	
+    return bits.getBufferSize();
   }
   
   /**
    * This is where the actual encoding takes place
+   * @param data
+   * @param offset
+   * @param len
+   * @return true if successful.
    */
-  public boolean processData(byte data[], int offset, int len)
+  public boolean processData(byte[] data, int offset, int len)
   {
     // converty raw bytes into float samples
     mapPcm16bitLittleEndian2Float(data, offset, rawData, 0, len/2);
@@ -195,6 +215,10 @@ public class SpeexEncoder
 
   /**
    * Encode an array of shorts.
+   * @param data
+   * @param offset
+   * @param len
+   * @return true if successful.
    */
   public boolean processData(short[] data, int offset, int numShorts)
   {
@@ -208,6 +232,9 @@ public class SpeexEncoder
 
   /**
    * Encode an array of floats.
+   * @param data
+   * @param numSamples
+   * @return true if successful.
    */
   public boolean processData(float[] data, int numSamples)
   {
@@ -233,7 +260,10 @@ public class SpeexEncoder
    *      combined with shifting operations.
    * </ul>
    * @param pcm16bitBytes - byte array of linear 16-bit PCM formated audio.
+   * @param offsetInput
    * @param samples - float array to receive the 16-bit linear audio samples.
+   * @param offsetOutput
+   * @param length
    */
   public static void mapPcm16bitLittleEndian2Float(byte[] pcm16bitBytes, int offsetInput, float[] samples, int offsetOutput, int length)
   {

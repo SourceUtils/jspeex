@@ -36,9 +36,15 @@
 
 package org.xiph.speex.spi;
 
-import java.io.*;
-import javax.sound.sampled.*;
-import org.xiph.speex.*;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.StreamCorruptedException;
+import javax.sound.sampled.AudioFormat;
+
+import org.xiph.speex.Bits;
+import org.xiph.speex.Decoder;
+import org.xiph.speex.NbDecoder;
+import org.xiph.speex.SbDecoder;
 
 /**
  * Converts an Ogg Speex bitstream into a PCM 16bits/sample audio stream.
@@ -89,7 +95,6 @@ public class Speex2PcmAudioInputStream
   {
     super(in, size, format, length);
     bits = new Bits();
-    decoder = null;
     packetSizes = new byte[256];
     first = true;
   }
@@ -124,6 +129,7 @@ public class Speex2PcmAudioInputStream
    * 72 - 75: reserved1
    * 76 - 79: reserved2
    * </pre>
+   * @exception IOException
    */
   protected void initDecoder()
     throws IOException
@@ -157,9 +163,9 @@ public class Speex2PcmAudioInputStream
     /* initialize the speex decoder */
     decoder.setPerceptualEnhancement(true);
     /* set decoder format and properties */
-    frameSize      = decoder.getFrameSize();
-    decodedData    = new float[framesPerPacket*frameSize*channelCount];
-    outputData     = new byte[2*framesPerPacket*frameSize*channelCount];
+    frameSize   = decoder.getFrameSize();
+    decodedData = new float[framesPerPacket*frameSize*channelCount];
+    outputData  = new byte[2*framesPerPacket*frameSize*channelCount];
     bits.init();
   }
   
@@ -169,6 +175,7 @@ public class Speex2PcmAudioInputStream
    * Assumes that it is being called by a synchronized method.
    * This method also assumes that all data has already been read in, hence
    * pos > count.
+   * @exception IOException
    */
   protected void fill()
     throws IOException
@@ -193,7 +200,7 @@ public class Speex2PcmAudioInputStream
           prepos += n;
           while ((buf.length - count) < outputData.length) { // grow buffer
             int nsz = buf.length * 2;
-            byte nbuf[] = new byte[nsz];
+            byte[] nbuf = new byte[nsz];
             System.arraycopy(buf, 0, nbuf, 0, count);
             buf = nbuf;
           }
@@ -237,7 +244,7 @@ public class Speex2PcmAudioInputStream
                 prepos += n;
                 while ((buf.length - count) < outputData.length) { // grow buffer
                   int nsz = buf.length * 2;
-                  byte nbuf[] = new byte[nsz];
+                  byte[] nbuf = new byte[nsz];
                   System.arraycopy(buf, 0, nbuf, 0, count);
                   buf = nbuf;
                 }
@@ -256,15 +263,18 @@ public class Speex2PcmAudioInputStream
         }
       }
       else { // n == 0
-//        log.error("Speex2PcmInputStream.fill(): this should never happen - read 0 bytes from underlying stream yet it is not finished");
+        // read 0 bytes from underlying stream yet it is not finished.
       }
     }
   }
 
   /**
    * This is where the actual decoding takes place
+   * @param data
+   * @param offset
+   * @param len
    */
-  protected void decode(byte data[], int offset, int len)
+  protected void decode(byte[] data, int offset, int len)
   {
     int i;
     short val;

@@ -37,7 +37,9 @@
 
 package org.xiph.speex;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * Writes basic PCM wave files from binary audio data.
@@ -70,12 +72,13 @@ public class PcmWaveWriter
    */
   public PcmWaveWriter()
   {
-    size       = 0;
+    size = 0;
   }
 
   /**
    * Closes the output file.
    * MUST be called to have a correct stream. 
+   * @exception IOException
    */
   public void close()
     throws IOException 
@@ -94,8 +97,9 @@ public class PcmWaveWriter
   }
   
   /**
-   *  Open the output file. 
-   *  @param filename filename to open.
+   * Open the output file. 
+   * @param filename filename to open.
+   * @exception IOException
    */
   public void open(String filename)
     throws IOException 
@@ -106,7 +110,9 @@ public class PcmWaveWriter
   }
   
   /**
-   *  Sets the output format. Must be called before WriteHeader().
+   * Sets the output format. Must be called before WriteHeader().
+   * @param channels
+   * @param sampleRate
    */
   public void setFormat(int channels, int sampleRate)
   {
@@ -115,21 +121,22 @@ public class PcmWaveWriter
   }
   
   /**
-   *  Writes the initial data chunks that start the wave file. 
-   *  Prepares file for data samples to written. 
+   * Writes the initial data chunks that start the wave file. 
+   * Prepares file for data samples to written. 
+   * @exception IOException
    */
   public void writeHeader()
     throws IOException
   {
     /* writes the RIFF chunk indicating wave format */
-    byte[] chkid = new String("RIFF").getBytes(); 
+    byte[] chkid = "RIFF".getBytes(); 
     raf.write(chkid, 0, chkid.length);
     writeInt(0); /* total length must be blank */
-    chkid = new String("WAVE").getBytes(); 
+    chkid = "WAVE".getBytes(); 
     raf.write(chkid, 0, chkid.length);
     
     /* format subchunk: of size 16 */
-    chkid = new String("fmt ").getBytes(); 
+    chkid = "fmt ".getBytes(); 
     raf.write(chkid, 0, chkid.length);
     writeInt(16);
     
@@ -143,14 +150,17 @@ public class PcmWaveWriter
     writeShort(bits);
     
     /* write the start of data chunk */
-    chkid = new String("data").getBytes(); 
+    chkid = "data".getBytes(); 
     raf.write(chkid, 0, chkid.length);
     writeInt(0);
   }
   
   /**
-   *  Writes a packet of audio. 
-   *  @param data audio data
+   * Writes a packet of audio. 
+   * @param data audio data
+   * @param offset
+   * @param len
+   * @exception IOException
    */
   public void writeData(byte[] data, int offset, int len)
     throws IOException 
@@ -160,7 +170,9 @@ public class PcmWaveWriter
   }
   
   /**
-   * Writes a Little-endian short
+   * Writes a Little-endian short.
+   * @param v value to write.
+   * @exception IOException
    */  
   private void writeShort(short v)
     throws IOException 
@@ -170,7 +182,9 @@ public class PcmWaveWriter
   }
   
   /**
-   * Writes a Little-endian int
+   * Writes a Little-endian int.
+   * @param v value to write.
+   * @exception IOException
    */
   private void writeInt(int v)
     throws IOException 

@@ -54,6 +54,8 @@ public class SpeexFileFormatType
 
   /**
    * Constructs a file type.
+   * @param name - the name of the Speex File Format.
+   * @param extension - the file extension for this Speex File Format.
    */
   public SpeexFileFormatType(String name, String extension)
   {

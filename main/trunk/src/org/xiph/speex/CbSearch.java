@@ -92,7 +92,7 @@ public abstract class CbSearch
    * @param complexity
    */
   public abstract void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
-                             int p, int nsf, float exc[], int es, float[] r,
+                             int p, int nsf, float[] exc, int es, float[] r,
                              Bits bits, int complexity); 
 
   /**
@@ -102,5 +102,5 @@ public abstract class CbSearch
    * @param nsf - number of samples in subframe.
    * @param bits - Speex bits buffer.
    */
-  public abstract void unquant(float exc[], int es, int nsf, Bits bits); 
+  public abstract void unquant(float[] exc, int es, int nsf, Bits bits); 
 }

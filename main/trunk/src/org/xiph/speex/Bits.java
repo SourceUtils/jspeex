@@ -80,7 +80,7 @@ public class Bits
   public static final int DEFAULT_BUFFER_SIZE = 1024;
   
   /** "raw" data */
-  private byte bytes[];
+  private byte[] bytes;
   
   /** Position of the byte "cursor" */
   private int  bytePtr;
@@ -124,6 +124,7 @@ public class Bits
   
   /**
    * Take a peek at the next bit.
+   * @return the next bit.
    */
   public int peek()
   {
@@ -136,9 +137,9 @@ public class Bits
    * @param offset
    * @param len
    */
-  public void read_from(byte newbytes[], int offset, int len)
+  public void read_from(byte[] newbytes, int offset, int len)
   {
-    for (int i=0;i<len;i++)
+    for (int i=0; i<len; i++)
       bytes[i]=newbytes[offset+i];
     bytePtr=0;
     bitPtr=0;
@@ -147,17 +148,16 @@ public class Bits
   /**
    * Read the next N bits from the buffer.
    * @param nbBits - the number of bits to read.
+   * @return the next N bits from the buffer.
    */
   public int unpack(int nbBits)  
   {
     int d=0;
-    while(nbBits!=0)
-    {
+    while (nbBits!=0) {
       d<<=1;
       d |= ((bytes[bytePtr] & 0xFF)>>(7-bitPtr))&1;
       bitPtr++;
-      if (bitPtr==8)
-      {
+      if (bitPtr==8) {
         bitPtr=0;
         bytePtr++;
       }
@@ -173,19 +173,16 @@ public class Bits
    */
   public void pack(int data, int nbBits)
   {
-    int i;
     int d=data;
 
-    while(bytePtr+((nbBits+bitPtr)>>3) >= bytes.length)
-    {
+    while (bytePtr+((nbBits+bitPtr)>>3) >= bytes.length) {
       System.err.println("Buffer too small to pack bits");
       int size = bytes.length*2;
       byte[] tmp = new byte[size];
       System.arraycopy(bytes, 0, tmp, 0, bytes.length);
       bytes = tmp;
     }
-    while(nbBits>0)
-    {
+    while (nbBits>0) {
       int bit;
       bit = (d>>(nbBits-1))&1;
       bytes[bytePtr] |= bit<<(7-bitPtr);

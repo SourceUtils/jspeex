@@ -51,6 +51,7 @@ public class SpeexEncoding
    * Specifies Speex encoded data.
    */
   public static final AudioFormat.Encoding SPEEX = new SpeexEncoding("Speex");
+  /*
   public static final AudioFormat.Encoding SPEEX_Q1 = new SpeexEncoding("Speex_quality_1");
   public static final AudioFormat.Encoding SPEEX_Q2 = new SpeexEncoding("Speex_quality_2");
   public static final AudioFormat.Encoding SPEEX_Q3 = new SpeexEncoding("Speex_quality_3");
@@ -69,9 +70,11 @@ public class SpeexEncoding
   public static final AudioFormat.Encoding SPEEX_VBR7 = new SpeexEncoding("Speex_VBR_quality_7");
   public static final AudioFormat.Encoding SPEEX_VBR8 = new SpeexEncoding("Speex_VBR_quality_8");
   public static final AudioFormat.Encoding SPEEX_VBR9 = new SpeexEncoding("Speex_VBR_quality_9");
+  */
 
   /**
    * Constructs a new encoding.
+   * @param name - Name of the Speex encoding.
    */
   public SpeexEncoding(String name)
   {

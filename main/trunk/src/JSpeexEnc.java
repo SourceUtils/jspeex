@@ -76,6 +76,9 @@ import org.xiph.speex.*;
  */
 public class JSpeexEnc
 {
+  /**
+   * Version of the Speex Encoder
+   */
   public static final String VERSION = "Java Speex Command Line Encoder v0.8 ($Revision$)";
   
   private static int mode       = 0;
@@ -233,6 +236,9 @@ public class JSpeexEnc
   
   /**
    * Encodes a wave file to speex. 
+   * @param inputPath
+   * @param outputPath
+   * @exception IOException
    */
   public static void encode(String inputPath, String outputPath)
     throws IOException
@@ -313,6 +319,8 @@ public class JSpeexEnc
   
   /**
    * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
+   * @param data
+   * @param offset
    */
   private static int readInt(byte[] data, int offset)
   {

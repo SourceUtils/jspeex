@@ -133,6 +133,15 @@ public class VQ
 
   /**
    * Finds the indices of the n-best entries in a codebook
+   * @param in
+   * @param offset
+   * @param codebook
+   * @param len
+   * @param entries
+   * @param E
+   * @param N
+   * @param nbest
+   * @param best_dist
    */
   public static final void nbest(float[] in, int offset, float[] codebook, int len, int entries, float[] E, int N, int[] nbest, float[] best_dist)
   {
@@ -156,6 +165,15 @@ public class VQ
 
   /**
    * Finds the indices of the n-best entries in a codebook with sign
+   * @param in
+   * @param offset
+   * @param codebook
+   * @param len
+   * @param entries
+   * @param E
+   * @param N
+   * @param nbest
+   * @param best_dist
    */
   public static final void nbest_sign(float[] in, int offset, float[] codebook, int len, int entries, float[] E, int N, int[] nbest, float[] best_dist)
   {

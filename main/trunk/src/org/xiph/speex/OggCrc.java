@@ -78,13 +78,13 @@ public class OggCrc
 
   static {
     crc_lookup = new int[256];
-    for(int i=0; i<crc_lookup.length; i++){
+    for (int i=0; i<crc_lookup.length; i++) {
       int r=i<<24;
-      for(int j=0; j<8; j++){
-        if((r& 0x80000000)!=0){
+      for (int j=0; j<8; j++) {
+        if ((r& 0x80000000)!=0) {
           r=(r << 1)^0x04c11db7; /* The same as the ethernet generator polynomial, although we use an unreflected alg and an init/final of 0, not 0xffffffff */
         }
-        else{
+        else {
           r<<=1;
         }
       }
@@ -104,9 +104,10 @@ public class OggCrc
    * @param offset - the offset at which to start calculating the checksum.
    * @param length - the length of data over which to calculate the checksum.
    */
-  public static int checksum(int crc, byte[] data, int offset, int length){
+  public static int checksum(int crc, byte[] data, int offset, int length)
+  {
     int end=offset+length;
-    for(;offset<end;offset++){
+    for (;offset<end;offset++){
       crc=(crc<<8)^crc_lookup[((crc>>>24)&0xff)^(data[offset]&0xff)];
     }
     return crc;

@@ -57,8 +57,8 @@ public class NbCodec
   public static final int NB_SUBMODES     = 16;
   /** The Narrowband Submodes Bits gives the number bits used to encode the Narrowband Submode*/
   public static final int NB_SUBMODE_BITS = 4;
-  public static final float exc_gain_quant_scal1[] = {-0.35f, 0.05f};
-  public static final float exc_gain_quant_scal3[] = {-2.794750f, -1.810660f,
+  public static final float[] exc_gain_quant_scal1 = {-0.35f, 0.05f};
+  public static final float[] exc_gain_quant_scal3 = {-2.794750f, -1.810660f,
                                                       -1.169850f, -0.848119f, 
                                                       -0.587190f, -0.329818f,
                                                       -0.063266f, 0.282826f};
@@ -72,40 +72,40 @@ public class NbCodec
   //---------------------------------------------------------------------------
   // Parameters
   //---------------------------------------------------------------------------
-  protected SubMode submodes[];     /** Sub-mode data */
-  protected int     submodeID;      /** Activated sub-mode */
+  protected SubMode[] submodes;  /** Sub-mode data */
+  protected int       submodeID; /** Activated sub-mode */
 
-  protected int    first;             /** Is this the first frame? */
-  protected int    frameSize;         /** Size of frames */
-  protected int    subframeSize;      /** Size of sub-frames */
-  protected int    nbSubframes;       /** Number of sub-frames */
-  protected int    windowSize;        /** Analysis (LPC) window length */
-  protected int    lpcSize;           /** LPC order */
-  protected int    bufSize;           /** Buffer size */
-  protected int    min_pitch;         /** Minimum pitch value allowed */
-  protected int    max_pitch;         /** Maximum pitch value allowed */
-  protected float  gamma1;            /** Perceptual filter: A(z/gamma1) */
-  protected float  gamma2;            /** Perceptual filter: A(z/gamma2) */
-  protected float  lag_factor;        /** Lag windowing Gaussian width */
-  protected float  lpc_floor;         /** Noise floor multiplier for A[0] in LPC analysis*/
-  protected float  preemph;           /** Pre-emphasis: P(z) = 1 - a*z^-1*/
-  protected float  pre_mem;           /** 1-element memory for pre-emphasis */
+  protected int    first;        /** Is this the first frame? */
+  protected int    frameSize;    /** Size of frames */
+  protected int    subframeSize; /** Size of sub-frames */
+  protected int    nbSubframes;  /** Number of sub-frames */
+  protected int    windowSize;   /** Analysis (LPC) window length */
+  protected int    lpcSize;      /** LPC order */
+  protected int    bufSize;      /** Buffer size */
+  protected int    min_pitch;    /** Minimum pitch value allowed */
+  protected int    max_pitch;    /** Maximum pitch value allowed */
+  protected float  gamma1;       /** Perceptual filter: A(z/gamma1) */
+  protected float  gamma2;       /** Perceptual filter: A(z/gamma2) */
+  protected float  lag_factor;   /** Lag windowing Gaussian width */
+  protected float  lpc_floor;    /** Noise floor multiplier for A[0] in LPC analysis*/
+  protected float  preemph;      /** Pre-emphasis: P(z) = 1 - a*z^-1*/
+  protected float  pre_mem;      /** 1-element memory for pre-emphasis */
 
   //---------------------------------------------------------------------------
   // Variables
   //---------------------------------------------------------------------------
-  protected float   frmBuf[];        /** Input buffer (original signal) */
+  protected float[] frmBuf;      /** Input buffer (original signal) */
   protected int     frmIdx;
-  protected float   excBuf[];        /** Excitation buffer */
-  protected int     excIdx;          /** Start of excitation frame */
-  protected float[] innov;           /** Innovation for the frame */
-  protected float[] lpc;             /** LPCs for current frame */
-  protected float[] qlsp;            /** Quantized LSPs for current frame */
-  protected float[] old_qlsp;        /** Quantized LSPs for previous frame */
-  protected float[] interp_qlsp;     /** Interpolated quantized LSPs */
-  protected float[] interp_qlpc;     /** Interpolated quantized LPCs */
-  protected float[] mem_sp;          /** Filter memory for synthesis signal */
-  protected float[] pi_gain;         /** Gain of LPC filter at theta=pi (fe/2) */
+  protected float[] excBuf;      /** Excitation buffer */
+  protected int     excIdx;      /** Start of excitation frame */
+  protected float[] innov;       /** Innovation for the frame */
+  protected float[] lpc;         /** LPCs for current frame */
+  protected float[] qlsp;        /** Quantized LSPs for current frame */
+  protected float[] old_qlsp;    /** Quantized LSPs for previous frame */
+  protected float[] interp_qlsp; /** Interpolated quantized LSPs */
+  protected float[] interp_qlpc; /** Interpolated quantized LPCs */
+  protected float[] mem_sp;      /** Filter memory for synthesis signal */
+  protected float[] pi_gain;     /** Gain of LPC filter at theta=pi (fe/2) */
   protected float[] awk1, awk2, awk3;
   // Vocoder data
   protected float voc_m1;
@@ -138,10 +138,14 @@ public class NbCodec
 
   /**
    * Initialisation.
+   * @param frameSize
+   * @param subframeSize
+   * @param lpcSize
+   * @param bufSize
    */
   protected void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
   {
-    first=1;
+    first = 1;
     // Codec parameters, should eventually have several "modes"
     this.frameSize    = frameSize;
     this.windowSize   = frameSize*3/2;

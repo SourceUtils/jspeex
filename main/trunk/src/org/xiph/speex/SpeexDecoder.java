@@ -86,35 +86,39 @@ package org.xiph.speex;
  */
 public class SpeexDecoder
 {
+  /**
+   * Version of the Speex Decoder
+   */
   public static final String VERSION = "Java Speex Decoder v0.8 ($Revision$)";
 
-  private int           sampleRate;
-  private int           channels;
-  private float[]       decodedData;
-  private short[]       outputData;
-  private int           outputSize;
-  private Bits          bits;
-  private Decoder       decoder;
-  private int           frameSize;
+  private int     sampleRate;
+  private int     channels;
+  private float[] decodedData;
+  private short[] outputData;
+  private int     outputSize;
+  private Bits    bits;
+  private Decoder decoder;
+  private int     frameSize;
 
   /**
    * Constructor
    */
-  public SpeexDecoder() 
-  {	    
+  public SpeexDecoder()
+  {
     bits = new Bits();
     sampleRate = 0;
     channels   = 0;
   }
   
   /**
-   * initialise the Speex Decoder.
+   * Initialise the Speex Decoder.
    * @param mode
-   * @param SampleRate
+   * @param sampleRate
    * @param channels
    * @param enhanced
+   * @return true if initialisation successful.
    */
-  public boolean init(int mode, int SampleRate, int channels, boolean enhanced)
+  public boolean init(int mode, int sampleRate, int channels, boolean enhanced)
   {
     switch (mode) {
     case 0:
@@ -139,7 +143,7 @@ public class SpeexDecoder
     decoder.setPerceptualEnhancement(enhanced);
     /* set decoder format and properties */
     this.frameSize  = decoder.getFrameSize();
-    this.sampleRate = SampleRate;
+    this.sampleRate = sampleRate;
     this.channels   = channels;
     int secondSize  = sampleRate*channels;
     decodedData     = new float[secondSize*2];
@@ -150,7 +154,8 @@ public class SpeexDecoder
   }
   
   /**
-   * Returns the sample rate
+   * Returns the sample rate.
+   * @return the sample rate.
    */
   public int getSampleRate() 
   {
@@ -158,7 +163,8 @@ public class SpeexDecoder
   }
   
   /**
-   * Returns the number of channels
+   * Returns the number of channels.
+   * @return the number of channels.
    */
   public int getChannels() 
   {
@@ -167,14 +173,17 @@ public class SpeexDecoder
   
   /**
    * Pull the decoded data out into a byte array at the given offset
-   * and returns tne number of bytes processed and just read
+   * and returns the number of bytes processed and just read.
+   * @param data
+   * @param offset
+   * @return the number of bytes processed and just read.
    */
-  public int getProcessedData(byte data[], int offset) 
+  public int getProcessedData(byte[] data, int offset) 
   {    
     if (outputSize<=0) {
       return outputSize;
     }
-    for(int i=0; i<outputSize; i++) {
+    for (int i=0; i<outputSize; i++) {
       int dx     =  offset + (i<<1);
       data[dx]   = (byte) (outputData[i] & 0xff);
       data[dx+1] = (byte) ((outputData[i] >> 8) &  0xff );
@@ -187,8 +196,11 @@ public class SpeexDecoder
   /**
    * Pull the decoded data out into a short array at the given offset
    * and returns tne number of shorts processed and just read
+   * @param data
+   * @param offset
+   * @return the number of samples processed and just read.
    */
-  public int getProcessedData(short data[], int offset)
+  public int getProcessedData(short[] data, int offset)
   {
     if (outputSize<=0) {
       return outputSize;
@@ -200,11 +212,12 @@ public class SpeexDecoder
   }
 
   /**
-   * Returns tne number of bytes processed and ready to be read
+   * Returns the number of bytes processed and ready to be read.
+   * @return the number of bytes processed and ready to be read.
    */
   public int getProcessedDataByteSize() 
   {
-    return (outputSize*2);	
+    return (outputSize*2);
   }
   
   /**
@@ -213,8 +226,9 @@ public class SpeexDecoder
    * If it is null, the packet is supposed lost.
    * @param offset - the offset from which to start reading the data.
    * @param len - the length of data to read (Speex frame size).
+   * @return true if successful.
    */
-  public boolean processData(byte data[], int offset, int len)
+  public boolean processData(byte[] data, int offset, int len)
   {
     if (data == null) {
       return processData(true);
@@ -229,6 +243,7 @@ public class SpeexDecoder
   /**
    * This is where the actual decoding takes place.
    * @param lost - true if the Speex packet has been lost.
+   * @return true if successful.
    */
   public boolean processData(boolean lost)
   {

@@ -62,9 +62,12 @@ public class SpeexFormatConvertionProvider
   extends FormatConversionProvider
 {
   public static final AudioFormat.Encoding[] NO_ENCODING = {};
-  public static final AudioFormat.Encoding[] PCM_ENCODING = {AudioFormat.Encoding.PCM_SIGNED};
-  public static final AudioFormat.Encoding[] SPEEX_ENCODING = {SpeexEncoding.SPEEX};
-  public static final AudioFormat.Encoding[] BOTH_ENCODINGS = {SpeexEncoding.SPEEX, AudioFormat.Encoding.PCM_SIGNED};
+  public static final AudioFormat.Encoding[] PCM_ENCODING =
+                        {AudioFormat.Encoding.PCM_SIGNED};
+  public static final AudioFormat.Encoding[] SPEEX_ENCODING =
+                        {SpeexEncoding.SPEEX};
+  public static final AudioFormat.Encoding[] BOTH_ENCODINGS =
+                        {SpeexEncoding.SPEEX, AudioFormat.Encoding.PCM_SIGNED};
   public static final AudioFormat[] NO_FORMAT = {};
 
   /**
@@ -93,6 +96,7 @@ public class SpeexFormatConvertionProvider
    * Obtains the set of target format encodings supported by the format
    * converter given a particular source format. If no target format encodings
    * are supported for this source format, an array of length 0 is returned.
+   * @param sourceFormat format of the incoming data.
    * @return array of supported target format encodings.
    */
   public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat)
@@ -112,6 +116,8 @@ public class SpeexFormatConvertionProvider
    * Obtains the set of target formats with the encoding specified supported by
    * the format converter. If no target formats with the specified encoding are
    * supported for this source format, an array of length 0 is returned.
+   * @param targetEncoding desired encoding of the outgoing data.
+   * @param sourceFormat format of the incoming data.
    * @return array of supported target formats.
    */
   public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
@@ -186,15 +192,15 @@ public class SpeexFormatConvertionProvider
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {
-    			throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
         }
       }
       else {
-  			throw new IllegalArgumentException("target format not found");
+        throw new IllegalArgumentException("target format not found");
       }
     }
     else {
-			throw new IllegalArgumentException("conversion not supported");
+      throw new IllegalArgumentException("conversion not supported");
     }
   }
   
@@ -224,15 +230,15 @@ public class SpeexFormatConvertionProvider
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {
-    			throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
         }
       }
       else {
-  			throw new IllegalArgumentException("target format not found");
+        throw new IllegalArgumentException("target format not found");
       }
     }
     else {
-			throw new IllegalArgumentException("conversion not supported");
+      throw new IllegalArgumentException("conversion not supported");
     }
   }
 }

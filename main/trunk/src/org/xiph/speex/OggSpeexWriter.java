@@ -36,8 +36,11 @@
 
 package org.xiph.speex;
 
-import java.io.*;
-
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Random;
 
 /**
@@ -83,6 +86,7 @@ public class OggSpeexWriter
 
   /**
    * Closes the output file.
+   * @exception IOException
    */
   public void close()
     throws IOException 
@@ -94,6 +98,7 @@ public class OggSpeexWriter
   /**
    * Open the output file. 
    * @param filename - file to open.
+   * @exception IOException
    */
   public void open(String filename)
     throws IOException 
@@ -116,6 +121,10 @@ public class OggSpeexWriter
   /**
    * Sets the output format.
    * Must be called before WriteHeader().
+   * @param mode
+   * @param sampleRate
+   * @param channels
+   * @param nframes
    */
   public void setFormat(int mode, int sampleRate, int channels, int nframes)
   {
@@ -126,8 +135,10 @@ public class OggSpeexWriter
   }
   
   /**
-   *  Writes the header pages that start the Ogg Speex file. 
-   *  Prepares file for data to be written.
+   * Writes the header pages that start the Ogg Speex file. 
+   * Prepares file for data to be written.
+   * @param comment
+   * @exception IOException
    */
   public void writeHeader(String comment)
     throws IOException
@@ -194,8 +205,11 @@ public class OggSpeexWriter
   }
   
   /**
-   *  Writes a packet of audio. 
-   *  @param data - audio data.
+   * Writes a packet of audio. 
+   * @param data - audio data.
+   * @param offset
+   * @param len
+   * @exception IOException
    */
   public void writePacket(byte[] data, int offset, int len)
     throws IOException 
@@ -214,7 +228,9 @@ public class OggSpeexWriter
   }
 
   /**
-   * flush the Ogg page out of the buffers into the file.
+   * Flush the Ogg page out of the buffers into the file.
+   * @param eos - end of stream
+   * @exception IOException
    */
   public void flush(boolean eos)
     throws IOException
@@ -249,6 +265,7 @@ public class OggSpeexWriter
    * Writes a Little-endian short.
    * @param os - the output stream to write to.
    * @param v - the value to write.
+   * @exception IOException
    */
   private static void writeShort(OutputStream os, short v)
     throws IOException 
@@ -261,6 +278,7 @@ public class OggSpeexWriter
    * Writes a Little-endian int.
    * @param os - the output stream to write to.
    * @param v - the value to write.
+   * @exception IOException
    */
   private static void writeInt(OutputStream os, int v)
     throws IOException 
@@ -275,6 +293,7 @@ public class OggSpeexWriter
    * Writes a Little-endian long.
    * @param os - the output stream to write to.
    * @param v - the value to write.
+   * @exception IOException
    */
   private static void writeLong(OutputStream os, long v) throws IOException 
   {

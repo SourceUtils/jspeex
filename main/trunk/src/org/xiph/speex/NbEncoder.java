@@ -80,27 +80,27 @@ public class NbEncoder
   /** The Narrowband Quality map indicates which narrowband submode to use for the given narrowband quality setting */
   public static final int[] NB_QUALITY_MAP = {1, 8, 2, 3, 3, 4, 4, 5, 5, 6, 7};
   
-  private int    bounded_pitch;  /** Next frame should not rely on previous frames for pitch */
-  private int    pitch[];        /** */
-  private float  pre_mem2;       /** 1-element memory for pre-emphasis */
-  private float  exc2Buf[];      /** "Pitch enhanced" excitation */
-  private int    exc2Idx;        /** "Pitch enhanced" excitation */
-  private float  swBuf[];        /** Weighted signal buffer */
-  private int    swIdx;          /** Start of weighted signal frame */
-  private float[]  window;       /** Temporary (Hanning) window */
-  private float[]  buf2;         /** 2nd temporary buffer */
-  private float[]  autocorr;     /** auto-correlation */
-  private float[]  lagWindow;    /** Window applied to auto-correlation */
-  private float[]  lsp;          /** LSPs for current frame */
-  private float[]  old_lsp;      /** LSPs for previous frame */
-  private float[]  interp_lsp;   /** Interpolated LSPs */
-  private float[]  interp_lpc;   /** Interpolated LPCs */
-  private float[]  bw_lpc1;      /** LPCs after bandwidth expansion by gamma1 for perceptual weighting*/
-  private float[]  bw_lpc2;      /** LPCs after bandwidth expansion by gamma2 for perceptual weighting*/
-  private float[]  rc;           /** Reflection coefficients */
-  private float[]  mem_sw;       /** Filter memory for perceptually-weighted signal */
-  private float[]  mem_sw_whole; /** Filter memory for perceptually-weighted signal (whole frame)*/
-  private float[]  mem_exc;      /** Filter memory for excitation (whole frame) */
+  private int     bounded_pitch; /** Next frame should not rely on previous frames for pitch */
+  private int[]   pitch;         /** */
+  private float   pre_mem2;      /** 1-element memory for pre-emphasis */
+  private float[] exc2Buf;       /** "Pitch enhanced" excitation */
+  private int     exc2Idx;       /** "Pitch enhanced" excitation */
+  private float[] swBuf;         /** Weighted signal buffer */
+  private int     swIdx;         /** Start of weighted signal frame */
+  private float[] window;       /** Temporary (Hanning) window */
+  private float[] buf2;         /** 2nd temporary buffer */
+  private float[] autocorr;     /** auto-correlation */
+  private float[] lagWindow;    /** Window applied to auto-correlation */
+  private float[] lsp;          /** LSPs for current frame */
+  private float[] old_lsp;      /** LSPs for previous frame */
+  private float[] interp_lsp;   /** Interpolated LSPs */
+  private float[] interp_lpc;   /** Interpolated LPCs */
+  private float[] bw_lpc1;      /** LPCs after bandwidth expansion by gamma1 for perceptual weighting*/
+  private float[] bw_lpc2;      /** LPCs after bandwidth expansion by gamma2 for perceptual weighting*/
+  private float[] rc;           /** Reflection coefficients */
+  private float[] mem_sw;       /** Filter memory for perceptually-weighted signal */
+  private float[] mem_sw_whole; /** Filter memory for perceptually-weighted signal (whole frame)*/
+  private float[] mem_exc;      /** Filter memory for excitation (whole frame) */
 
   private Vbr    vbr;            /** State of the VBR data */
   private int    dtx_count;      /** Number of consecutive DTX frames */
@@ -122,6 +122,10 @@ public class NbEncoder
 
   /**
    * Initialisation
+   * @param frameSize
+   * @param subFrameSize
+   * @param lpcSize
+   * @param bufSize
    */
   public void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
   {
@@ -184,8 +188,9 @@ public class NbEncoder
    * Encode the given input signal.
    * @param bits - Speex bits buffer.
    * @param in - the raw mono audio frame to encode.
+   * @return return 1 if successful.
    */
-  public int encode(Bits bits, float in[])
+  public int encode(Bits bits, float[] in)
   {
     int i;
     float[] res, target, mem;
@@ -273,16 +278,19 @@ public class NbEncoder
       m_lsp.lsp2lpc(interp_lsp, interp_lpc, lpcSize);
 
       /*Open-loop pitch*/
-      if (submodes[submodeID] == null || vbr_enabled != 0 || vad_enabled != 0 || submodes[submodeID].forced_pitch_gain != 0 ||
+      if (submodes[submodeID] == null ||
+          vbr_enabled != 0 || vad_enabled != 0 ||
+          submodes[submodeID].forced_pitch_gain != 0 ||
           submodes[submodeID].lbr_pitch != -1)
       {
-        int nol_pitch[] = new int[6];
-        float nol_pitch_coef[] = new float[6];
+        int[] nol_pitch = new int[6];
+        float[] nol_pitch_coef = new float[6];
         
         Filters.bw_lpc(gamma1, interp_lpc, bw_lpc1, lpcSize);
         Filters.bw_lpc(gamma2, interp_lpc, bw_lpc2, lpcSize);
         
-        Filters.filter_mem2(frmBuf, frmIdx, bw_lpc1, bw_lpc2, swBuf, swIdx, frameSize, lpcSize, mem_sw_whole, 0);
+        Filters.filter_mem2(frmBuf, frmIdx, bw_lpc1, bw_lpc2, swBuf, swIdx,
+                            frameSize, lpcSize, mem_sw_whole, 0);
 
         Ltp.open_loop_nbest_pitch(swBuf, swIdx, min_pitch, max_pitch, frameSize, 
                                   nol_pitch, nol_pitch_coef, 6);
@@ -292,8 +300,10 @@ public class NbEncoder
         for (i=1;i<6;i++)
         {
           if ((nol_pitch_coef[i]>.85*ol_pitch_coef) && 
-              (Math.abs(nol_pitch[i]-ol_pitch/2.0)<=1 || Math.abs(nol_pitch[i]-ol_pitch/3.0)<=1 || 
-               Math.abs(nol_pitch[i]-ol_pitch/4.0)<=1 || Math.abs(nol_pitch[i]-ol_pitch/5.0)<=1))
+              (Math.abs(nol_pitch[i]-ol_pitch/2.0)<=1 ||
+               Math.abs(nol_pitch[i]-ol_pitch/3.0)<=1 || 
+               Math.abs(nol_pitch[i]-ol_pitch/4.0)<=1 ||
+               Math.abs(nol_pitch[i]-ol_pitch/5.0)<=1))
           {
             /*ol_pitch_coef=nol_pitch_coef[i];*/
             ol_pitch = nol_pitch[i];
@@ -791,6 +801,7 @@ public class NbEncoder
 
   /**
    * Sets the Quality
+   * @param quality
    */
   public void setQuality(int quality)
   {
@@ -804,7 +815,8 @@ public class NbEncoder
   }
   
   /**
-   * 
+   * Gets the bitrate.
+   * @return the bitrate.
    */
   public int getBitRate()
   {

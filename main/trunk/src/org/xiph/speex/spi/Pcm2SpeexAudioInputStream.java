@@ -36,12 +36,17 @@
 
 package org.xiph.speex.spi;
 
-import java.io.*;
-import javax.sound.sampled.*;
-
-import org.xiph.speex.*;
-
 import java.util.Random;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StreamCorruptedException;
+import javax.sound.sampled.AudioFormat;
+
+import org.xiph.speex.OggCrc;
+import org.xiph.speex.Encoder;
+import org.xiph.speex.NbEncoder;
+import org.xiph.speex.SbEncoder;
+import org.xiph.speex.SpeexEncoder;
 
 /**
  * Converts a PCM 16bits/sample mono audio stream to Ogg Speex
@@ -75,42 +80,54 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Constructor
-   * @param   in     the underlying input stream.
+   * @param in     the underlying input stream.
+   * @param format
+   * @param length
    */
-  public Pcm2SpeexAudioInputStream(InputStream in, AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(InputStream in,
+                                   AudioFormat format, long length)
   {
     this(DEFAULT_SAMPLERATE, in, DEFAULT_BUFFER_SIZE, format, length);
   }
 
   /**
    * Constructor
-   * @param   rate   the samplerate of the audio stream.
-   * @param   in     the underlying input stream.
+   * @param rate   the samplerate of the audio stream.
+   * @param in     the underlying input stream.
+   * @param format
+   * @param length
    */
-  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in, AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in,
+                                   AudioFormat format, long length)
   {
     this(samplerate, in, DEFAULT_BUFFER_SIZE, format, length);
   }
 
   /**
    * Constructor
-   * @param   in     the underlying input stream.
-   * @param   size   the buffer size.
+   * @param in     the underlying input stream.
+   * @param size   the buffer size.
+   * @param format
+   * @param length
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(InputStream in, int size, AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(InputStream in, int size,
+                                   AudioFormat format, long length)
   {
     this(DEFAULT_SAMPLERATE, in, size, format, length);
   }
   
   /**
    * Constructor
-   * @param   rate   the samplerate of the audio stream.
-   * @param   in     the underlying input stream.
-   * @param   size   the buffer size.
+   * @param rate   the samplerate of the audio stream.
+   * @param in     the underlying input stream.
+   * @param size   the buffer size.
+   * @param format
+   * @param length
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in, int size, AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in, int size,
+                                   AudioFormat format, long length)
   {
     super(in, size, format, length);
     // Ogg initialisation
@@ -121,7 +138,8 @@ public class Pcm2SpeexAudioInputStream
     pageCount = 0;
     // Speex initialisation
     framesPerPacket = DEFAULT_FRAMES_PER_PACKET;
-    mode = (samplerate < 12000) ? 0 : ((samplerate < 24000) ? 1 : 2); // 0: narrowband, 1: wideband, 2: ultra-wideband 
+    // mode 0: narrowband, 1: wideband, 2: ultra-wideband 
+    mode = (samplerate < 12000) ? 0 : ((samplerate < 24000) ? 1 : 2);
     encoder = new SpeexEncoder();
     encoder.init(mode, DEFAULT_QUALITY, samplerate, 1);
     frameSize = 2 * encoder.getFrameSize();
@@ -132,6 +150,8 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the number of Audio Frames that are to be put in every Speex Packet.
+   * @param framesPerPacket
+   * @see #DEFAULT_FRAMES_PER_PACKET
    */
   public void setFramesPerPacket(int framesPerPacket)
   {
@@ -143,6 +163,8 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the number of Speex Packets that are to be put in every Ogg Page.
+   * @param setPacketsPerOggPage
+   * @see #DEFAULT_PACKETS_PER_OGG_PAGE
    */
   public void setPacketsPerOggPage(int packetsPerOggPage)
   {
@@ -157,6 +179,8 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Sets the comment for the Ogg Comment Header.
+   * @param comment
+   * @param appendVersion
    */
   public void setComment(String comment, boolean appendVersion)
   {
@@ -168,6 +192,7 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the Speex encoder Quality
+   * @param quality
    */
   public void setQuality(int quality)
   {
@@ -179,6 +204,7 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Sets whether of not the encoder is to use VBR
+   * @param vbr
    */
   public void setVbr(boolean vbr)
   {
@@ -187,6 +213,7 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Returns the Encoder
+   * @return the Encoder
    */
   public Encoder getEncoder()
   {
@@ -199,6 +226,7 @@ public class Pcm2SpeexAudioInputStream
    * Assumes that it is being called by a synchronized method.
    * This method also assumes that all data has already been read in,
    * hence pos > count.
+   * @exception IOException
    */
   protected void fill()
     throws IOException
@@ -216,10 +244,12 @@ public class Pcm2SpeexAudioInputStream
           throw new StreamCorruptedException("Incompleted last PCM sample when stream ended");
         }
         while (prepos < precount) { // still data to encode
-          if ((precount - prepos) < framesPerPacket*frameSize) { // fill end of frame with zeros
-            if ((prebuf.length - prepos) < framesPerPacket*frameSize) { // grow prebuf
+          if ((precount - prepos) < framesPerPacket*frameSize) {
+            // fill end of frame with zeros
+            if ((prebuf.length - prepos) < framesPerPacket*frameSize) {
+              // grow prebuf
               int nsz = prepos + framesPerPacket*frameSize;
-              byte nbuf[] = new byte[nsz];
+              byte[] nbuf = new byte[nsz];
               System.arraycopy(prebuf, 0, nbuf, 0, precount);
               prebuf = nbuf;
             }
@@ -237,7 +267,7 @@ public class Pcm2SpeexAudioInputStream
           int size = encoder.getProcessedDataByteSize();
           while ((buf.length - oggCount) < size) { // grow buffer
             int nsz = buf.length * 2;
-            byte nbuf[] = new byte[nsz];
+            byte[] nbuf = new byte[nsz];
             System.arraycopy(buf, 0, nbuf, 0, oggCount);
             buf = nbuf;
           }
@@ -262,7 +292,6 @@ public class Pcm2SpeexAudioInputStream
       }
       else if (n > 0) {
         precount += n;
-        // do stuff here
         if ((precount - prepos) >= framesPerPacket*frameSize) { // enough data to encode frame
           while ((precount - prepos) >= framesPerPacket*frameSize) { // lets encode all we can
             if (packetCount == 0) {
@@ -275,7 +304,7 @@ public class Pcm2SpeexAudioInputStream
             int size = encoder.getProcessedDataByteSize();
             while ((buf.length - oggCount) < size) { // grow buffer
               int nsz = buf.length * 2;
-              byte nbuf[] = new byte[nsz];
+              byte[] nbuf = new byte[nsz];
               System.arraycopy(buf, 0, nbuf, 0, oggCount);
               buf = nbuf;
             }
@@ -292,12 +321,15 @@ public class Pcm2SpeexAudioInputStream
           prepos = 0;
           if (packetCount >= packetsPerOggPage) {
             writeOggPageChecksum();
-            return; // we have encoded some data (all that we could), so we can leave now, otherwise we return to a potentially blocking read of the underlying inputstream.
+            // we have encoded some data (all that we could),
+            // so we can leave now, otherwise we return to a potentially
+            // blocking read of the underlying inputstream.
+            return;
           }
         }
       }
       else { // n == 0
-//        log.error("Pcm2SpeexInputStream.fill(): this should never happen - read 0 bytes from underlying stream yet it is not finished");
+        // read 0 bytes from underlying stream yet it is not finished.
         return;
       }
     }
@@ -323,7 +355,7 @@ public class Pcm2SpeexAudioInputStream
     super.available();
     int avail = count - pos;
     if (encoder.getEncoder().getVbr()) {
-      switch(mode) {
+      switch (mode) {
         case 0: // Narrowband
           return avail + (in.available() / 320); // count 1 byte for each block available
         case 1: // Wideband
@@ -336,7 +368,7 @@ public class Pcm2SpeexAudioInputStream
     }
     else {
       int packetsize;
-      switch(mode) {
+      switch (mode) {
         case 0: // Narrowband
           packetsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           avail += (in.available() / 320) * packetsize; // 20ms = 160ech = 320bytes
@@ -379,19 +411,20 @@ public class Pcm2SpeexAudioInputStream
    * Write an OGG page header.
    * @param packets - the number of packets in the Ogg Page (must be between 1 and 255)
    * @param headertype - 2=bos: beginning of sream, 4=eos: end of sream
+   * @exception IOException
    */
   private void writeOggPageHeader(int packets, int headertype)
     throws IOException
   {
     while ((buf.length - count) < (27 + packets)) { // grow buffer
       int nsz = buf.length * 2;
-      byte nbuf[] = new byte[nsz];
+      byte[] nbuf = new byte[nsz];
       System.arraycopy(buf, 0, nbuf, 0, count);
       buf = nbuf;
     }
     writeString(buf, count, "OggS");             //  0 -  3: capture_pattern
     buf[count+4] = 0;                            //       4: stream_structure_version
-    buf[count+5] = 2;                            //       5: header_type_flag (2=bos: beginning of sream, 4=eos: end of sream)
+    buf[count+5] = (byte) headertype;            //       5: header_type_flag (2=bos: beginning of stream, 4=eos: end of stream)
     writeLong(buf, count+6, granulpos);          //  6 - 13: absolute granule position
     writeInt(buf, count+14, streamSerialNumber); // 14 - 17: stream serial number
     writeInt(buf, count+18, pageCount++);        // 18 - 21: page sequence no
@@ -405,6 +438,7 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Calculate and write the OGG page checksum. This now closes the Ogg page.
+   * @exception IOException
    */
   private void writeOggPageChecksum()
     throws IOException
@@ -421,14 +455,16 @@ public class Pcm2SpeexAudioInputStream
   }
   
   /**
-   * 
+   * Write the OGG Speex header.
+   * @exception IOException
    */
   private void writeHeaderFrame()
     throws IOException
   {
-    while ((buf.length - count) < 108) { // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
+    while ((buf.length - count) < 108) {
+      // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
       int nsz = buf.length * 2;
-      byte nbuf[] = new byte[nsz];
+      byte[] nbuf = new byte[nsz];
       System.arraycopy(buf, 0, nbuf, 0, count);
       buf = nbuf;
     }
@@ -457,7 +493,8 @@ public class Pcm2SpeexAudioInputStream
   }
   
   /**
-   * 
+   * Write the OGG Speex Comment header.
+   * @exception IOException
    */
   private void writeCommentFrame()
     throws IOException
@@ -468,7 +505,7 @@ public class Pcm2SpeexAudioInputStream
     int length = comment.length();
     while ((buf.length - count) < length + 8 + 28) { // grow buffer
       int nsz = buf.length * 2;
-      byte nbuf[] = new byte[nsz];
+      byte[] nbuf = new byte[nsz];
       System.arraycopy(buf, 0, nbuf, 0, count);
       buf = nbuf;
     }

@@ -89,12 +89,12 @@ public class SbEncoder
   private float[] x1d;
   private float[] h0_mem;
 
-  private float buf[];
-  private float swBuf[];        /** Weighted signal buffer */
-  private float res[];
-  private float target[];
-  private float window[];
-  private float lagWindow[];
+  private float[] buf;
+  private float[] swBuf;        /** Weighted signal buffer */
+  private float[] res;
+  private float[] target;
+  private float[] window;
+  private float[] lagWindow;
 
   private float[] rc;           /** Reflection coefficients */
   private float[] autocorr;     /** auto-correlation */
@@ -123,7 +123,7 @@ public class SbEncoder
   protected float abr_count;
   protected int sampling_rate;
 
-  protected int     submodeSelect;  /** Mode chosen by the user (may differ from submodeID if VAD is on) */
+  protected int submodeSelect;  /** Mode chosen by the user (may differ from submodeID if VAD is on) */
 
   /**
    * Wideband initialisation
@@ -159,6 +159,11 @@ public class SbEncoder
 
   /**
    * Initialisation
+   * @param frameSize
+   * @param subFrameSize
+   * @param lpcSize
+   * @param bufSize
+   * @param foldingGain
    */
   public void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
   {
@@ -201,8 +206,9 @@ public class SbEncoder
    * Encode the given input signal.
    * @param bits - Speex bits buffer.
    * @param in - the raw mono audio frame to encode.
+   * @param return 1 if successful.
    */
-  public int encode(Bits bits, float in[])
+  public int encode(Bits bits, float[] in)
   {
     int i;
     float[] mem, innov, syn_resp;
@@ -596,6 +602,7 @@ public class SbEncoder
 
   /**
    * Sets the Quality.
+   * @param quality
    */
   public void setQuality(int quality)
   {
@@ -677,6 +684,7 @@ public class SbEncoder
 
   /**
    * Returns the bitrate.
+   * @return the bitrate.
    */
   public int getBitRate()
   {

@@ -68,7 +68,7 @@
 
 package org.xiph.speex;
 
-import java.util.*;
+import java.util.Random;
 
 /**
  * Narrowband Speex Decoder
@@ -81,14 +81,14 @@ public class NbDecoder
   extends NbCodec
   implements Decoder
 {
-  private float  innov2[];
+  private float[]  innov2;
   /*Packet loss*/
-  private int    count_lost;
-  private int    last_pitch;         /** Pitch of last correctly decoded frame */
-  private float  last_pitch_gain;    /** Pitch gain of last correctly decoded frame */
-  private float  pitch_gain_buf[];   /** Pitch gain of last decoded frames */
-  private int    pitch_gain_buf_idx; /** Tail of the buffer */
-  private float  last_ol_gain;       /** Open-loop gain for previous frame */
+  private int     count_lost;
+  private int     last_pitch;         /** Pitch of last correctly decoded frame */
+  private float   last_pitch_gain;    /** Pitch gain of last correctly decoded frame */
+  private float[] pitch_gain_buf;     /** Pitch gain of last decoded frames */
+  private int     pitch_gain_buf_idx; /** Tail of the buffer */
+  private float   last_ol_gain;       /** Open-loop gain for previous frame */
 
   protected Random random = new Random();
   protected Stereo  stereo;
@@ -107,6 +107,10 @@ public class NbDecoder
 
   /**
    * Initialise
+   * @param frameSize
+   * @param subframeSize
+   * @param lpcSize
+   * @param bufSize
    */
   public void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
   {
@@ -126,11 +130,12 @@ public class NbDecoder
    * Decode the given input bits.
    * @param bits - Speex bits buffer.
    * @param out - the decoded mono audio frame.
+   * @return 0 if successful.
    */
   public int decode(Bits bits, float[] out)
   {
     int i, sub, pitch, ol_pitch=0, m;
-    float pitch_gain[] = new float[3];
+    float[] pitch_gain = new float[3];
     float ol_gain=0.0f, ol_pitch_coef=0.0f;
     int best_pitch=40;
     float best_pitch_gain=0;
@@ -496,6 +501,7 @@ public class NbDecoder
   /**
    * Decode when packets are lost.
    * @param out - the generated mono audio frame.
+   * @return 0 if successful.
    */
   public int decodeLost(float[] out)
   {
@@ -505,8 +511,8 @@ public class NbDecoder
     fact = (float) Math.exp(-.04*count_lost*count_lost);
     // median3(a, b, c) = (a<b ? (b<c ? b : (a<c ? c : a))
     //                         : (c<b ? b : (c<a ? c : a)))
-    gain_med =	(pitch_gain_buf[0] < pitch_gain_buf[1] ? (pitch_gain_buf[1] < pitch_gain_buf[2] ? pitch_gain_buf[1] : (pitch_gain_buf[0] < pitch_gain_buf[2] ? pitch_gain_buf[2] : pitch_gain_buf[0]))
-                                                       : (pitch_gain_buf[2] < pitch_gain_buf[1] ? pitch_gain_buf[1] : (pitch_gain_buf[2] < pitch_gain_buf[0] ? pitch_gain_buf[2] : pitch_gain_buf[0])));
+    gain_med = (pitch_gain_buf[0] < pitch_gain_buf[1] ? (pitch_gain_buf[1] < pitch_gain_buf[2] ? pitch_gain_buf[1] : (pitch_gain_buf[0] < pitch_gain_buf[2] ? pitch_gain_buf[2] : pitch_gain_buf[0]))
+                                                      : (pitch_gain_buf[2] < pitch_gain_buf[1] ? pitch_gain_buf[1] : (pitch_gain_buf[2] < pitch_gain_buf[0] ? pitch_gain_buf[2] : pitch_gain_buf[0])));
     if (gain_med < last_pitch_gain)
       last_pitch_gain = gain_med;
 

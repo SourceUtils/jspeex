@@ -85,7 +85,7 @@ package org.xiph.speex;
  */
 public class Lsp
 {
-  private float pw[];
+  private float[] pw;
   
   /**
    * Constructor
@@ -95,7 +95,7 @@ public class Lsp
     pw  = new float[42];
   }
 
-  /*---------------------------------------------------------------------------*\
+  /*-------------------------------------------------------------------------*\
 
   	FUNCTION....: cheb_poly_eva()
 
@@ -104,29 +104,31 @@ public class Lsp
 
       This function evaluates a series of Chebyshev polynomials
 
-  \*---------------------------------------------------------------------------*/
+  \*-------------------------------------------------------------------------*/
 
   /**
    * This function evaluates a series of Chebyshev polynomials.
    * @param coef - coefficients of the polynomial to be evaluated.
    * @param x    - the point where polynomial is to be evaluated.
    * @param m    - order of the polynomial.
+   * @return the value of the polynomial at point x.
    */
-  public static final float cheb_poly_eva(float[] coef,float x,int m)
+  public static final float cheb_poly_eva(float[] coef, float x, int m)
   {
     int i;
-    float T[],sum;
-    int m2=m>>1;
+    float sum;
+    float[] T;
+    int m2 = m >> 1;
     /* Allocate memory for Chebyshev series formulation */
-    T=new float[m2+1];
+    T = new float[m2+1];
     /* Initialise values */
-    T[0]=1;
-    T[1]=x;
+    T[0] = 1;
+    T[1] = x;
     /* Evaluate Chebyshev series formulation using iterative approach  */
     /* Evaluate polynomial and return value also free memory space */
     sum = coef[m2] + coef[m2-1]*x;
     x *= 2;
-    for(i=2;i<=m2;i++)
+    for (i=2; i<=m2; i++)
     {
       T[i] = x*T[i-1] - T[i-2];
       sum += coef[m2-i] * T[i];
@@ -134,7 +136,7 @@ public class Lsp
     return sum;
   }
 
-  /*---------------------------------------------------------------------------*\
+  /*-------------------------------------------------------------------------*\
 
   	FUNCTION....: lpc_to_lsp()
 
@@ -144,31 +146,32 @@ public class Lsp
       This function converts LPC coefficients to LSP
       coefficients.
 
-  \*---------------------------------------------------------------------------*/
+  \*-------------------------------------------------------------------------*/
 
   /**
-   * This function converts LPC coefficients to LSP coeficients.
+   * This function converts LPC coefficients to LSP coefficients.
    * @param a      - LPC coefficients.
    * @param lpcrdr - order of LPC coefficients (10).
    * @param freq   - LSP frequencies in the x domain.
    * @param nb     - number of sub-intervals (4).
    * @param delta  - grid spacing interval (0.02).
+   * @return the number of roots (the LSP coefs are returned in the array).
    */
   public static int lpc2lsp (float[] a, int lpcrdr, float[] freq, int nb, float delta)
   {
-    float psuml,psumr,psumm,temp_xr,xl,xr,xm=0;
-    float temp_psumr/*,temp_qsumr*/;
-    int i,j,m,flag,k;
-    float[] Q;                 	/* ptrs for memory allocation 		*/
+    float psuml, psumr, psumm, temp_xr, xl, xr, xm=0;
+    float temp_psumr;
+    int i, j, m, flag, k;
+    float[] Q;     // ptrs for memory allocation
     float[] P;
-    int px;                	/* ptrs of respective P'(z) & Q'(z)	*/
+    int px;        // ptrs of respective P'(z) & Q'(z)
     int qx;
     int p;
     int q;
-    float[] pt;                	/* ptr used for cheb_poly_eval() whether P' or Q' */
-    int roots=0;              	/* DR 8/2/94: number of roots found 	*/
-    flag = 1;                	/*  program is searching for a root when, 1 else has found one 			*/
-    m = lpcrdr/2;            	/* order of P'(z) & Q'(z) polynomials 	*/
+    float[] pt;    // ptr used for cheb_poly_eval() whether P' or Q'
+    int roots = 0; // DR 8/2/94: number of roots found
+    flag = 1;      // program is searching for a root when, 1 else has found one
+    m = lpcrdr/2;  // order of P'(z) & Q'(z) polynomials
 
     /* Allocate memory space for polynomials */
     Q = new float[m+1];
@@ -183,45 +186,44 @@ public class Lsp
     q = qx;
     P[px++] = 1.0f;
     Q[qx++] = 1.0f;
-    for(i=1;i<=m;i++){
+    for (i=1; i<=m; i++){
       P[px++] = a[i]+a[lpcrdr+1-i]-P[p++];
       Q[qx++] = a[i]-a[lpcrdr+1-i]+Q[q++];
     }
     px = 0;
     qx = 0;
-    for(i=0;i<m;i++){
+    for (i=0; i<m; i++){
       P[px] = 2*P[px];
       Q[qx] = 2*Q[qx];
       px++;
       qx++;
     }
-    px = 0;             	/* re-initialise ptrs 			*/
+    px = 0; /* re-initialise ptrs */
     qx = 0;
 
     /* Search for a zero in P'(z) polynomial first and then alternate to Q'(z).
     Keep alternating between the two polynomials as each zero is found 	*/
 
-    xr = 0;             	/* initialise xr to zero 		*/
-    xl = 1.0f;               	/* start at point xl = 1 		*/
+    xr = 0;    /* initialise xr to zero */
+    xl = 1.0f; /* start at point xl = 1 */
 
-
-    for(j=0;j<lpcrdr;j++){
-      if(j%2 != 0)            	/* determines whether P' or Q' is eval. */
+    for (j=0; j<lpcrdr; j++){
+      if (j%2 != 0) /* determines whether P' or Q' is eval. */
         pt = Q;
       else
         pt = P;
 
-      psuml = cheb_poly_eva(pt,xl,lpcrdr);	/* evals poly. at xl 	*/
+      psuml = cheb_poly_eva(pt, xl, lpcrdr); /* evals poly. at xl */
       flag = 1;
-      while((flag == 1) && (xr >= -1.0)){
+      while ((flag == 1) && (xr >= -1.0)) {
         float dd;
         /* Modified by JMV to provide smaller steps around x=+-1 */
         dd=(float)(delta*(1-.9*xl*xl));
         if (Math.abs(psuml)<.2)
           dd *= .5;
 
-        xr = xl - dd;                        	/* interval spacing 	*/
-        psumr = cheb_poly_eva(pt,xr,lpcrdr);/* poly(xl-delta_x) 	*/
+        xr = xl - dd;                          /* interval spacing */
+        psumr = cheb_poly_eva(pt, xr, lpcrdr); /* poly(xl-delta_x) */
         temp_psumr = psumr;
         temp_xr = xr;
 
@@ -232,37 +234,37 @@ public class Lsp
         interval the zero lies in.
         If there is no sign change between poly(xm) and poly(xl) set interval
         between xm and xr else set interval between xl and xr and repeat till
-        root is located within the specified limits 			*/
+        root is located within the specified limits */
 
-        if((psumr*psuml)<0.0){
+        if ((psumr*psuml)<0.0) {
           roots++;
 
-          psumm=psuml;
-          for(k=0;k<=nb;k++){
-            xm = (xl+xr)/2;        	/* bisect the interval 	*/
-            psumm=cheb_poly_eva(pt,xm,lpcrdr);
-            if(psumm*psuml>0.){
-              psuml=psumm;
-              xl=xm;
+          psumm = psuml;
+          for (k=0; k<=nb; k++){
+            xm = (xl+xr)/2; /* bisect the interval */
+            psumm = cheb_poly_eva(pt, xm, lpcrdr);
+            if (psumm*psuml>0.) {
+              psuml = psumm;
+              xl = xm;
             }
-            else{
-              psumr=psumm;
-              xr=xm;
+            else {
+              psumr = psumm;
+              xr = xm;
             }
           }
 
-          /* once zero is found, reset initial interval to xr 	*/
-          freq[j] = (xm);
+          /* once zero is found, reset initial interval to xr */
+          freq[j] = xm;
           xl = xm;
-          flag = 0;       		/* reset flag for next search 	*/
+          flag = 0; /* reset flag for next search */
         }
-        else{
-          psuml=temp_psumr;
-          xl=temp_xr;
+        else {
+          psuml = temp_psumr;
+          xl = temp_xr;
         }
       }
     }
-    return(roots);
+    return roots;
   }
 
   /**
@@ -271,7 +273,7 @@ public class Lsp
    * @param ak
    * @param lpcrdr
    */
-  public void lsp2lpc(float freq[], float ak[], int lpcrdr)
+  public void lsp2lpc(float[] freq, float[] ak, int lpcrdr)
   {
     int i, j;
     float xout1, xout2, xin1, xin2;
@@ -288,10 +290,10 @@ public class Lsp
     /* reconstruct P(z) and Q(z) by  cascading second order
     polynomials in form 1 - 2xz(-1) +z(-2), where x is the
     LSP coefficient */
-    for(j=0;j<=lpcrdr;j++) {
+    for (j=0; j<=lpcrdr; j++) {
       int i2=0;
       
-      for(i=0;i<m;i++,i2+=2) {
+      for (i=0; i<m; i++, i2+=2) {
         n1 = i*4;
         n2 = n1 + 1;
         n3 = n2 + 1;
@@ -321,7 +323,7 @@ public class Lsp
    * @param len
    * @param margin
    */
-  public static void enforce_margin(float lsp[], int len, float margin)
+  public static void enforce_margin(float[] lsp, int len, float margin)
   {
     int i;
     

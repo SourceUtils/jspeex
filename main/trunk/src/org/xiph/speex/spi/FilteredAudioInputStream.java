@@ -36,8 +36,8 @@
 
 package org.xiph.speex.spi;
 
-import java.io.*;
-
+import java.io.IOException;
+import java.io.InputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
@@ -55,7 +55,10 @@ import javax.sound.sampled.AudioInputStream;
 public abstract class FilteredAudioInputStream
   extends AudioInputStream
 {
-  public static int DEFAULT_BUFFER_SIZE = 2048;
+  /**
+   * The default size of the buffer.
+   */
+  public static final int DEFAULT_BUFFER_SIZE = 2048;
 
   /**
    * The underlying inputStream.
@@ -66,7 +69,7 @@ public abstract class FilteredAudioInputStream
    * The internal buffer array where the data is stored. When necessary,
    * it may be replaced by another array of a different size.
    */
-  protected byte buf[];
+  protected byte[] buf;
 
   /**
    * The index one greater than the index of the last valid byte in the buffer.
@@ -161,6 +164,7 @@ public abstract class FilteredAudioInputStream
   
   /**
    * Check to make sure that this stream has not been closed
+   * @exception IOException
    */
   private void checkIfStillOpen()
     throws IOException
@@ -178,7 +182,8 @@ public abstract class FilteredAudioInputStream
    * @param format
    * @param length
    */
-  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length) {
+  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length)
+  {
     this(in, DEFAULT_BUFFER_SIZE, format, length);
   }
 
@@ -233,6 +238,7 @@ public abstract class FilteredAudioInputStream
    * Assumes that it is being called by a synchronized method.
    * This method also assumes that all data has already been read in,
    * hence pos > count.
+   * @exception IOException
    */
   protected void fill()
     throws IOException
@@ -250,7 +256,7 @@ public abstract class FilteredAudioInputStream
         break;
       }
       else { // n == 0
-        // read 0 bytes from underlying stream yet it is not finished
+        // read 0 bytes from underlying stream yet it is not finished.
       }
     }
   }
@@ -261,23 +267,23 @@ public abstract class FilteredAudioInputStream
   protected void makeSpace()
   {
     if (markpos < 0)
-      pos = 0;		/* no mark: throw away the buffer */
-    else if (pos >= buf.length)	/* no room left in buffer */
-      if (markpos > 0) {	/* can throw away early part of the buffer */
+      pos = 0; /* no mark: throw away the buffer */
+    else if (pos >= buf.length) /* no room left in buffer */
+      if (markpos > 0) { /* can throw away early part of the buffer */
         int sz = pos - markpos;
         System.arraycopy(buf, markpos, buf, 0, sz);
         pos = sz;
         markpos = 0;
       }
       else if (buf.length >= marklimit) {
-        markpos = -1;	/* buffer got too big, invalidate mark */
-        pos = 0;	/* drop buffer contents */
+        markpos = -1; /* buffer got too big, invalidate mark */
+        pos = 0; /* drop buffer contents */
       }
-      else {		/* grow buffer */
+      else { /* grow buffer */
         int nsz = pos * 2;
         if (nsz > marklimit)
           nsz = marklimit;
-        byte nbuf[] = new byte[nsz];
+        byte[] nbuf = new byte[nsz];
         System.arraycopy(buf, 0, nbuf, 0, pos);
         buf = nbuf;
       }
@@ -362,7 +368,7 @@ public abstract class FilteredAudioInputStream
    *             the stream has been reached.
    * @exception  IOException  if an I/O error occurs.
    */
-  public synchronized int read(byte b[], int off, int len)
+  public synchronized int read(byte[] b, int off, int len)
     throws IOException
   {
     checkIfStillOpen();
