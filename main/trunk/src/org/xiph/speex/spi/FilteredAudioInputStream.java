@@ -252,14 +252,14 @@ public abstract class FilteredAudioInputStream
         precount += read;
         break;
       }
-      else { // n == 0
+      else { // read == 0
         // read 0 bytes from underlying stream yet it is not finished.
       }
     }
   }
 
   /**
-   * 
+   * Free up some space in the buffers.
    */
   protected void makeSpace()
   {

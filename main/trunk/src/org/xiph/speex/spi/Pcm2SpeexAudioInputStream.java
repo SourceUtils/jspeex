@@ -310,8 +310,8 @@ public class Pcm2SpeexAudioInputStream
         System.arraycopy(prebuf, 0, nbuf, 0, precount);
         prebuf = nbuf;
       }
-      int n = in.read(prebuf, precount, prebuf.length - precount);
-      if (n < 0) { // inputstream has ended
+      int read = in.read(prebuf, precount, prebuf.length - precount);
+      if (read < 0) { // inputstream has ended
         if ((precount-prepos) % 2 != 0) { // we don't have a complete last PCM sample
           throw new StreamCorruptedException("Incompleted last PCM sample when stream ended");
         }
@@ -357,8 +357,8 @@ public class Pcm2SpeexAudioInputStream
         }
         return;
       }
-      else if (n > 0) {
-        precount += n;
+      else if (read > 0) {
+        precount += read;
         if ((precount - prepos) >= framesPerPacket*frameSize*packetsPerOggPage) { // enough data to encode frame
           while ((precount - prepos) >= framesPerPacket*frameSize*packetsPerOggPage) { // lets encode all we can
             if (packetCount == 0) {
@@ -394,7 +394,7 @@ public class Pcm2SpeexAudioInputStream
           return;
         }
       }
-      else { // n == 0
+      else { // read == 0
         // read 0 bytes from underlying stream yet it is not finished.
         if (precount >= prebuf.length) {
           // no more room in buffer
