@@ -185,7 +185,7 @@ public class JSpeexEnc
     if (outfile.toLowerCase().endsWith(".spx")) {
       outputFormat = FILE_FORMAT_OGG;
     }
-    if (outfile.toLowerCase().endsWith(".wav")) {
+    else if (outfile.toLowerCase().endsWith(".wav")) {
       outputFormat = FILE_FORMAT_WAVE;
     }
     else {
