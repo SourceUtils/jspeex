@@ -282,29 +282,34 @@ System.out.println("size="+audio.length);
    * Implemented from ActionListener interface.
    */
   public void actionPerformed(ActionEvent e) {
-    if ("Play".equals(e.getActionCommand())) {
-      playIt();
-    }
-    else if ("Record".equals(e.getActionCommand())) {
-      recordIt();
-    }
-    else if ("Pause".equals(e.getActionCommand())) {
-      if (state == STATE_PAUSED) {
-        playIt();
-      }
-      else if (state == STATE_REC_PAUSED) {
-        recordIt();
-      }
-      else {
-        pauseIt();
-      }
-    }
-    else if ("Stop".equals(e.getActionCommand())) {
-      stopIt();
+    if (e.getSource() == timer) {
+      progressBar.setValue(getProgress());
     }
     else {
+      if ("Play".equals(e.getActionCommand())) {
+        playIt();
+      }
+      else if ("Record".equals(e.getActionCommand())) {
+        recordIt();
+      }
+      else if ("Pause".equals(e.getActionCommand())) {
+        if (state == STATE_PAUSED) {
+          playIt();
+        }
+        else if (state == STATE_REC_PAUSED) {
+          recordIt();
+        }
+        else {
+          pauseIt();
+        }
+      }
+      else if ("Stop".equals(e.getActionCommand())) {
+        stopIt();
+      }
+      else {
+      }
     }
-  } 
+  }
   
   /**
    *
@@ -323,6 +328,8 @@ System.out.println("size="+audio.length);
     else if (oldstate == STATE_RECORDING || oldstate == STATE_REC_PAUSED) {
       capture.stop();
     }
+    timer.stop();
+    progressBar.setValue(0);
     recordButton.setEnabled(true);
     playButton.setEnabled(true);
     pauseButton.setEnabled(false);
@@ -347,6 +354,7 @@ System.out.println("size="+audio.length);
       playback.start();
     }
     playback.line.start();
+    timer.start();
     recordButton.setEnabled(false);
     playButton.setEnabled(false);
     pauseButton.setEnabled(true);
@@ -375,6 +383,7 @@ System.out.println("size="+audio.length);
       recordButton.setEnabled(true);
       playButton.setEnabled(false);
     }
+    timer.stop();
     pauseButton.setEnabled(true);
     stopButton.setEnabled(true);
   }
@@ -397,12 +406,30 @@ System.out.println("size="+audio.length);
       capture.start();
     }
     capture.line.start();
+    timer.start();
     recordButton.setEnabled(false);
     playButton.setEnabled(false);
     pauseButton.setEnabled(true);
     stopButton.setEnabled(true);
   }
 
+  /**
+   * Return the progress of the playback.
+   * @return
+   */
+  protected int getProgress()
+  {
+    audioLength = 500000;
+    if (state == STATE_PLAYING || state == STATE_PAUSED) {
+      return super.getProgress();
+    }
+    else if (state == STATE_RECORDING || state == STATE_REC_PAUSED) {
+      return capture.line.getFramePosition() * 1000 / audioLength;
+    }
+    else {
+      return 0;
+    }
+  }
   //--------------------------------------------------------------------------
   // GUI code
   //--------------------------------------------------------------------------

@@ -61,7 +61,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JProgressBar;
+import javax.swing.JSlider;
+import javax.swing.Timer;
 
 /**
  * JavaSound Player.
@@ -109,13 +110,14 @@ public class Player
   protected JButton playButton;
   protected JButton pauseButton;
   protected JButton stopButton;
-  protected JProgressBar progressBar;
+  protected JSlider progressBar;
+  protected Timer timer;
 
   protected int state;
   protected int oldstate;
-  protected String file;
-  protected URL audioFile;
   protected String audioFilename;
+  protected URL audioFile;
+  protected int audioLength;
 
   protected Playback playback;
 
@@ -152,7 +154,7 @@ public class Player
    */
   public Player(String file)
   {
-    this.file = file;
+    this.audioFilename = file;
     createGUI();
   }
   
@@ -162,18 +164,19 @@ public class Player
   public void init()
   {
     state = STATE_STOPPED;
-    if (!file.startsWith("http://") &&
-        !file.startsWith("file:/"))
-        file = "file:/" + file;
+    if (!audioFilename.startsWith("http://") &&
+        !audioFilename.startsWith("file:/"))
+        audioFilename = "file:/" + audioFilename;
     try {
-      audioFile = new URL(file);
+      audioFile = new URL(audioFilename);
     }
     catch (MalformedURLException e) {
       e.printStackTrace();
     }
+    audioLength = 0;
     playback = new Playback();
   }
-  
+
   /**
    * Start the Player Component.
    */
@@ -374,23 +377,28 @@ public class Player
    * Implemented from ActionListener interface.
    */
   public void actionPerformed(ActionEvent e) {
-    if ("Play".equals(e.getActionCommand())) {
-      playIt();
-    }
-    else if ("Pause".equals(e.getActionCommand())) {
-      if (state == STATE_PAUSED) {
-        playIt();
-      }
-      else if (state == STATE_PLAYING) {
-        pauseIt();
-      }
-    }
-    else if ("Stop".equals(e.getActionCommand())) {
-      stopIt();
+    if (e.getSource() == timer) {
+      progressBar.setValue(getProgress());
     }
     else {
+      if ("Play".equals(e.getActionCommand())) {
+        playIt();
+      }
+      else if ("Pause".equals(e.getActionCommand())) {
+        if (state == STATE_PAUSED) {
+          playIt();
+        }
+        else if (state == STATE_PLAYING) {
+          pauseIt();
+        }
+      }
+      else if ("Stop".equals(e.getActionCommand())) {
+        stopIt();
+      }
+      else {
+      }
     }
-  } 
+  }
   
   /**
    *
@@ -403,6 +411,8 @@ public class Player
     oldstate = state;
     state = STATE_STOPPED;
     playback.stop();
+    timer.stop();
+    progressBar.setValue(0);
     playButton.setEnabled(true);
     pauseButton.setEnabled(false);
     stopButton.setEnabled(false);
@@ -425,13 +435,14 @@ public class Player
       playback.start();
     }
     playback.line.start();
+    timer.start();
     playButton.setEnabled(false);
     pauseButton.setEnabled(true);
     stopButton.setEnabled(true);
   }
 
   /**
-   *
+   * Pause
    */
   public synchronized void pauseIt()
   {
@@ -441,11 +452,27 @@ public class Player
     oldstate = state;
     state = STATE_PAUSED;
     playback.line.stop();
+    timer.stop();
     playButton.setEnabled(true);
     pauseButton.setEnabled(true);
     stopButton.setEnabled(true);
   }
 
+  /**
+   * Return the progress of the playback.
+   * @return
+   */
+  protected int getProgress()
+  {
+    audioLength = 500000;
+    if (state == STATE_PLAYING || state == STATE_PAUSED) {
+      return playback.line.getFramePosition() * 1000 / audioLength;
+    }
+    else {
+      return 0;
+    }
+  }
+  
   //--------------------------------------------------------------------------
   // GUI code
   //--------------------------------------------------------------------------
@@ -487,11 +514,18 @@ public class Player
    */
   protected void createScrollPanel()
   {
-    progressBar = new JProgressBar();
+    // Create the Progress Bar
+    progressBar = new JSlider();
+    progressBar.setMinimum(0);
+    progressBar.setMaximum(1000);
+    progressBar.setValue(0);
+    progressBar.setPreferredSize(new Dimension(120, 16));
     progressBar.setBackground(Color.WHITE);
-    progressBar.setIndeterminate(true);
+    progressBar.setEnabled(false);
     playerScrollPane.add(progressBar);
     playerScrollPane.setBackground(Color.WHITE);
+    // Create the timer
+    timer = new Timer(100, this);
   }
   
   /**
