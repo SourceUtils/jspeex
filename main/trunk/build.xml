@@ -51,12 +51,16 @@
   <property name="log"     location="log"/>
   <property name="doc"     location="doc"/>
 
+  <property name="version" value="0.9"/>
+
   <!-- Define additional tasks -->
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
            classpath="${lib}/proguard.jar" />
 
   <target name="init" description="Initialise ant" depends="clean">
-    <tstamp/>
+    <tstamp>
+      <format property="NOW" pattern="dd/MM/yyyy HH:mm" locale="en"/>
+    </tstamp>
     <mkdir dir="${build}"/>
     <mkdir dir="${dist}"/>
     <mkdir dir="${temp}"/>
@@ -101,9 +105,14 @@
       <metainf dir="${include}/"/>
       <manifest>
         <section name="build">
-          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Build-Date" value="${NOW}"/>
           <attribute name="Built-By" value="${user.name}"/>
           <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <section name="library">
+          <attribute name="Library-Name" value="JSpeex"/>
+          <attribute name="Library-Version" value="${version}"/>
+          <attribute name="URL" value="http://jspeex.sourceforge.net/"/>
         </section>
         <attribute name="Main-Class" value="JSpeexEnc"/>
       </manifest>
@@ -133,11 +142,6 @@
     <jar jarfile="${dist}/jspeex-encdec.jar">
       <fileset dir="${build}" excludes="**/spi/*.class"/>
       <manifest>
-        <section name="build">
-          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
-        </section>
         <attribute name="Main-Class" value="JSpeexEnc"/>
       </manifest>
     </jar>
@@ -163,11 +167,6 @@
     <jar jarfile="${dist}/jspeex-dec.jar">
       <fileset dir="${build}" excludes="**/spi/*.class"/>
       <manifest>
-        <section name="build">
-          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
-        </section>
         <attribute name="Main-Class" value="JSpeexDec"/>
       </manifest>
     </jar>
@@ -190,11 +189,6 @@
     <jar jarfile="${dist}/jspeex-dec-nb.jar">
       <fileset dir="${build}" excludes="${build}/org/xiph/speex/spi/*.class"/>
       <manifest>
-        <section name="build">
-          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
-        </section>
         <attribute name="Main-Class" value="JSpeexDec"/>
       </manifest>
     </jar>
