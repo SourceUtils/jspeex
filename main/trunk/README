@@ -20,7 +20,7 @@ encoder help: java -cp dist/jspeex.jar JSpeexEnc -h
 or: java -jar dist/jspeex.jar -h
 decoder help: java -cp dist/jspeex.jar JSpeexDec -h
 ex:
-encoding an 8kHz wav file: java -cp dist/jspeex.jar JSpeexEnc -n input.wav output.spx
+encoding a wav file: java -cp dist/jspeex.jar JSpeexEnc input.wav output.spx
 decoding any speex file: java -cp dist/jspeex.jar JSpeexDec input.spx output.wav
 
 Credits
@@ -29,7 +29,11 @@ First of all I'd like to thank Jean-Marc Valin for giving us all this fantastic
 codec. This code is really just a porting of Jean-Marc's code from C to Java.
 I'd also like to thank James Lawrence, who wrote the original Java Speex
 Decoder, from which this encoder was build.
+Finally I'd like to thank all the people who have submitted patches since the
+project has started:
+Dan Rollo <drollo at ets.org>
+William Shubert <wms at igoweb.org>
 
-Marc Gimpel <marc.gimpel@wimba.com>
+Marc Gimpel <marc.gimpel at wimba.com>
 Head of Research
 Wimba
