@@ -352,7 +352,7 @@ public class JSpeexDec
   }
 
   /**
-   * Decodes a spx file to wave.
+   * Decodes a Speex file to PCM.
    * @exception IOException
    */
   public void decode()
@@ -362,7 +362,7 @@ public class JSpeexDec
   }
 
   /**
-   * Decodes a spx file to wave.
+   * Decodes a Speex file to PCM.
    * @param srcPath
    * @param destPath
    * @exception IOException

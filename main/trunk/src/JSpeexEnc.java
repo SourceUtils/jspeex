@@ -334,7 +334,7 @@ public class JSpeexEnc
   }
   
   /**
-   * Encodes a wave file to speex. 
+   * Encodes a PCM file to Speex. 
    * @exception IOException
    */
   public void encode()
@@ -344,7 +344,7 @@ public class JSpeexEnc
   }
 
   /**
-   * Encodes a wave file to speex. 
+   * Encodes a PCM file to Speex. 
    * @param srcPath
    * @param destPath
    * @exception IOException
