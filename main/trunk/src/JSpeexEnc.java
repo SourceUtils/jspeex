@@ -101,10 +101,17 @@ public class JSpeexEnc
   /** Print level for messages */
   protected static int printlevel = INFO;
 
-  /** Defines whether or not the input uses the Wav File Format or is raw. */
-  protected static boolean wav    = true;
-  /** Defines whether or not the output uses the Ogg File Format or is raw. */
-  protected static boolean ogg    = true;
+  /** File format for input or output audio file: Raw */
+  public static final int FILE_FORMAT_RAW  = 0;
+  /** File format for input or output audio file: Ogg */
+  public static final int FILE_FORMAT_OGG  = 1;
+  /** File format for input or output audio file: Wave */
+  public static final int FILE_FORMAT_WAVE = 2;
+  /** Defines File format for input audio file (Raw, Ogg or Wave). */
+  protected static int inputFormat  = FILE_FORMAT_OGG;
+  /** Defines File format for output audio file (Raw or Wave). */
+  protected static int outputFormat = FILE_FORMAT_WAVE;
+
   /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
   protected static int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
@@ -169,16 +176,16 @@ public class JSpeexEnc
     infile = args[args.length-2];
     outfile = args[args.length-1];
     if (infile.toLowerCase().endsWith(".wav")) {
-      wav = true;
+      inputFormat = FILE_FORMAT_WAVE;
     }
     else {
-      wav = false;
+      inputFormat = FILE_FORMAT_RAW;
     }
     if (outfile.toLowerCase().endsWith(".spx")) {
-      ogg = true;
+      outputFormat = FILE_FORMAT_OGG;
     }
     else {
-      ogg = false;
+      outputFormat = FILE_FORMAT_RAW;
     }
     // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
@@ -336,7 +343,7 @@ public class JSpeexEnc
     // Open the input stream
     DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
     // Prepare input stream
-    if (wav) {
+    if (inputFormat == FILE_FORMAT_WAVE) {
       // read the WAVE header
       dis.readFully(temp, 0, HEADERSIZE+4);
       // make sure its a WAVE header
@@ -460,7 +467,7 @@ public class JSpeexEnc
     }
     // Open the file writer
     AudioFileWriter writer;
-    if (ogg) {
+    if (outputFormat == FILE_FORMAT_OGG) {
       writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
     }
     else {
