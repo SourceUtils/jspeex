@@ -80,7 +80,7 @@ public interface Encoder
    * Encode the given input signal.
    * @param bits - Speex bits buffer.
    * @param in - the raw mono audio frame to encode.
-   * @param return 1 if successful.
+   * @return 1 if successful.
    */
   public int encode(Bits bits, float[] in);
 

@@ -160,7 +160,7 @@ public class SbEncoder
   /**
    * Initialisation
    * @param frameSize
-   * @param subFrameSize
+   * @param subframeSize
    * @param lpcSize
    * @param bufSize
    * @param foldingGain
@@ -206,7 +206,7 @@ public class SbEncoder
    * Encode the given input signal.
    * @param bits - Speex bits buffer.
    * @param in - the raw mono audio frame to encode.
-   * @param return 1 if successful.
+   * @return 1 if successful.
    */
   public int encode(Bits bits, float[] in)
   {

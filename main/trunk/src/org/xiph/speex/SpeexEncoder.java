@@ -35,23 +35,23 @@
 
 /* $Id$ */
 
-/* Copyright (C) 2002 Jean-Marc Valin 
+/* Copyright (C) 2002 Jean-Marc Valin
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
-   
+
    - Redistributions of source code must retain the above copyright
    notice, this list of conditions and the following disclaimer.
-   
+
    - Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-   
+
    - Neither the name of the Xiph.org Foundation nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-   
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -70,7 +70,7 @@ package org.xiph.speex;
 /**
  * Main Speex Encoder class.
  * This class encodes the given PCM 16bit samples into Speex packets.
- * 
+ *
  * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
  * @version $Revision$
  */
@@ -87,11 +87,11 @@ public class SpeexEncoder
   private int     sampleRate;
   private int     channels;
   private int     frameSize;
-    
+
   /**
    * Constructor
    */
-  public SpeexEncoder() 
+  public SpeexEncoder()
   {
     bits = new Bits();
   }
@@ -127,13 +127,13 @@ public class SpeexEncoder
 
     /* initialize the speex decoder */
     encoder.setQuality(quality);
-    
+
     /* set decoder format and properties */
     this.frameSize  = encoder.getFrameSize();
     this.sampleRate = sampleRate;
     this.channels   = channels;
     rawData         = new float[sampleRate*channels];
-    
+
     bits.init();
     return true;
   }
@@ -142,7 +142,7 @@ public class SpeexEncoder
    * Returns the Encoder being used (Narrowband, Wideband or Ultrawideband).
    * @return the Encoder being used (Narrowband, Wideband or Ultrawideband).
    */
-  public Encoder getEncoder() 
+  public Encoder getEncoder()
   {
     return encoder;
   }
@@ -151,7 +151,7 @@ public class SpeexEncoder
    * Returns the sample rate.
    * @return the sample rate.
    */
-  public int getSampleRate() 
+  public int getSampleRate()
   {
     return sampleRate;
   }
@@ -160,7 +160,7 @@ public class SpeexEncoder
    * Returns the number of channels.
    * @return the number of channels.
    */
-  public int getChannels() 
+  public int getChannels()
   {
     return channels;
   }
@@ -181,7 +181,7 @@ public class SpeexEncoder
    * @param offset
    * @return the number of bytes of encoded data just read.
    */
-  public int getProcessedData(byte[] data, int offset) 
+  public int getProcessedData(byte[] data, int offset)
   {
     int size = bits.getBufferSize();
     System.arraycopy(bits.getBuffer(), 0, data, offset, size);
@@ -193,11 +193,11 @@ public class SpeexEncoder
    * Returns the number of bytes of encoded data ready to be read.
    * @return the number of bytes of encoded data ready to be read.
    */
-  public int getProcessedDataByteSize() 
+  public int getProcessedDataByteSize()
   {
     return bits.getBufferSize();
   }
-  
+
   /**
    * This is where the actual encoding takes place
    * @param data
@@ -217,7 +217,7 @@ public class SpeexEncoder
    * Encode an array of shorts.
    * @param data
    * @param offset
-   * @param len
+   * @param numShorts
    * @return true if successful.
    */
   public boolean processData(short[] data, int offset, int numShorts)

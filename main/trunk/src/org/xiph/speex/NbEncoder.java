@@ -123,7 +123,7 @@ public class NbEncoder
   /**
    * Initialisation
    * @param frameSize
-   * @param subFrameSize
+   * @param subframeSize
    * @param lpcSize
    * @param bufSize
    */

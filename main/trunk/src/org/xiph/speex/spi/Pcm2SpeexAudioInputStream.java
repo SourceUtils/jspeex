@@ -92,7 +92,7 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Constructor
-   * @param rate   the samplerate of the audio stream.
+   * @param samplerate   the samplerate of the audio stream.
    * @param in     the underlying input stream.
    * @param format
    * @param length
@@ -119,7 +119,7 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Constructor
-   * @param rate   the samplerate of the audio stream.
+   * @param samplerate   the samplerate of the audio stream.
    * @param in     the underlying input stream.
    * @param size   the buffer size.
    * @param format
@@ -163,7 +163,7 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the number of Speex Packets that are to be put in every Ogg Page.
-   * @param setPacketsPerOggPage
+   * @param packetsPerOggPage
    * @see #DEFAULT_PACKETS_PER_OGG_PAGE
    */
   public void setPacketsPerOggPage(int packetsPerOggPage)

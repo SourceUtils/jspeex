@@ -148,7 +148,7 @@ public class SpeexAudioFileReader
    * Return the AudioFileFormat from the given InputStream. Implementation.
    * @param bitStream
    * @param baos
-   * @param medialength
+   * @param mediaLength
    * @return an AudioInputStream object based on the audio file data contained in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
@@ -287,7 +287,7 @@ public class SpeexAudioFileReader
   /**
    * Obtains an audio input stream from the input stream provided.
    * The stream must point to valid audio file data.
-   * @param stream the input stream from which the AudioInputStream should be constructed.
+   * @param inputStream the input stream from which the AudioInputStream should be constructed.
    * @param medialength
    * @return an AudioInputStream object based on the audio file data contained in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to

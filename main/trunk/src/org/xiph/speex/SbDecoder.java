@@ -128,7 +128,7 @@ public class SbDecoder
   /**
    * Initialisation
    * @param frameSize
-   * @param subFrameSize
+   * @param subframeSize
    * @param lpcSize
    * @param bufSize
    * @param foldingGain
