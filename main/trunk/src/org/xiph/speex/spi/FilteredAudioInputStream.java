@@ -55,14 +55,10 @@ import javax.sound.sampled.AudioInputStream;
 public abstract class FilteredAudioInputStream
   extends AudioInputStream
 {
-  /**
-   * The default size of the buffer.
-   */
+  /** The default size of the buffer. */
   public static final int DEFAULT_BUFFER_SIZE = 2048;
 
-  /**
-   * The underlying inputStream.
-   */
+  /** The underlying inputStream. */
   protected InputStream in;
   
   /**
@@ -129,7 +125,7 @@ public abstract class FilteredAudioInputStream
   protected int marklimit;
 
   /**
-   * 
+   * Array of size 1, used by the read method to read just 1 byte.
    */
   private final byte[] single = new byte[1];
   
@@ -178,30 +174,14 @@ public abstract class FilteredAudioInputStream
    * the input stream <code>in</code>, for later use.
    * An internal buffer array is created and  stored in <code>buf</code>.
    *
-   * @param in the underlying input stream.
-   * @param format
-   * @param length
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
+   * @exception IllegalArgumentException if size <= 0 or presize <= 0.
    */
   public FilteredAudioInputStream(InputStream in, AudioFormat format, long length)
   {
-    this(in, DEFAULT_BUFFER_SIZE, format, length);
-  }
-
-  /**
-   * Creates a <code>FilteredAudioInputStream</code> with the specified buffer
-   * size, and saves its argument, the inputstream <code>in</code> for later use.
-   * An internal buffer array of length <code>size</code> is created and stored
-   * in <code>buf</code>.
-   *
-   * @param in     the underlying input stream.
-   * @param size   the buffer size.
-   * @param format
-   * @param length
-   * @exception IllegalArgumentException if size <= 0.
-   */
-  public FilteredAudioInputStream(InputStream in, int size, AudioFormat format, long length)
-  {
-    this(in, size, size, format, length);
+    this(in, format, length, DEFAULT_BUFFER_SIZE);
   }
 
   /**
@@ -211,13 +191,30 @@ public abstract class FilteredAudioInputStream
    * in <code>buf</code>.
    *
    * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
+   * @param size    the buffer sizes.
+   * @exception IllegalArgumentException if size <= 0.
+   */
+  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length, int size)
+  {
+    this(in, format, length, size, size);
+  }
+
+  /**
+   * Creates a <code>FilteredAudioInputStream</code> with the specified buffer
+   * size, and saves its argument, the inputstream <code>in</code> for later use.
+   * An internal buffer array of length <code>size</code> is created and stored
+   * in <code>buf</code>.
+   *
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
    * @param size    the buffer size.
    * @param presize the prebuffer size.
-   * @param format
-   * @param length
    * @exception IllegalArgumentException if size <= 0 or presize <= 0.
    */
-  public FilteredAudioInputStream(InputStream in, int size, int presize, AudioFormat format, long length)
+  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length, int size, int presize)
   {
     super(in, format, length);
     this.in = in;

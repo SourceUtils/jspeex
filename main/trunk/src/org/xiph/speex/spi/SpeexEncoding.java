@@ -47,11 +47,10 @@ import javax.sound.sampled.AudioFormat;
 public class SpeexEncoding
   extends AudioFormat.Encoding
 {
-  /**
-   * Specifies Speex encoded data.
-   */
+  /** Specifies any Speex encoded data. */
   public static final AudioFormat.Encoding SPEEX = new SpeexEncoding("Speex");
   /*
+  public static final AudioFormat.Encoding SPEEX_Q0 = new SpeexEncoding("Speex_quality_0");
   public static final AudioFormat.Encoding SPEEX_Q1 = new SpeexEncoding("Speex_quality_1");
   public static final AudioFormat.Encoding SPEEX_Q2 = new SpeexEncoding("Speex_quality_2");
   public static final AudioFormat.Encoding SPEEX_Q3 = new SpeexEncoding("Speex_quality_3");
@@ -61,6 +60,8 @@ public class SpeexEncoding
   public static final AudioFormat.Encoding SPEEX_Q7 = new SpeexEncoding("Speex_quality_7");
   public static final AudioFormat.Encoding SPEEX_Q8 = new SpeexEncoding("Speex_quality_8");
   public static final AudioFormat.Encoding SPEEX_Q9 = new SpeexEncoding("Speex_quality_9");
+  public static final AudioFormat.Encoding SPEEX_Q10 = new SpeexEncoding("Speex_quality_10");
+  public static final AudioFormat.Encoding SPEEX_VBR0 = new SpeexEncoding("Speex_VBR_quality_0");
   public static final AudioFormat.Encoding SPEEX_VBR1 = new SpeexEncoding("Speex_VBR_quality_1");
   public static final AudioFormat.Encoding SPEEX_VBR2 = new SpeexEncoding("Speex_VBR_quality_2");
   public static final AudioFormat.Encoding SPEEX_VBR3 = new SpeexEncoding("Speex_VBR_quality_3");
@@ -70,6 +71,7 @@ public class SpeexEncoding
   public static final AudioFormat.Encoding SPEEX_VBR7 = new SpeexEncoding("Speex_VBR_quality_7");
   public static final AudioFormat.Encoding SPEEX_VBR8 = new SpeexEncoding("Speex_VBR_quality_8");
   public static final AudioFormat.Encoding SPEEX_VBR9 = new SpeexEncoding("Speex_VBR_quality_9");
+  public static final AudioFormat.Encoding SPEEX_VBR10 = new SpeexEncoding("Speex_VBR_quality_10");
   */
 
   /**

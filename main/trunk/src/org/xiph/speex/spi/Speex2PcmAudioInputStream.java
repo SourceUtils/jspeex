@@ -56,20 +56,35 @@ public class Speex2PcmAudioInputStream
   extends FilteredAudioInputStream
 {
   // audio parameters
+  /** The sample rate of the audio, in samples per seconds (Hz). */
   private int     sampleRate;
+  /** The number of audio channels (1=mono, 2=stereo). */
   private int     channelCount;
+
   // Speex variables
+  /** Array containing the decoded audio samples. */
   private float[] decodedData;
+  /** Array containing the decoded audio samples converted into bytes. */
   private byte[]  outputData;
+  /** Speex bit packing and unpacking class. */
   private Bits    bits;
+  /** Speex Decoder. */
   private Decoder decoder;
+  /** The frame size, in samples. */
   private int     frameSize;
+  /** The number of Speex frames that will be put in each Ogg packet. */
   private int     framesPerPacket;
+
   // Ogg variables
+  /** A unique serial number that identifies the Ogg stream. */
   private int     streamSerialNumber;
-  private int     packetsPerPage;
+  /** The number of Ogg packets that are in each Ogg page. */
+  private int     packetsPerOggPage;
+  /** The number of Ogg packets that have been decoded in the current page. */
   private int     packetCount;
+  /** Array containing the sizes of Ogg packets in the current page.*/
   private byte[]  packetSizes;
+  /** Flag to indicate if this is the first time a decode method is called. */
   private boolean first;
 
   /**
@@ -80,20 +95,20 @@ public class Speex2PcmAudioInputStream
    */
   public Speex2PcmAudioInputStream(InputStream in, AudioFormat format, long length)
   {
-    this(in, DEFAULT_BUFFER_SIZE, format, length);
+    this(in, format, length, DEFAULT_BUFFER_SIZE);
   }
 
   /**
    * Constructor
    * @param in     the underlying input stream.
-   * @param size   the buffer size.
    * @param format the format of this stream's audio data.
    * @param length the length in sample frames of the data in this stream.
+   * @param size   the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Speex2PcmAudioInputStream(InputStream in, int size, AudioFormat format, long length)
+  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format, long length, int size)
   {
-    super(in, size, format, length);
+    super(in, format, length, size);
     bits = new Bits();
     packetSizes = new byte[256];
     first = true;
@@ -188,7 +203,7 @@ public class Speex2PcmAudioInputStream
           throw new StreamCorruptedException("Incomplete Ogg Headers");
         }
         while (prepos < precount) { // still data to decode
-          if (packetCount >= packetsPerPage) { // read new Ogg Page header
+          if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
             readOggPageHeader();
           }
           n = packetSizes[packetCount++];
@@ -217,15 +232,15 @@ public class Speex2PcmAudioInputStream
             initDecoder();
           }
           if (decoder!=null && precount>=108+27) { // we can process the comment (skip them)
-            packetsPerPage = 0xff & prebuf[108+26];
-            if (precount>=108+27+packetsPerPage) {
+            packetsPerOggPage = 0xff & prebuf[108+26];
+            if (precount>=108+27+packetsPerOggPage) {
               int size = 0;
-              for (int i=0; i<packetsPerPage; i++) {
+              for (int i=0; i<packetsPerOggPage; i++) {
                 size += 0xff & prebuf[108+27+i];
               }
-              if (precount>=108+27+packetsPerPage+size) { // we have read the complete comment page
-                prepos = 108+27+packetsPerPage+size;
-                packetsPerPage = 0;
+              if (precount>=108+27+packetsPerOggPage+size) { // we have read the complete comment page
+                prepos = 108+27+packetsPerOggPage+size;
+                packetsPerOggPage = 0;
                 packetCount = 255;
                 first = false;
               }
@@ -233,12 +248,13 @@ public class Speex2PcmAudioInputStream
           }
         }
         if (!first) {
-          if (packetCount >= packetsPerPage) { // read new Ogg Page header
+          if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
             readOggPageHeader();
           }
-          if (packetCount < packetsPerPage) { // read the next packet
+          if (packetCount < packetsPerOggPage) { // read the next packet
             if ((precount-prepos) >= packetSizes[packetCount]) { // we have enough data, lets start decoding
-              while (((precount-prepos) >= packetSizes[packetCount]) && packetCount < packetsPerPage) { // lets decode all we can
+              while (((precount-prepos) >= packetSizes[packetCount]) &&
+                     (packetCount < packetsPerOggPage)) { // lets decode all we can
                 n = packetSizes[packetCount++];
                 decode(prebuf, prepos, n);
                 prepos += n;
@@ -250,7 +266,7 @@ public class Speex2PcmAudioInputStream
                 }
                 System.arraycopy(outputData, 0, buf, count, outputData.length);
                 count += outputData.length;
-                if (packetCount >= packetsPerPage) { // read new Ogg Page header
+                if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
                   readOggPageHeader();
                 }
               }
@@ -284,12 +300,14 @@ public class Speex2PcmAudioInputStream
     for (int frame=0; frame<framesPerPacket; frame++) {
       /* decode the bitstream */
       decoder.decode(bits, decodedData);
+      if (channelCount == 2)
+        decoder.decodeStereo(decodedData, frameSize);
       /* PCM saturation */
-      for (i=0;i<frameSize*channelCount;i++) {
-        if (decodedData[i]>32767.0f)
-          decodedData[i]=32767.0f;
-        else if (decodedData[i]<-32768.0f)
-          decodedData[i]=-32768.0f;
+      for (i=0; i<frameSize*channelCount; i++) {
+        if (decodedData[i] > 32767.0f)
+          decodedData[i] = 32767.0f;
+        else if (decodedData[i] < -32768.0f)
+          decodedData[i] = -32768.0f;
       }
       /* convert to short and save to buffer */
       for (i=0; i<frameSize*channelCount; i++) {
@@ -323,12 +341,12 @@ public class Speex2PcmAudioInputStream
   {
     int avail = super.available();
     // See how much we could decode from the underlying stream.
-    if (packetCount < packetsPerPage) {
+    if (packetCount < packetsPerOggPage) {
       int undecoded = precount - prepos + in.available();
       int size = packetSizes[packetCount];
       int tempCount = 0;
       while (size < undecoded &&
-             packetCount + tempCount < packetsPerPage) {
+             packetCount + tempCount < packetsPerOggPage) {
         undecoded -= size;
         avail += 2 * frameSize * framesPerPacket;
         tempCount++;
@@ -363,7 +381,7 @@ public class Speex2PcmAudioInputStream
       System.arraycopy(prebuf, prepos+27, packetSizes, 0, packets);
       packetCount = 0;
       prepos += 27+packets;
-      packetsPerPage = packets;
+      packetsPerOggPage = packets;
     }
   }
   
@@ -371,8 +389,9 @@ public class Speex2PcmAudioInputStream
    * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
    * @param data the data to read.
    * @param offset the offset from which to start reading.
+   * @return the integer value of the reassembled bytes.
    */
-  private int readInt(byte[] data, int offset)
+  private static int readInt(byte[] data, int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |

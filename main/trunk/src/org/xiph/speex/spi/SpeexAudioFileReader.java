@@ -67,10 +67,15 @@ import  org.xiph.speex.OggCrc;
 public class SpeexAudioFileReader
   extends AudioFileReader
 {
+  /** */
   public static final int    OGG_HEADERSIZE   = 27;
+  /** The size of the Speex header. */
   public static final int    SPEEX_HEADERSIZE = 80;
+  /** */
   public static final int    SEGOFFSET        = 26;
+  /** The String that identifies the beginning of an Ogg packet. */
   public static final String OGGID            = "OggS";
+  /** The String that identifies the beginning of the Speex header. */
   public static final String SPEEXID          = "Speex   ";
 
   /**
@@ -194,7 +199,7 @@ public class SpeexAudioFileReader
       // read the OGG header
       dis.readFully(header, 0, OGG_HEADERSIZE);
       baos.write(header, 0, OGG_HEADERSIZE);
-      origchksum = bytestoint(header, 22);
+      origchksum = readInt(header, 22);
       header[22] = 0;
       header[23] = 0;
       header[24] = 0;
@@ -225,11 +230,11 @@ public class SpeexAudioFileReader
       if (!SPEEXID.equals(new String(header, OGG_HEADERSIZE+1, 8))) {
         throw new UnsupportedAudioFileException("Corrupt Speex Header: missing Speex ID");
       }
-      mode        = bytestoint(header, OGG_HEADERSIZE+1+40);
-      sampleRate  = bytestoint(header, OGG_HEADERSIZE+1+36);
-      channels    = bytestoint(header, OGG_HEADERSIZE+1+48);
-      int nframes = bytestoint(header, OGG_HEADERSIZE+1+64);
-      boolean vbr = bytestoint(header, OGG_HEADERSIZE+1+60) == 1;
+      mode        = readInt(header, OGG_HEADERSIZE+1+40);
+      sampleRate  = readInt(header, OGG_HEADERSIZE+1+36);
+      channels    = readInt(header, OGG_HEADERSIZE+1+48);
+      int nframes = readInt(header, OGG_HEADERSIZE+1+64);
+      boolean vbr = readInt(header, OGG_HEADERSIZE+1+60) == 1;
       // Checksum
       if (chksum != origchksum)
         throw new IOException("Ogg CheckSums do not match");
@@ -366,16 +371,16 @@ public class SpeexAudioFileReader
   }
 
   /**
-   * Converts the bytes from the given array to an integer.
-   * @param a - the array
-   * @param i - the offset
+   * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  private static int bytestoint(byte[] a, int i)
+  private static int readInt(byte[] data, int offset)
   {
-    return ((a[i+3] & 0xFF) << 24) |
-           ((a[i+2] & 0xFF) << 16) |
-           ((a[i+1] & 0xFF) <<  8) |
-           (a[i] & 0xFF);
+    return (data[offset] & 0xff) |
+           ((data[offset+1] & 0xff) <<  8) |
+           ((data[offset+2] & 0xff) << 16) |
+           (data[offset+3] << 24); // no & 0xff at the end to keep the sign
   }
 }

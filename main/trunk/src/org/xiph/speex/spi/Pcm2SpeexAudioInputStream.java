@@ -57,95 +57,143 @@ import org.xiph.speex.SpeexEncoder;
 public class Pcm2SpeexAudioInputStream
   extends FilteredAudioInputStream
 {
+  /** The default size of the buffer (UWB stereo requires at least 2560b). */
+  public static final int DEFAULT_BUFFER_SIZE = 2560;
+
 //  public static final boolean DEFAULT_VBR              = true;
+  /** The default sample rate if none is given in the constructor. */
   public static final int DEFAULT_SAMPLERATE           = 8000;
+  /** The default number of channels if none is given in the constructor. */
+  public static final int DEFAULT_CHANNELS             = 1;
+  /** The default quality setting for the Speex encoder. */
   public static final int DEFAULT_QUALITY              = 3;
+  /** The default number of Speex frames that will be put in each Ogg packet. */
   public static final int DEFAULT_FRAMES_PER_PACKET    = 1;
+  /** The default number of Ogg packets that will be put in each Ogg page. */
   public static final int DEFAULT_PACKETS_PER_OGG_PAGE = 20; // .4s of audio
+  /** Indicates the value is unknown or undetermined. */
+  public static final int UNKNOWN = -1;
 
   // Speex variables
+  /** The Speex Encoder class. */
   private SpeexEncoder encoder;
+  /** The encoder mode (0=NB, 1=WB, 2=UWB). */
   private int     mode;
+  /** The size in bytes of PCM data that will be encoded into 1 Speex frame. */
   private int     frameSize;
+  /** The number of Speex frames that will be put in each Ogg packet. */
   private int     framesPerPacket;
+
   // Ogg variables
+  /** The comment String that will appear in the Ogg comment packet. */
   private String  comment = null;
+  /** A counter for the number of PCM samples that have been encoded. */
   private int     granulpos;
+  /** A unique serial number that identifies the Ogg stream. */
   private int     streamSerialNumber;
+  /** The number of Ogg packets that will be put in each Ogg page. */
   private int     packetsPerOggPage;
+  /** The number of Ogg packets that have been encoded in the current page. */
   private int     packetCount;
+  /** The number of Ogg pages that have been written to the stream. */
   private int     pageCount;
+  /** Pointer in the buffer to the point where Ogg data is added. */
   private int     oggCount;
+  /** Flag to indicate if this is the first time a encode method is called. */
   private boolean first;
   
   /**
    * Constructor
-   * @param in     the underlying input stream.
-   * @param format the format of this stream's audio data.
-   * @param length the length in sample frames of the data in this stream.
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
    */
   public Pcm2SpeexAudioInputStream(InputStream in,
                                    AudioFormat format, long length)
   {
-    this(DEFAULT_SAMPLERATE, in, DEFAULT_BUFFER_SIZE, format, length);
+    this(UNKNOWN, UNKNOWN, in, format, length, DEFAULT_BUFFER_SIZE);
   }
 
   /**
    * Constructor
-   * @param samplerate   the samplerate of the audio stream.
-   * @param in     the underlying input stream.
-   * @param format the format of this stream's audio data.
-   * @param length the length in sample frames of the data in this stream.
+   * @param mode    the mode of the encoder (0=NB, 1=WB, 2=UWB).
+   * @param quality the quality setting of the encoder (between 0 and 10).
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
    */
-  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in,
+  public Pcm2SpeexAudioInputStream(int mode, int quality, InputStream in,
                                    AudioFormat format, long length)
   {
-    this(samplerate, in, DEFAULT_BUFFER_SIZE, format, length);
+    this(mode, quality, in, format, length, DEFAULT_BUFFER_SIZE);
   }
 
   /**
    * Constructor
-   * @param in     the underlying input stream.
-   * @param size   the buffer size.
-   * @param format the format of this stream's audio data.
-   * @param length the length in sample frames of the data in this stream.
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
+   * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(InputStream in, int size,
-                                   AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(InputStream in, AudioFormat format,
+                                   long length, int size)
   {
-    this(DEFAULT_SAMPLERATE, in, size, format, length);
+    this(UNKNOWN, UNKNOWN, in, format, length, size);
   }
   
   /**
    * Constructor
-   * @param samplerate   the samplerate of the audio stream.
-   * @param in     the underlying input stream.
-   * @param size   the buffer size.
-   * @param format the format of this stream's audio data.
-   * @param length the length in sample frames of the data in this stream.
+   * @param mode    the mode of the encoder (0=NB, 1=WB, 2=UWB).
+   * @param quality the quality setting of the encoder (between 0 and 10).
+   * @param in      the underlying input stream.
+   * @param format  the format of this stream's audio data.
+   * @param length  the length in sample frames of the data in this stream.
+   * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(int samplerate, InputStream in, int size,
-                                   AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(int mode, int quality, InputStream in,
+                                   AudioFormat format, long length, int size)
   {
-    super(in, size, format, length);
+    super(in, format, length, size);
     // Ogg initialisation
     granulpos = 0;
-    streamSerialNumber = new Random().nextInt();
+    if (streamSerialNumber == 0)
+      streamSerialNumber = new Random().nextInt();
     packetsPerOggPage = DEFAULT_PACKETS_PER_OGG_PAGE;
     packetCount = 0;
     pageCount = 0;
     // Speex initialisation
     framesPerPacket = DEFAULT_FRAMES_PER_PACKET;
-    // mode 0: narrowband, 1: wideband, 2: ultra-wideband 
-    mode = (samplerate < 12000) ? 0 : ((samplerate < 24000) ? 1 : 2);
+    int samplerate = (int) format.getSampleRate();
+    if (samplerate < 0)
+      samplerate = DEFAULT_SAMPLERATE;
+    int channels = format.getChannels();
+    if (channels < 0)
+      channels = DEFAULT_CHANNELS;
+    if (mode < 0)
+      mode = (samplerate < 12000) ? 0 : ((samplerate < 24000) ? 1 : 2);
+    this.mode = mode;
+    if (quality < 0)
+      quality = DEFAULT_QUALITY;
     encoder = new SpeexEncoder();
-    encoder.init(mode, DEFAULT_QUALITY, samplerate, 1);
-    frameSize = 2 * encoder.getFrameSize();
+    encoder.init(mode, quality, samplerate, channels);
+    frameSize = 2 * channels * encoder.getFrameSize();
     // Misc initialsation
     comment = "Encoded with " + encoder.VERSION;
     first = true;
+  }
+
+  /**
+   * Sets the Stream Serial Number.
+   * Must not be changed mid stream.
+   * @param serialNumber
+   */
+  public void setSerialNumber(int serialNumber)
+  {
+    if (first) {
+      this.streamSerialNumber = serialNumber;
+    }
   }
 
   /**

@@ -55,7 +55,9 @@ import  javax.sound.sampled.spi.AudioFileWriter;
 public class SpeexAudioFileWriter
   extends AudioFileWriter
 {
+  /** */
   public static final AudioFileFormat.Type[] NO_FORMAT = {};
+  /** */
   public static final AudioFileFormat.Type[] SPEEX_FORMAT = {SpeexFileFormatType.SPEEX};
 
   /**

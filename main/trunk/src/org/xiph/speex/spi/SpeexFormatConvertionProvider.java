@@ -61,13 +61,18 @@ import javax.sound.sampled.spi.FormatConversionProvider;
 public class SpeexFormatConvertionProvider
   extends FormatConversionProvider
 {
+  /** */
   public static final AudioFormat.Encoding[] NO_ENCODING = {};
+  /** */
   public static final AudioFormat.Encoding[] PCM_ENCODING =
                         {AudioFormat.Encoding.PCM_SIGNED};
+  /** */
   public static final AudioFormat.Encoding[] SPEEX_ENCODING =
                         {SpeexEncoding.SPEEX};
+  /** */
   public static final AudioFormat.Encoding[] BOTH_ENCODINGS =
                         {SpeexEncoding.SPEEX, AudioFormat.Encoding.PCM_SIGNED};
+  /** */
   public static final AudioFormat[] NO_FORMAT = {};
 
   /**
