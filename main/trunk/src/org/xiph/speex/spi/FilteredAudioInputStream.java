@@ -418,7 +418,7 @@ public abstract class FilteredAudioInputStream
     }
     // Read into buffers and skip
     else {
-      fill();
+      fill(); // This is potentially blocking (i.e. the read on the underlying inputStream could be blocking)
       int avail = count - pos;
       if (avail <= 0)
         return 0;

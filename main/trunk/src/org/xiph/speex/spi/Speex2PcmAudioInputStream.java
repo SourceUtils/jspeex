@@ -301,18 +301,43 @@ public class Speex2PcmAudioInputStream
   }
 
   /**
-   * Calculates the size of the data that will be read given the size of the
-   * data it receives.
-   * @param inputSize - the quantity of data that will be available from the
-   * underlying InputStream
-   * @return the quantity od data that can be read from this InputStream given
-   * the inputSize. -1 the value can't be estimated.
+   * Returns the number of bytes that can be read from this inputstream without
+   * blocking. 
+   * <p>
+   * The <code>available</code> method of <code>FilteredAudioInputStream</code>
+   * returns the sum of the the number of bytes remaining to be read in the
+   * buffer (<code>count - pos</code>).
+   * The result of calling the <code>available</code> method of the underlying
+   * inputstream is not used, as this data will have to be filtered, and thus
+   * may not be the same size after processing (although subclasses that do the
+   * filtering should override this method and use the amount of data available
+   * in the underlying inputstream).
+   *
+   * @return the number of bytes that can be read from this inputstream without
+   * blocking.
+   * @exception IOException if an I/O error occurs.
+   * @see #in
    */
-  public int totalRead(int inputSize)
+  public synchronized int available()
+    throws IOException
   {
-    return -1;
+    int avail = super.available();
+    // See how much we could decode from the underlying stream.
+    if (packetCount < packetsPerPage) {
+      int undecoded = precount - prepos + in.available();
+      int size = packetSizes[packetCount];
+      int tempCount = 0;
+      while (size < undecoded &&
+             packetCount + tempCount < packetsPerPage) {
+        undecoded -= size;
+        avail += 2 * frameSize * framesPerPacket;
+        tempCount++;
+        size = packetSizes[packetCount + tempCount];
+      }
+    }
+    return avail;
   }
-  
+
   //---------------------------------------------------------------------------
   // Ogg Specific code
   //---------------------------------------------------------------------------

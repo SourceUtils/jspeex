@@ -330,7 +330,24 @@ public class Pcm2SpeexAudioInputStream
       }
       else { // n == 0
         // read 0 bytes from underlying stream yet it is not finished.
-        return;
+        if (precount >= prebuf.length) {
+          // no more room in buffer
+          if (prepos > 0) {
+            // free some space
+            System.arraycopy(prebuf, prepos, prebuf, 0, precount-prepos);
+            precount -= prepos;
+            prepos = 0;
+          }
+          else {
+            // we could grow the pre-buffer but that risks in turn growing the
+            // buffer which could lead sooner or later to an
+            // OutOfMemoryException. 
+            return;
+          }
+        }
+        else {
+          return;
+        }
       }
     }
   }
@@ -352,58 +369,60 @@ public class Pcm2SpeexAudioInputStream
   public synchronized int available()
     throws IOException
   {
-    super.available();
-    int avail = count - pos;
+    int avail = super.available();
+    int unencoded = precount - prepos + in.available();
     if (encoder.getEncoder().getVbr()) {
-      switch (mode) {
+      switch(mode) {
         case 0: // Narrowband
-          return avail + (in.available() / 320); // count 1 byte for each block available
+          // ogg header size = 27 + packetsPerOggPage
+          // count 1 byte (min 5 bits) for each block available
+          return avail + (27 + 2 * packetsPerOggPage) *
+                         (unencoded / (packetsPerOggPage*framesPerPacket*320));
         case 1: // Wideband
-          return avail + (in.available() / 640); // count 1 byte for each block available
+          // ogg header size = 27 + packetsPerOggPage
+          // count 2 byte (min 9 bits) for each block available
+          return avail + (27 + 2 * packetsPerOggPage) *
+                         (unencoded / (packetsPerOggPage*framesPerPacket*640));
         case 2: // Ultra wideband
-          return avail + (in.available() / 1280); // count 1 byte for each block available
+          // ogg header size = 27 + packetsPerOggPage
+          // count 2 byte (min 13 bits) for each block available
+          return avail + (27 + 3 * packetsPerOggPage) *
+                         (unencoded / (packetsPerOggPage*framesPerPacket*1280));
         default:
           return avail;
       }
     }
     else {
       int packetsize;
-      switch (mode) {
+      switch(mode) {
         case 0: // Narrowband
           packetsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          avail += (in.available() / 320) * packetsize; // 20ms = 160ech = 320bytes
+          // 1 frame = 20ms = 160ech = 320bytes
+          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
+                   (unencoded / (packetsPerOggPage * framesPerPacket * 320));
           return avail;
         case 1: // Wideband
           packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          avail += (in.available() / 640) * packetsize; // 20ms = 320ech = 640bytes
+          // 1 frame = 20ms = 320ech = 640bytes
+          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
+                   (unencoded / (packetsPerOggPage * framesPerPacket * 640));
           return avail;
         case 2: // Ultra wideband
           packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          avail += (in.available() / 1280) * packetsize; // 20ms = 640ech = 1280bytes
+          // 1 frame = 20ms = 640ech = 1280bytes
+          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
+                   (unencoded / (packetsPerOggPage * framesPerPacket * 1280));
           return avail;
         default:
           return avail;
       }
     }
-  }
-
-  /**
-   * Calculates the size of the data that will be read given the size of the
-   * data it receives.
-   * @param inputSize - the quantity of data that will be available from the
-   * underlying InputStream
-   * @return the quantity od data that can be read from this InputStream given
-   * the inputSize. -1 the value can't be estimated.
-   */
-  public int totalRead(int inputSize)
-  {
-    return -1;
   }
   
   //---------------------------------------------------------------------------
