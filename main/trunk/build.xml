@@ -5,10 +5,22 @@
 <!-- *                                                                    * -->
 <!-- * COPYRIGHT:                                                         * -->
 <!-- *      This software is the property of Wimba S.A.                   * -->
-<!-- *      It cannot be copied, used, or modified without obtaining an   * -->
-<!-- *      authorization from the authors or a mandated member of Wimba. * -->
-<!-- *      If such an authorization is provided, any modified version    * -->
-<!-- *      or copy of the software has to contain this header.           * -->
+<!-- *      This software is redistributed under the Xiph.org variant of  * -->
+<!-- *      the BSD license.                                              * -->
+<!-- *      Redistribution and use in source and binary forms, with or    * -->
+<!-- *      without modification, are permitted provided that the         * -->
+<!-- *      following conditions are met:                                 * -->
+<!-- *      - Redistributions of source code must retain the above        * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer.                                                   * -->
+<!-- *      - Redistributions in binary form must reproduce the above     * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer in the documentation and/or other materials        * -->
+<!-- *      provided with the distribution.                               * -->
+<!-- *      - Neither the name of Wimba, the Xiph.org Foundation nor the  * -->
+<!-- *      names of its contributors may be used to endorse or promote   * -->
+<!-- *      products derived from this software without specific prior    * -->
+<!-- *      written permission.                                           * -->
 <!-- *                                                                    * -->
 <!-- * WARRANTIES:                                                        * -->
 <!-- *      This software is made available by the authors in the hope    * -->
@@ -28,23 +40,29 @@
 <project name="jspeex" default="package" basedir=".">
   <description>JSpeex build file</description>
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
-           classpath="../proguard/proguard.jar" />
+           classpath="../lib/proguard.jar" />
 
   <!-- set global properties for this build -->
   <property name="root"    location="."/>
-  <property name="src"     location="."/>
-  <property name="include" location="../include"/>
-  <property name="build"   location="../build"/>
-  <property name="temp"    location="../temp"/>
-  <property name="lib"     location="../lib"/>
-  <property name="log"     location="../log"/>
-  <property name="doc"     location="../doc"/>
+  <property name="src"     location="src"/>
+  <property name="include" location="include"/>
+  <property name="build"   location="build"/>
+  <property name="dist"    location="dist"/>
+  <property name="temp"    location="temp"/>
+  <property name="lib"     location="lib"/>
+  <property name="log"     location="log"/>
+  <property name="doc"     location="doc"/>
 
   <target name="init" description="Initialise ant" depends="clean">
     <tstamp/>
     <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
     <mkdir dir="${temp}"/>
   </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Build                                                              -->
+  <!-- ******************************************************************** -->
 
   <target name="compile" depends="init"
           description="Compile JSpeex" >
@@ -73,7 +91,11 @@
 
   <target name="package" depends="compile"
           description="Package JSpeex library" >
-    <jar jarfile="${lib}/jspeex.jar" basedir="${build}">
+    <jar jarfile="${dist}/jspeex.jar">
+      <fileset dir="${build}">
+        <include name="**/*.class"/>
+        <exclude name="**/Test*"/>
+      </fileset>
       <metainf dir="${include}/"/>
       <manifest>
         <section name="build">
@@ -88,12 +110,14 @@
 
   <target name="compress" depends="package"
           description="Package obfuscated JSpeex library" >
+    <mkdir dir="${log}"/>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeex.jar
--outjar      ../lib/jspeex-obf.jar
+-injars      ${dist}/jspeex.jar
+-outjar      ${dist}/jspeex-obf.jar
 -renamesourcefileattribute SourceFile
 -keepattributes InnerClasses,SourceFile
+-printmapping ${log}/jspeex-obf.map
 -overloadaggressively
 
 -keep public class * {
@@ -104,7 +128,7 @@
 
   <target name="compress-encdec" depends="compile"
           description="Package obfuscated JSpeex encoder and decoder (without SPI)" >
-    <jar jarfile="${lib}/jspeex-encdec.jar">
+    <jar jarfile="${dist}/jspeex-encdec.jar">
       <fileset dir="${build}" excludes="**/spi/*.class"/>
       <manifest>
         <section name="build">
@@ -117,8 +141,8 @@
     </jar>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeex-encdec.jar
--outjar      ../lib/jspeex-encdec-obf.jar
+-injars      ${dist}/jspeex-encdec.jar
+-outjar      ${dist}/jspeex-encdec-obf.jar
 -overloadaggressively
 -defaultpackage ''
 
@@ -133,7 +157,7 @@
 
   <target name="compress-dec" depends="compile"
           description="Package obfuscated JSpeex decoder (without SPI)" >
-    <jar jarfile="${lib}/jspeex-dec.jar">
+    <jar jarfile="${dist}/jspeex-dec.jar">
       <fileset dir="${build}" excludes="**/spi/*.class"/>
       <manifest>
         <section name="build">
@@ -146,8 +170,8 @@
     </jar>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeex-dec.jar
--outjar      ../lib/jspeex-dec-obf.jar
+-injars      ${dist}/jspeex-dec.jar
+-outjar      ${dist}/jspeex-dec-obf.jar
 -overloadaggressively
 -defaultpackage ''
 
@@ -159,7 +183,7 @@
 
   <target name="compress-dec-nb" depends="compile-nb"
           description="Package obfuscated JSpeex decoder (without SPI) (narrowband only)" >
-    <jar jarfile="${lib}/jspeex-dec-nb.jar">
+    <jar jarfile="${dist}/jspeex-dec-nb.jar">
       <fileset dir="${build}" excludes="${build}/org/xiph/speex/spi/*.class"/>
       <manifest>
         <section name="build">
@@ -172,8 +196,8 @@
     </jar>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeex-dec-nb.jar
--outjar      ../lib/jspeex-dec-nb-obf.jar
+-injars      ${dist}/jspeex-dec-nb.jar
+-outjar      ${dist}/jspeex-dec-nb-obf.jar
 -overloadaggressively
 -defaultpackage ''
 
@@ -182,6 +206,10 @@
 }
     </proguard>
   </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Documentation                                                      -->
+  <!-- ******************************************************************** -->
 
   <target name="javadoc"
           description="Generate JSpeex javadoc documentation" >
@@ -193,14 +221,36 @@
              Overview="${src}/Overview.html"
              Windowtitle="JSpeex API Specification"
              DocTitle="JSpeex API Specification">
-      <bottom><![CDATA[<i>Copyright &#169; 1999-2003 Wimba S.A. All Rights Reserved.</i>]]></bottom>
+      <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Wimba S.A. All Rights Reserved.</i>]]></bottom>
       <group title="Core JSpeex codec package" packages="org.xiph.speex"/>
       <group title="JavaSound SPI for JSpeex package" packages="org.xiph.speex.spi"/>
     </javadoc>
   </target>
 
-  <target name="clean"
-          description="Clean up" >
+  <!-- ******************************************************************** -->
+  <!-- * Miscellaneous                                                      -->
+  <!-- ******************************************************************** -->
+
+  <target name="usage" description="Display usage information" >
+    <echo taskname="usage">
+ant [options] target
+Principal Targets of interest:
+  compile          Compile classes
+  package          Package classes into library (94k)
+  compress         Obfuscate library to reduce size (92k)
+  javadoc          Generate javadoc documentation
+Other Targets of interest:
+  compile-nb       Compile classes for narrowband use only
+  compress-dec-nb  Package and compress only the decoder for narrowband (48k)
+  compress-dec     Package and compress only the decoder (52k)
+  compress-encdec  Package and compress only the codec, not javasound SPI (69k)
+Other Targets:
+  usage            Display this message
+  clean            Clean the build directories
+    </echo>
+  </target>
+
+  <target name="clean" description="Clean up" >
     <delete dir="${build}"/>
     <delete dir="${temp}"/>
   </target>
