@@ -151,7 +151,7 @@ public class OggSpeexWriter
 
   /**
    * Closes the output file.
-   * @exception IOException
+   * @exception IOException if there was an exception closing the Audio Writer.
    */
   public void close()
     throws IOException 
@@ -162,15 +162,26 @@ public class OggSpeexWriter
   
   /**
    * Open the output file. 
+   * @param file - file to open.
+   * @exception IOException if there was an exception opening the Audio Writer.
+   */
+  public void open(File file)
+    throws IOException
+  {
+    file.delete(); 
+    out = new FileOutputStream(file);
+    size = 0;   
+  }
+
+  /**
+   * Open the output file. 
    * @param filename - file to open.
-   * @exception IOException
+   * @exception IOException if there was an exception opening the Audio Writer.
    */
   public void open(String filename)
     throws IOException 
   {
-    new File(filename).delete(); 
-    out  = new FileOutputStream(filename);
-    size = 0;   
+    open(new File(filename)); 
   }
   
   /**

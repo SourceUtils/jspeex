@@ -38,6 +38,7 @@
 package org.xiph.speex;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -186,7 +187,7 @@ public class PcmWaveWriter
   /**
    * Closes the output file.
    * MUST be called to have a correct stream. 
-   * @exception IOException
+   * @exception IOException if there was an exception closing the Audio Writer.
    */
   public void close()
     throws IOException 
@@ -206,15 +207,26 @@ public class PcmWaveWriter
   
   /**
    * Open the output file. 
+   * @param file - file to open.
+   * @exception IOException if there was an exception opening the Audio Writer.
+   */
+  public void open(File file)
+    throws IOException
+  {
+    file.delete(); 
+    raf = new RandomAccessFile(file, "rw");
+    size = 0;   
+  }
+
+  /**
+   * Open the output file. 
    * @param filename filename to open.
-   * @exception IOException
+   * @exception IOException if there was an exception opening the Audio Writer.
    */
   public void open(String filename)
     throws IOException 
   {
-    new File(filename).delete(); 
-    raf = new RandomAccessFile(filename, "rw");
-    size = 0;   
+    open(new File(filename)); 
   }
     
   /**

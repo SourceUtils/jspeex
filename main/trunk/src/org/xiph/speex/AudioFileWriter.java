@@ -37,6 +37,7 @@
 package org.xiph.speex;
 
 import java.io.DataOutput;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -50,15 +51,23 @@ public abstract class AudioFileWriter
 {
   /**
    * Closes the output file.
-   * @exception IOException
+   * @exception IOException if there was an exception closing the Audio Writer.
    */
   public abstract void close()
     throws IOException;
   
   /**
    * Open the output file. 
+   * @param file - file to open.
+   * @exception IOException if there was an exception opening the Audio Writer.
+   */
+  public abstract void open(File file)
+    throws IOException;
+
+  /**
+   * Open the output file. 
    * @param filename - file to open.
-   * @exception IOException
+   * @exception IOException if there was an exception opening the Audio Writer.
    */
   public abstract void open(String filename)
     throws IOException;
