@@ -251,7 +251,7 @@ public class SpeexEncoder
     }
     // encode the bitstream
     if (channels==2) {
-      Stereo.encode(bits, data, numSamples);
+      Stereo.encode(bits, data, getFrameSize());
     }
     encoder.encode(bits, data);
     return true;
