@@ -143,6 +143,7 @@
 -libraryjars ${java.home}/lib/rt.jar
 -injars      ${dist}/jspeex-encdec.jar
 -outjar      ${dist}/jspeex-encdec-obf.jar
+-printmapping ${log}/jspeex-encdec-obf.map
 -overloadaggressively
 -defaultpackage ''
 
@@ -172,6 +173,7 @@
 -libraryjars ${java.home}/lib/rt.jar
 -injars      ${dist}/jspeex-dec.jar
 -outjar      ${dist}/jspeex-dec-obf.jar
+-printmapping ${log}/jspeex-dec-obf.map
 -overloadaggressively
 -defaultpackage ''
 
@@ -198,6 +200,7 @@
 -libraryjars ${java.home}/lib/rt.jar
 -injars      ${dist}/jspeex-dec-nb.jar
 -outjar      ${dist}/jspeex-dec-nb-obf.jar
+-printmapping ${log}/jspeex-dec-nb-obf.map
 -overloadaggressively
 -defaultpackage ''
 

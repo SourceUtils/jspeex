@@ -1,23 +1,34 @@
 Building
 --------
-If you have apache ant installed, there is a build.xml file in the src directory. For those of you who are interested in getting the smallest footprint possible out of this code, there are several build targets which remove the wideband code to reduce the footprint, and obfuscate the code using another open source tool, Proguard, which also further reduces the footprint. With this I have manager to build a Jar file with just the narrowband decoder that is only 45k
+If you have apache ant installed, there is a build.xml file in the root
+directory. For those of you who are interested in getting the smallest
+footprint possible out of this code, there are several build targets which
+remove the wideband code to reduce the footprint, and obfuscate the code using
+another open source tool, Proguard, which also further reduces the footprint.
+With this I have manager to build a Jar file with just the narrowband decoder
+that is only 47.7k
 
 Using with JavaSound
 ----------------------
-place the lib/jspeex.jar in your classpath and JavaSound will automatically have access to the codecs, to read, write and convert the Speex (.spx) files. It has been tested and works with the jlGui Java Music Player.
+place the dist/jspeex.jar in your classpath and JavaSound will automatically
+have access to the codecs, to read, write and convert the Speex (.spx) files.
+It has been tested and works with the jlGui Java Music Player.
 
 Running on the Command line
 ---------------------------
-encoder help: java -cp lib/jspeex.jar JSpeexEnc -h
-or: java -jar lib/jspeex.jar -h
-decoder help: java -cp lib/jspeex.jar JSpeexDec -h
+encoder help: java -cp dist/jspeex.jar JSpeexEnc -h
+or: java -jar dist/jspeex.jar -h
+decoder help: java -cp dist/jspeex.jar JSpeexDec -h
 ex:
 encoding an 8kHz wav file: java -cp lib/jspeex.jar JSpeexEnc -n input.wav output.spx
 decoding any speex file: java -cp lib/jspeex.jar JSpeexDec input.spx output.wav
 
 Credits
 -------
-First of all I'd like to thank Jean-Marc Valin for giving us all this fantastic codec. This code is really just a porting of Jean-Marc's code from C to Java. I'd also like to thank James Lawrence, who wrote the original Java Speex Decoder, from which this encoder was build.
+First of all I'd like to thank Jean-Marc Valin for giving us all this fantastic
+codec. This code is really just a porting of Jean-Marc's code from C to Java.
+I'd also like to thank James Lawrence, who wrote the original Java Speex
+Decoder, from which this encoder was build.
 
 Marc Gimpel <marc.gimpel@wimba.com>
 Head of Research
