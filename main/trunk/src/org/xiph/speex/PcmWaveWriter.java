@@ -151,16 +151,16 @@ public class PcmWaveWriter
     /* format subchunk: of size 16 */
     chkid = "fmt ".getBytes(); 
     raf.write(chkid, 0, chkid.length);
-    writeInt(raf, 16);
+    writeInt(raf, 16); // Size of format chunk
     
     short   bits     = 16;
     
-    writeShort(raf, (short)0x01);
-    writeShort(raf, (short)channels);
-    writeInt(raf, sampleRate);
-    writeInt(raf, sampleRate*channels*(bits/8));
-    writeShort(raf, (short) (channels*(bits/8)));
-    writeShort(raf, bits);
+    writeShort(raf, (short)0x01);                 // Format type PCM
+    writeShort(raf, (short)channels);             // Number of channels
+    writeInt(raf, sampleRate);                    // Sampling frequency
+    writeInt(raf, sampleRate*channels*(bits/8));  // Average bytes per second
+    writeShort(raf, (short) (channels*(bits/8))); // Blocksize of data
+    writeShort(raf, bits);                        // Bits per sample
     
     /* write the start of data chunk */
     chkid = "data".getBytes(); 
