@@ -170,6 +170,15 @@
   <!-- * Miscellaneous                                                      -->
   <!-- ******************************************************************** -->
 
+  <target name="release" description="Builds the release zip" depends="clean">
+    <zip destfile="../jlGuiSpx.zip">
+      <zipfileset dir="../player" prefix="jlGuiSpx">
+        <include name="**/*"/>
+        <exclude name="log/**"/>
+      </zipfileset>
+    </zip>
+  </target>
+
   <target name="usage" description="Display usage information" >
     <echo taskname="usage">
 ant [options] target
@@ -178,6 +187,7 @@ Principal Targets of interest:
   package          Package player into library jar
   compress         Obfuscate library to reduce size
 Other Targets:
+  release          Builds a zip file containing the release
   usage            Display this message
   clean            Clean the build directories
     </echo>
