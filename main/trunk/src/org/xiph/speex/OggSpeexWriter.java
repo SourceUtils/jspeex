@@ -113,7 +113,8 @@ public class OggSpeexWriter
    * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes, boolean vbr)
+  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes,
+                        boolean vbr)
   {
     this();
     setFormat(mode, sampleRate, channels, nframes, vbr);
@@ -186,7 +187,7 @@ public class OggSpeexWriter
     byte[] data;
     /* writes the OGG header page */
     header = buildOggPageHeader(2, 0, streamSerialNumber, pageCount++, 1,
-                              new byte[] {80});
+                                new byte[] {80});
     data = buildSpeexHeader(sampleRate, mode, channels, vbr, nframes);
     chksum = OggCrc.checksum(0, header, 0, header.length);
     chksum = OggCrc.checksum(chksum, data, 0, data.length);
@@ -195,7 +196,7 @@ public class OggSpeexWriter
     out.write(data);
     /* writes the OGG comment page */
     header = buildOggPageHeader(0, 0, streamSerialNumber, pageCount++, 1,
-                              new byte[] {(byte) (comment.length() + 8)});
+                                new byte[] {(byte) (comment.length() + 8)});
     data = buildSpeexComment(comment);
     chksum = OggCrc.checksum(0, header, 0, header.length);
     chksum = OggCrc.checksum(chksum, data, 0, data.length);
