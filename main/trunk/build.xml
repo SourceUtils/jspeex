@@ -51,7 +51,7 @@
   <property name="log"     location="log"/>
   <property name="doc"     location="doc"/>
 
-  <property name="version" value="0.9"/>
+  <property name="version" value="0.9.1"/>
 
   <!-- Define additional tasks -->
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
