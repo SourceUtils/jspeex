@@ -38,11 +38,11 @@
 
 /* 
 Original copyright
-	FILE........: AKSLSPD.C
-	TYPE........: Turbo C
-	COMPANY.....: Voicetronix
-	AUTHOR......: David Rowe
-	DATE CREATED: 24/2/93
+  FILE........: AKSLSPD.C
+  TYPE........: Turbo C
+  COMPANY.....: Voicetronix
+  AUTHOR......: David Rowe
+  DATE CREATED: 24/2/93
 
 Modified by Jean-Marc Valin
 
@@ -97,10 +97,10 @@ public class Lsp
 
   /*-------------------------------------------------------------------------*\
 
-  	FUNCTION....: cheb_poly_eva()
+    FUNCTION....: cheb_poly_eva()
 
-  	AUTHOR......: David Rowe
-  	DATE CREATED: 24/2/93
+    AUTHOR......: David Rowe
+    DATE CREATED: 24/2/93
 
       This function evaluates a series of Chebyshev polynomials
 
@@ -138,10 +138,10 @@ public class Lsp
 
   /*-------------------------------------------------------------------------*\
 
-  	FUNCTION....: lpc_to_lsp()
+    FUNCTION....: lpc_to_lsp()
 
-  	AUTHOR......: David Rowe
-  	DATE CREATED: 24/2/93
+    AUTHOR......: David Rowe
+    DATE CREATED: 24/2/93
 
       This function converts LPC coefficients to LSP
       coefficients.
@@ -180,7 +180,7 @@ public class Lsp
     /* determine P'(z)'s and Q'(z)'s coefficients where
     P'(z) = P(z)/(1 + z^(-1)) and Q'(z) = Q(z)/(1-z^(-1)) */
 
-    px = 0;                      /* initialise ptrs 			*/
+    px = 0;                      /* initialise ptrs       */
     qx = 0;
     p = px;
     q = qx;
@@ -202,7 +202,7 @@ public class Lsp
     qx = 0;
 
     /* Search for a zero in P'(z) polynomial first and then alternate to Q'(z).
-    Keep alternating between the two polynomials as each zero is found 	*/
+    Keep alternating between the two polynomials as each zero is found  */
 
     xr = 0;    /* initialise xr to zero */
     xl = 1.0f; /* start at point xl = 1 */
