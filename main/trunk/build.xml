@@ -231,7 +231,7 @@
   <!-- ******************************************************************** -->
 
   <target name="release" description="Builds the release zip" depends="clean">
-    <zip destfile="../jspeex.zip">
+    <zip destfile="../jspeex-${version}.zip">
       <zipfileset dir="../main" prefix="jspeex">
         <include name="**/*"/>
         <exclude name="doc/**"/>
