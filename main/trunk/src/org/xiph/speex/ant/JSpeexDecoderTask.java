@@ -100,9 +100,13 @@ public class JSpeexDecoderTask
   private File destDir;
   /** */
   private boolean failOnError = true;
-  /** Print level for messages */
 
-  private int printlevel;
+  /** Print level for messages */
+  private int printlevel = INFO;
+  /** Tells the task to suppress all but the most important output */
+  private boolean quiet;
+  /** Tells the task to output as much information as possible */ 
+  private boolean verbose;
   /** Defines File format for input audio file (Raw, Ogg or Wave). */
   private int srcFormat;
   /** Defines File format for output audio file (Raw or Wave). */
@@ -125,7 +129,7 @@ public class JSpeexDecoderTask
   private int channels      = 1;
   /** The percentage of packets to lose in the packet loss simulation. */
   private int loss          = 0;
-
+  
   //-------------------------------------------------------------------------
   // Ant Task
   //-------------------------------------------------------------------------
@@ -146,6 +150,7 @@ public class JSpeexDecoderTask
         destFile = buildDestFile(srcFile);
       }
       try {
+        setupTask(srcFile, destFile);
         decode(srcFile, destFile);
       }
       catch (IOException e) {
@@ -154,8 +159,10 @@ public class JSpeexDecoderTask
     }
     for (int i=0; i<srcFileset.size(); i++) {
       File srcFileI = (File) srcFileset.get(i);
+      File destFileI = buildDestFile(srcFileI);
       try {
-        decode(srcFileI, buildDestFile(srcFileI));
+        setupTask(srcFileI, destFileI);
+        decode(srcFileI, destFileI);
       }
       catch (IOException e) {
         log(e.getMessage());
@@ -166,7 +173,7 @@ public class JSpeexDecoderTask
   }
 
   /**
-   * 
+   * Builds the destination file.
    * @param srcFile
    * @return
    */
@@ -186,6 +193,32 @@ public class JSpeexDecoderTask
     }
     else {
       return new File(destDir, destFilename);
+    }
+  }
+  
+  /**
+   * Setup some task variables.
+   * @param srcPath the Speex encoded source file.
+   * @param destPath the destination file.
+   */
+  private void setupTask(File srcPath, File destPath)
+  {
+    // Setup source and destination formats
+    if (srcPath.toString().toLowerCase().endsWith(".spx")) {
+      srcFormat = FILE_FORMAT_OGG;
+    }
+    else if (srcPath.toString().toLowerCase().endsWith(".wav")) {
+      srcFormat = FILE_FORMAT_WAVE;
+    }
+    else {
+      srcFormat = FILE_FORMAT_RAW;
+    }
+    if (destPath == null ||
+        destPath.toString().toLowerCase().endsWith(".wav")) {
+      destFormat = FILE_FORMAT_WAVE;
+    }
+    else {
+      destFormat = FILE_FORMAT_RAW;
     }
   }
   
@@ -238,6 +271,35 @@ public class JSpeexDecoderTask
     this.failOnError = failOnError;
   }
 
+  /**
+   * Handles the <code>quiet</code> attribute.
+   * @param quiet the attribute value converted to a boolean.
+   */
+  public void setQuiet(boolean quiet)
+  {
+    this.quiet = quiet;
+    this.printlevel = WARN;
+  }
+
+  /**
+   * Handles the <code>verbose</code> attribute.
+   * @param verbose the attribute value converted to a boolean.
+   */
+  public void setVerbose(boolean verbose)
+  {
+    this.verbose = verbose;
+    this.printlevel = DEBUG;
+  }
+
+  /**
+   * Handles the <code>enhanced</code> attribute.
+   * @param enhanced the attribute value converted to a boolean.
+   */
+  public void setEnhanced(boolean enhanced)
+  {
+    this.enhanced = enhanced;
+  }
+
   //-------------------------------------------------------------------------
   // Decoder
   //-------------------------------------------------------------------------
@@ -254,8 +316,8 @@ public class JSpeexDecoderTask
 
   /**
    * Decodes a spx file to wave.
-   * @param srcPath
-   * @param destPath
+   * @param srcPath the Speex encoded source file.
+   * @param destPath the destination file.
    * @exception IOException
    */
   public void decode(File srcPath, File destPath)
