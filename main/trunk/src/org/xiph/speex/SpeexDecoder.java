@@ -257,7 +257,7 @@ public class SpeexDecoder
       decoder.decodeStereo(decodedData, frameSize);
 
     /* PCM saturation */
-    for (i=0;i<frameSize*channels;i++) {
+    for (i=0; i<frameSize*channels; i++) {
       if (decodedData[i]>32767.0f)
         decodedData[i]=32767.0f;
       else if (decodedData[i]<-32768.0f)
