@@ -113,7 +113,9 @@ public class Lsp
    * @param m    - order of the polynomial.
    * @return the value of the polynomial at point x.
    */
-  public static final float cheb_poly_eva(float[] coef, float x, int m)
+  public static final float cheb_poly_eva(final float[] coef,
+                                          float x,
+                                          final int m)
   {
     int i;
     float sum;
@@ -157,7 +159,11 @@ public class Lsp
    * @param delta  - grid spacing interval (0.02).
    * @return the number of roots (the LSP coefs are returned in the array).
    */
-  public static int lpc2lsp (float[] a, int lpcrdr, float[] freq, int nb, float delta)
+  public static int lpc2lsp (final float[] a,
+                             final int lpcrdr,
+                             final float[] freq,
+                             final int nb,
+                             final float delta)
   {
     float psuml, psumr, psumm, temp_xr, xl, xr, xm=0;
     float temp_psumr;
@@ -273,7 +279,9 @@ public class Lsp
    * @param ak
    * @param lpcrdr
    */
-  public void lsp2lpc(float[] freq, float[] ak, int lpcrdr)
+  public void lsp2lpc(final float[] freq,
+                      final float[] ak,
+                      final int lpcrdr)
   {
     int i, j;
     float xout1, xout2, xin1, xin2;
@@ -323,7 +331,9 @@ public class Lsp
    * @param len
    * @param margin
    */
-  public static void enforce_margin(float[] lsp, int len, float margin)
+  public static void enforce_margin(final float[] lsp,
+                                    final int len,
+                                    final float margin)
   {
     int i;
     

@@ -71,6 +71,8 @@ package org.xiph.speex;
  */
 public class OggCrc
 {
+  // TODO - implement java.util.zip.Checksum
+  
   /**
    * CRC checksum lookup table
    */
@@ -107,7 +109,10 @@ public class OggCrc
    * @param length - the length of data over which to calculate the checksum.
    * @return the checksum.
    */
-  public static int checksum(int crc, byte[] data, int offset, int length)
+  public static int checksum(int crc,
+                             final byte[] data,
+                             int offset,
+                             final int length)
   {
     int end=offset+length;
     for (;offset<end;offset++){

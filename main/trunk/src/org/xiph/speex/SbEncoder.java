@@ -167,7 +167,11 @@ public class SbEncoder
    * @param bufSize
    * @param foldingGain
    */
-  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
+  public void init(final int frameSize,
+                   final int subframeSize,
+                   final int lpcSize,
+                   final int bufSize,
+                   final float foldingGain)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize, foldingGain);
 
@@ -210,7 +214,7 @@ public class SbEncoder
    * @param in - the raw mono audio frame to encode.
    * @return 1 if successful.
    */
-  public int encode(Bits bits, float[] in)
+  public int encode(final Bits bits, final float[] in)
   {
     int i;
     float[] mem, innov, syn_resp;
@@ -656,7 +660,7 @@ public class SbEncoder
    * Sets whether or not to use Variable Bit Rate encoding.
    * @param vbr
    */
-  public void    setVbr(boolean vbr)
+  public void    setVbr(final boolean vbr)
   {
 //    super.setVbr(vbr);
     vbr_enabled = vbr ? 1 : 0;
@@ -667,7 +671,7 @@ public class SbEncoder
    * Sets the Average Bit Rate.
    * @param abr
    */
-  public void    setAbr(int abr)
+  public void    setAbr(final int abr)
   {
     lowenc.setVbr(true);
 //    super.setAbr(abr);
@@ -711,7 +715,7 @@ public class SbEncoder
    * Sets the sampling rate.
    * @param rate
    */
-  public void setSamplingRate(int rate)
+  public void setSamplingRate(final int rate)
   {
 //    super.setSamplingRate(rate);
     sampling_rate = rate;
@@ -743,6 +747,9 @@ public class SbEncoder
    */
   public void setMode(int mode)
   {
+    if (mode < 0) {
+      mode = 0;
+    }
     submodeID = submodeSelect = mode;
   }
   
@@ -759,7 +766,7 @@ public class SbEncoder
    * Sets the bitrate.
    * @param bitrate
    */
-  public void setBitRate(int bitrate)
+  public void setBitRate(final int bitrate)
   {
     for (int i=10; i>=0; i--) {
       setQuality(i);
@@ -781,7 +788,7 @@ public class SbEncoder
    * Sets whether or not to use Voice Activity Detection encoding.
    * @param vad
    */
-  public void setVad(boolean vad)
+  public void setVad(final boolean vad)
   {
     vad_enabled = vad ? 1 : 0;
   }
@@ -799,7 +806,7 @@ public class SbEncoder
    * Sets whether or not to use Discontinuous Transmission encoding.
    * @param dtx
    */
-  public void setDtx(boolean dtx)
+  public void setDtx(final boolean dtx)
   {
     dtx_enabled = dtx ? 1 : 0;
   }

@@ -103,7 +103,7 @@ public class Bits
    * Advance n bits.
    * @param n - the number of bits to advance.
    */
-  public void advance(int n)
+  public void advance(final int n)
   {
     bytePtr += n >> 3;
     bitPtr += n & 7;
@@ -117,7 +117,7 @@ public class Bits
    * Sets the buffer to the given value.
    * @param newBuffer
    */
-  protected void setBuffer(byte[] newBuffer)
+  protected void setBuffer(final byte[] newBuffer)
   {
     bytes = newBuffer;
   }  
@@ -137,7 +137,9 @@ public class Bits
    * @param offset
    * @param len
    */
-  public void read_from(byte[] newbytes, int offset, int len)
+  public void read_from(final byte[] newbytes,
+                        final int offset,
+                        final int len)
   {
     for (int i=0; i<len; i++)
       bytes[i]=newbytes[offset+i];

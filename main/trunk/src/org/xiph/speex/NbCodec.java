@@ -149,7 +149,10 @@ public class NbCodec
    * @param lpcSize
    * @param bufSize
    */
-  protected void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
+  protected void init(final int frameSize,
+                      final int subframeSize,
+                      final int lpcSize,
+                      final int bufSize)
   {
     first = 1;
     // Codec parameters, should eventually have several "modes"

@@ -104,7 +104,10 @@ public class SpeexEncoder
    * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
    * @return true if initialisation successful.
    */
-  public boolean init(int mode, int quality, int sampleRate, int channels)
+  public boolean init(final int mode,
+                      final int quality,
+                      final int sampleRate,
+                      final int channels)
   {
     switch (mode) {
       case 0:
@@ -181,7 +184,7 @@ public class SpeexEncoder
    * @param offset
    * @return the number of bytes of encoded data just read.
    */
-  public int getProcessedData(byte[] data, int offset)
+  public int getProcessedData(final byte[] data, final int offset)
   {
     int size = bits.getBufferSize();
     System.arraycopy(bits.getBuffer(), 0, data, offset, size);
@@ -205,7 +208,9 @@ public class SpeexEncoder
    * @param len
    * @return true if successful.
    */
-  public boolean processData(byte[] data, int offset, int len)
+  public boolean processData(final byte[] data,
+                             final int offset,
+                             final int len)
   {
     // converty raw bytes into float samples
     mapPcm16bitLittleEndian2Float(data, offset, rawData, 0, len/2);
@@ -220,7 +225,9 @@ public class SpeexEncoder
    * @param numShorts
    * @return true if successful.
    */
-  public boolean processData(short[] data, int offset, int numShorts)
+  public boolean processData(final short[] data,
+                             final int offset,
+                             final int numShorts)
   {
     // convert shorts into float samples,
     for (int i=0; i<numShorts; i++) {
@@ -236,7 +243,7 @@ public class SpeexEncoder
    * @param numSamples
    * @return true if successful.
    */
-  public boolean processData(float[] data, int numSamples)
+  public boolean processData(final float[] data, final int numSamples)
   {
     int numSamplesRequired = channels * getFrameSize();
     if (numSamples != numSamplesRequired) {
@@ -265,7 +272,11 @@ public class SpeexEncoder
    * @param offsetOutput
    * @param length
    */
-  public static void mapPcm16bitLittleEndian2Float(byte[] pcm16bitBytes, int offsetInput, float[] samples, int offsetOutput, int length)
+  public static void mapPcm16bitLittleEndian2Float(final byte[] pcm16bitBytes,
+                                                   final int offsetInput,
+                                                   final float[] samples,
+                                                   final int offsetOutput,
+                                                   final int length)
   {
     if (pcm16bitBytes.length - offsetInput < 2 * length) {
       throw new IllegalArgumentException("Insufficient Samples to convert to floats");

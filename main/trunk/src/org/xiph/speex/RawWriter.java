@@ -67,7 +67,7 @@ public class RawWriter
    * @param file - file to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(File file)
+  public void open(final File file)
     throws IOException
   {
     file.delete(); 
@@ -79,7 +79,7 @@ public class RawWriter
    * @param filename - file to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(String filename)
+  public void open(final String filename)
     throws IOException 
   {
     open(new File(filename)); 
@@ -91,7 +91,7 @@ public class RawWriter
    * @param comment description to be included in the header.
    * @exception IOException
    */
-  public void writeHeader(String comment)
+  public void writeHeader(final String comment)
     throws IOException
   {
     // a raw audio file has no header
@@ -104,7 +104,9 @@ public class RawWriter
    * @param len the length of data to read.
    * @exception IOException
    */
-  public void writePacket(byte[] data, int offset, int len)
+  public void writePacket(final byte[] data,
+                          final int offset,
+                          final int len)
     throws IOException 
   {
     out.write(data, offset, len);

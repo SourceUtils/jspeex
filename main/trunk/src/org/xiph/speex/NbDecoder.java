@@ -117,7 +117,10 @@ public class NbDecoder
    * @param lpcSize
    * @param bufSize
    */
-  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
+  public void init(final int frameSize,
+                   final int subframeSize,
+                   final int lpcSize,
+                   final int bufSize)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize);
     filters.init ();
@@ -139,7 +142,7 @@ public class NbDecoder
    * @throws StreamCorruptedException If there is an error detected in the
    * data stream.
    */
-  public int decode(Bits bits, float[] out)
+  public int decode(final Bits bits, final float[] out)
     throws StreamCorruptedException
   {
     int i, sub, pitch, ol_pitch=0, m;
@@ -215,7 +218,7 @@ public class NbDecoder
 
     /* If null mode (no transmission), just set a couple things to zero*/
     if (submodes[submodeID] == null) {
-      filters.bw_lpc(.93f, interp_qlpc, lpc, 10);
+      Filters.bw_lpc(.93f, interp_qlpc, lpc, 10);
 
       float innov_gain=0;
       for (i=0;i<frameSize;i++)
@@ -227,7 +230,7 @@ public class NbDecoder
       first=1;
 
       /* Final signal synthesis from excitation */
-      filters.iir_mem2(excBuf, excIdx, lpc, frmBuf, frmIdx, frameSize, lpcSize, mem_sp);
+      Filters.iir_mem2(excBuf, excIdx, lpc, frmBuf, frmIdx, frameSize, lpcSize, mem_sp);
 
       out[0] = frmBuf[frmIdx] + preemph*pre_mem;
       for (i=1;i<frameSize;i++)
@@ -314,9 +317,9 @@ public class NbDecoder
         k1=submodes[submodeID].lpc_enh_k1;
         k2=submodes[submodeID].lpc_enh_k2;
         k3=(1-(1-r*k1)/(1-r*k2))/r;
-        filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
-        filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
-        filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+        Filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+        Filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+        Filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
       }
       
       /* Compute analysis filter at w=pi */
@@ -468,14 +471,14 @@ public class NbDecoder
 
       if (enhanced) {
         /* Use enhanced LPC filter */
-        filters.filter_mem2(frmBuf, spIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
-        filters.filter_mem2(frmBuf, spIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
+        Filters.filter_mem2(frmBuf, spIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
+        Filters.filter_mem2(frmBuf, spIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
       }
       else {
         /* Use regular filter */
         for (i=0;i<lpcSize;i++)
           mem_sp[lpcSize+i] = 0;
-        filters.iir_mem2(frmBuf, spIdx, interp_qlpc, frmBuf, spIdx, subframeSize, lpcSize, mem_sp);
+        Filters.iir_mem2(frmBuf, spIdx, interp_qlpc, frmBuf, spIdx, subframeSize, lpcSize, mem_sp);
       }
     }
     
@@ -507,7 +510,7 @@ public class NbDecoder
    * @param out - the generated mono audio frame.
    * @return 0 if successful.
    */
-  public int decodeLost(float[] out)
+  public int decodeLost(final float[] out)
   {
     int i;
     float pitch_gain, fact, gain_med;
@@ -554,9 +557,9 @@ public class NbDecoder
           k1 = k2 = 0.7f;
         }
         k3=(1-(1-r*k1)/(1-r*k2))/r;
-        filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
-        filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
-        filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+        Filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+        Filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+        Filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
       }
       /* Make up a plausible excitation */
       /* THIS CAN BE IMPROVED */
@@ -585,14 +588,14 @@ public class NbDecoder
       /* Signal synthesis */
       if (enhanced) {
         /* Use enhanced LPC filter */
-        filters.filter_mem2(frmBuf, spIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
-        filters.filter_mem2(frmBuf, spIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
+        Filters.filter_mem2(frmBuf, spIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
+        Filters.filter_mem2(frmBuf, spIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
       }
       else {
         /* Use regular filter */
         for (i=0;i<lpcSize;i++)
           mem_sp[lpcSize+i] = 0;
-        filters.iir_mem2(frmBuf, spIdx, interp_qlpc, frmBuf, spIdx, subframeSize, lpcSize, mem_sp);
+        Filters.iir_mem2(frmBuf, spIdx, interp_qlpc, frmBuf, spIdx, subframeSize, lpcSize, mem_sp);
       }
     }
 
@@ -616,7 +619,7 @@ public class NbDecoder
    * array will contain the interlaced stereo audio samples.
    * @param frameSize - the size of a frame of mono audio samples.
    */
-  public void decodeStereo(float[] data, int frameSize)
+  public void decodeStereo(final float[] data, final int frameSize)
   {
     stereo.decode(data, frameSize);
   }
@@ -625,7 +628,7 @@ public class NbDecoder
    * Enables or disables perceptual enhancement.
    * @param enhanced
    */
-  public void setPerceptualEnhancement(boolean enhanced)
+  public void setPerceptualEnhancement(final boolean enhanced)
   {
     this.enhanced = enhanced;
   }

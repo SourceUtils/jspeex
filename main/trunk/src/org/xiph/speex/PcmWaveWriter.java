@@ -126,7 +126,7 @@ public class PcmWaveWriter
    * @param sampleRate the number of samples per second.
    * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
    */
-  public PcmWaveWriter(int sampleRate, int channels)
+  public PcmWaveWriter(final int sampleRate, final int channels)
   {
     this();
     setPCMFormat(sampleRate, channels);
@@ -141,8 +141,12 @@ public class PcmWaveWriter
    * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  public PcmWaveWriter(int mode, int quality, int sampleRate, int channels,
-                       int nframes, boolean vbr)
+  public PcmWaveWriter(final int mode,
+                       final int quality,
+                       final int sampleRate,
+                       final int channels,
+                       final int nframes,
+                       final boolean vbr)
   {
     this();
     setSpeexFormat(mode, quality, sampleRate, channels, nframes, vbr);
@@ -154,7 +158,7 @@ public class PcmWaveWriter
    * @param sampleRate the number of samples per second.
    * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
    */
-  private void setPCMFormat(int sampleRate, int channels)
+  private void setPCMFormat(final int sampleRate, final int channels)
   {
     this.channels   = channels;
     this.sampleRate = sampleRate;
@@ -171,8 +175,12 @@ public class PcmWaveWriter
    * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  private void setSpeexFormat(int mode, int quality, int sampleRate,
-                              int channels, int nframes, boolean vbr)
+  private void setSpeexFormat(final int mode,
+                              final int quality,
+                              final int sampleRate,
+                              final int channels,
+                              final int nframes,
+                              final boolean vbr)
   {
     this.mode       = mode;
     this.quality    = quality;
@@ -209,7 +217,7 @@ public class PcmWaveWriter
    * @param file - file to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(File file)
+  public void open(final File file)
     throws IOException
   {
     file.delete(); 
@@ -222,7 +230,7 @@ public class PcmWaveWriter
    * @param filename filename to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(String filename)
+  public void open(final String filename)
     throws IOException 
   {
     open(new File(filename)); 
@@ -234,7 +242,7 @@ public class PcmWaveWriter
    * @param comment ignored by the WAV header.
    * @exception IOException
    */
-  public void writeHeader(String comment)
+  public void writeHeader(final String comment)
     throws IOException
   {
     /* writes the RIFF chunk indicating wave format */
@@ -285,7 +293,9 @@ public class PcmWaveWriter
    * @param len the length of data to read.
    * @exception IOException
    */
-  public void writePacket(byte[] data, int offset, int len)
+  public void writePacket(final byte[] data,
+                          final int offset,
+                          final int len)
     throws IOException 
   {
     raf.write(data, offset, len);
@@ -300,8 +310,9 @@ public class PcmWaveWriter
    * @param quality
    * @return effective bitrate (considering padding).
    */
-  private static final int calculateEffectiveBitrate(int mode, int channels,
-                                                     int quality)
+  private static final int calculateEffectiveBitrate(final int mode,
+                                                     final int channels,
+                                                     final int quality)
   {
     return ((((WAVE_FRAME_SIZES[mode-1][channels-1][quality] *
                WAVE_BITS_PER_FRAME[mode-1][channels-1][quality]) + 7) >> 3) *
@@ -316,8 +327,9 @@ public class PcmWaveWriter
    * @param quality
    * @return block size (considering padding).
    */
-  private static final int calculateBlockSize(int mode, int channels,
-                                              int quality)
+  private static final int calculateBlockSize(final int mode,
+                                              final int channels,
+                                              final int quality)
   {
     return (((WAVE_FRAME_SIZES[mode-1][channels-1][quality] *
               WAVE_BITS_PER_FRAME[mode-1][channels-1][quality]) + 7) >> 3);

@@ -139,7 +139,14 @@ public abstract class Ltp
    * @param gain
    * @param N
    */
-  protected static void open_loop_nbest_pitch(float[] sw, int swIdx, int start, int end, int len, int[] pitch, float[] gain, int N)
+  protected static void open_loop_nbest_pitch(final float[] sw,
+                                              final int swIdx,
+                                              final int start,
+                                              final int end,
+                                              final int len,
+                                              final int[] pitch,
+                                              final float[] gain,
+                                              final int N)
   {
     int i, j, k;
     /*float corr=0;*/

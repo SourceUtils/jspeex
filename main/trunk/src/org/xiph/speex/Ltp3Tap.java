@@ -95,7 +95,9 @@ public class Ltp3Tap
    * @param gain_bits
    * @param pitch_bits
    */
-  public Ltp3Tap(int[] gain_cdbk, int gain_bits, int pitch_bits)
+  public Ltp3Tap(final int[] gain_cdbk,
+                 final int gain_bits,
+                 final int pitch_bits)
   {
     this.gain       = new float[3];
     this.gain_cdbk  = gain_cdbk;
@@ -247,21 +249,36 @@ public class Ltp3Tap
   
   /**
    * Finds the best quantized 3-tap pitch predictor by analysis by synthesis
+   * @param target  Target vector
+   * @param ak      LPCs for this subframe
+   * @param awk1    Weighted LPCs #1 for this subframe
+   * @param awk2    Weighted LPCs #2 for this subframe
+   * @param exc     Excitation
+   * @param es
+   * @param pitch   Pitch value
+   * @param p       Number of LPC coeffs
+   * @param nsf     Number of samples in subframe
+   * @param bits
+   * @param exc2
+   * @param e2s
+   * @param r
+   * @param cdbk_index
+   * @return
    */
-  private float pitch_gain_search_3tap(float[] target, /* Target vector */
-                                       float[] ak,     /* LPCs for this subframe */
-                                       float[] awk1,   /* Weighted LPCs #1 for this subframe */
-                                       float[] awk2,   /* Weighted LPCs #2 for this subframe */
-                                       float[] exc,    /* Excitation */
-                                       int     es,
-                                       int     pitch,  /* Pitch value */
-                                       int     p,      /* Number of LPC coeffs */
-                                       int     nsf,    /* Number of samples in subframe */
-                                       Bits    bits,
-                                       float[] exc2,
-                                       int     e2s,
-                                       float[] r,
-                                       int[]   cdbk_index
+  private float pitch_gain_search_3tap(final float[] target,
+                                       final float[] ak,
+                                       final float[] awk1,
+                                       final float[] awk2,
+                                       final float[] exc,
+                                       final int     es,
+                                       final int     pitch,
+                                       final int     p,
+                                       final int     nsf,
+                                       final Bits    bits,
+                                       final float[] exc2,
+                                       final int     e2s,
+                                       final float[] r,
+                                       final int[]   cdbk_index
                                        )
   {
     int i,j;

@@ -135,8 +135,11 @@ public class SbDecoder
    * @param bufSize
    * @param foldingGain
    */
-  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize,
-                   float foldingGain)
+  public void init(final int frameSize,
+                   final int subframeSize,
+                   final int lpcSize,
+                   final int bufSize,
+                   final float foldingGain)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize, foldingGain);
     excIdx      = 0;
@@ -151,7 +154,7 @@ public class SbDecoder
    * @throws StreamCorruptedException If there is an error detected in the
    * data stream.
    */
-  public int decode(Bits bits, float[] out)
+  public int decode(final Bits bits, final float[] out)
     throws StreamCorruptedException
   {
     int i, sub, wideband, ret;
@@ -193,7 +196,7 @@ public class SbDecoder
 
       first=1;
       /* Final signal synthesis from excitation */
-      filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, frameSize,
+      Filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, frameSize,
                        lpcSize, mem_sp);
       filters.fir_mem_up(x0d, h0, y0, fullFrameSize, QMF_ORDER, g0_mem);
       filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
@@ -235,9 +238,9 @@ public class SbDecoder
         k1=submodes[submodeID].lpc_enh_k1;
         k2=submodes[submodeID].lpc_enh_k2;
         k3=k1-k2;
-        filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
-        filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
-        filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+        Filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+        Filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+        Filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
       }
 
       /* Calculate reponse ratio between low & high filter in band middle (4000 Hz) */      
@@ -299,16 +302,16 @@ public class SbDecoder
 
       if (enhanced) {
         /* Use enhanced LPC filter */
-        filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize,
+        Filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize,
                             lpcSize, mem_sp, lpcSize);
-        filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize,
+        Filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize,
                             lpcSize, mem_sp, 0);
       }
       else {
          /* Use regular filter */
          for (i=0;i<lpcSize;i++)
             mem_sp[lpcSize+i] = 0;
-         filters.iir_mem2(high, subIdx, interp_qlpc, high, subIdx,
+         Filters.iir_mem2(high, subIdx, interp_qlpc, high, subIdx,
                           subframeSize, lpcSize, mem_sp);
       }
     }
@@ -332,7 +335,7 @@ public class SbDecoder
    * @param dtx
    * @return 0 if successful.
    */
-  public int decodeLost(float[] out, boolean dtx)
+  public int decodeLost(final float[] out, final boolean dtx)
   {
     int i;
     int saved_modeid=0;
@@ -360,9 +363,9 @@ public class SbDecoder
         k1 = k2 = 0.7f;
       }
       k3=k1-k2;
-      filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
-      filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
-      filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+      Filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+      Filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+      Filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
     }
 
     /* Final signal synthesis from excitation */
@@ -375,9 +378,9 @@ public class SbDecoder
 
     if (enhanced) {
       /* Use enhanced LPC filter */
-      filters.filter_mem2(high, 0, awk2, awk1, high, 0, frameSize,
+      Filters.filter_mem2(high, 0, awk2, awk1, high, 0, frameSize,
                           lpcSize, mem_sp, lpcSize);
-      filters.filter_mem2(high, 0, awk3, interp_qlpc, high, 0, frameSize,
+      Filters.filter_mem2(high, 0, awk3, interp_qlpc, high, 0, frameSize,
                           lpcSize, mem_sp, 0);
     }
     else { /* Use regular filter */
@@ -407,7 +410,7 @@ public class SbDecoder
    * array will contain the interlaced stereo audio samples.
    * @param frameSize - the size of a frame of mono audio samples.
    */
-  public void decodeStereo(float[] data, int frameSize)
+  public void decodeStereo(final float[] data, final int frameSize)
   {
     stereo.decode(data, frameSize);
   }

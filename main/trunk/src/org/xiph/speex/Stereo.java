@@ -95,7 +95,9 @@ public class Stereo
    * @param data
    * @param frameSize
    */
-  public static void encode(Bits bits, float[] data, int frameSize)
+  public static void encode(final Bits bits,
+                            final float[] data,
+                            final int frameSize)
   {
     int i, tmp;
     float e_left=0, e_right=0, e_tot=0;
@@ -135,7 +137,7 @@ public class Stereo
    * array will contain the interlaced stereo audio samples.
    * @param frameSize - the size of a frame of mono audio samples.
    */
-  public void decode(float[] data, int frameSize)
+  public void decode(final float[] data, final int frameSize)
   {
     int i;
     float e_tot=0, e_left, e_right, e_sum;

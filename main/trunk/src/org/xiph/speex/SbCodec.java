@@ -112,7 +112,11 @@ public class SbCodec
    * @param bufSize
    * @param foldingGain
    */
-  protected void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
+  protected void init(final int frameSize,
+                      final int subframeSize,
+                      final int lpcSize,
+                      final int bufSize,
+                      final float foldingGain)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize);
     this.fullFrameSize = 2*frameSize;

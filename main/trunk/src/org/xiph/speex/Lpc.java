@@ -110,7 +110,10 @@ public class Lpc
    * @param p
    * @return minimum mean square error.
    */
-  public static float wld(float[] lpc, float[] ac, float[] ref, int p)
+  public static float wld(final float[] lpc,
+                          final float[] ac,
+                          final float[] ref,
+                          final int p)
   {
     int i, j;
     float r, error = ac[0];
@@ -149,7 +152,10 @@ public class Lpc
    * @param lag
    * @param n
    */
-  public static void autocorr(float[] x, float[] ac, int lag, int n)
+  public static void autocorr(final float[] x,
+                              final float[] ac,
+                              int lag,
+                              final int n)
   {
     float d;
     int i;

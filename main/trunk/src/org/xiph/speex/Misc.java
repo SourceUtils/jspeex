@@ -50,7 +50,7 @@ public class Misc
    * @param subFrameSize
    * @return an Asymmetric "pseudo-Hamming" window.
    */
-  public static float[] window(int windowSize, int subFrameSize)
+  public static float[] window(final int windowSize, final int subFrameSize)
   {
     int i;
     int part1 = subFrameSize * 7 / 2;
@@ -69,11 +69,11 @@ public class Misc
    * @param lagFactor
    * @return the window for autocorrelation.
    */
-  public static float[] lagWindow(int lpcSize, float lagFactor)
+  public static float[] lagWindow(final int lpcSize, final float lagFactor)
   {
     float[] lagWindow = new float[lpcSize+1];
     for (int i=0; i<lpcSize+1; i++)
-      lagWindow[i]=(float )Math.exp(-0.5 * (2*Math.PI*lagFactor*i) *
+      lagWindow[i]=(float) Math.exp(-0.5 * (2*Math.PI*lagFactor*i) *
                                            (2*Math.PI*lagFactor*i));
     return lagWindow;
   }

@@ -108,7 +108,10 @@ public class Filters
    * @param lpc_out
    * @param order
    */
-  public static final void bw_lpc(float gamma, float[] lpc_in, float[] lpc_out, int order)
+  public static final void bw_lpc(final float gamma,
+                                  final float[] lpc_in,
+                                  final float[] lpc_out,
+                                  final int order)
   {
     float tmp=1;
     for (int i=0; i<order+1; i++) {
@@ -128,7 +131,14 @@ public class Filters
    * @param mem
    * @param ms
    */
-  public static final void filter_mem2(float[] x, int xs, float[] num, float[] den, int N, int ord, float[] mem, int ms)
+  public static final void filter_mem2(final float[] x,
+                                       final int xs,
+                                       final float[] num,
+                                       final float[] den,
+                                       final int N,
+                                       final int ord,
+                                       final float[] mem,
+                                       final int ms)
   {
     int i, j;
     float xi, yi;
@@ -156,7 +166,16 @@ public class Filters
    * @param mem
    * @param ms
    */
-  public static final void filter_mem2(float[] x, int xs, float[] num, float[] den, float[] y, int ys, int N, int ord, float[] mem, int ms)
+  public static final void filter_mem2(final float[] x,
+                                       final int xs,
+                                       final float[] num,
+                                       final float[] den,
+                                       final float[] y,
+                                       final int ys,
+                                       final int N,
+                                       final int ord,
+                                       final float[] mem,
+                                       final int ms)
   {
     int i, j;
     float xi, yi;
@@ -182,7 +201,14 @@ public class Filters
    * @param ord
    * @param mem
    */
-  public static final void iir_mem2(float[] x, int xs, float[] den, float[] y, int ys, int N, int ord, float[] mem)
+  public static final void iir_mem2(final float[] x,
+                                    final int xs,
+                                    final float[] den,
+                                    final float[] y,
+                                    final int ys,
+                                    final int N,
+                                    final int ord,
+                                    final float[] mem)
   {
     int i, j;
     for (i=0; i<N; i++) {
@@ -205,7 +231,14 @@ public class Filters
    * @param ord
    * @param mem
    */
-  public static final void fir_mem2(float[] x, int xs, float[] num, float[] y, int ys, int N, int ord, float[] mem)
+  public static final void fir_mem2(final float[] x,
+                                    final int xs,
+                                    final float[] num,
+                                    final float[] y,
+                                    final int ys,
+                                    final int N,
+                                    final int ord,
+                                    final float[] mem)
   {
     int i,j;
     float xi;
@@ -230,7 +263,14 @@ public class Filters
    * @param N
    * @param ord
    */
-  public static final void syn_percep_zero(float[] xx, int xxs, float[] ak, float[] awk1, float[] awk2, float[] y, int N, int ord)
+  public static final void syn_percep_zero(final float[] xx,
+                                           final int xxs,
+                                           final float[] ak,
+                                           final float[] awk1,
+                                           final float[] awk2,
+                                           final float[] y,
+                                           final int N,
+                                           final int ord)
   {
     int i;
     float[] mem = new float[ord];
@@ -253,7 +293,14 @@ public class Filters
    * @param N
    * @param ord
    */
-  public static final void residue_percep_zero(float[] xx, int xxs, float[] ak, float[] awk1, float[] awk2, float[] y, int N, int ord)
+  public static final void residue_percep_zero(final float[] xx,
+                                               final int xxs,
+                                               final float[] ak,
+                                               final float[] awk1,
+                                               final float[] awk2,
+                                               final float[] y,
+                                               final int N,
+                                               final int ord)
   {
     int i;
     float[] mem = new float[ord];
@@ -274,7 +321,12 @@ public class Filters
    * @param M
    * @param mem
    */
-  public void fir_mem_up(float[] x, float[] a, float[] y, int N, int M, float[] mem)
+  public void fir_mem_up(final float[] x,
+                         final float[] a,
+                         final float[] y,
+                         final int N,
+                         final int M,
+                         final float[] mem)
   {
     int i, j;
 
@@ -324,8 +376,14 @@ public class Filters
    * @param pitch_gain - pitch gain (3-tap)
    * @param comb_gain - gain of comb filter
    */
-  public void comb_filter(float[] exc, int esi, float[] new_exc, int nsi,
-                          int nsf, int pitch, float[] pitch_gain, float comb_gain)
+  public void comb_filter(final float[] exc,
+                          final int esi,
+                          final float[] new_exc,
+                          final int nsi,
+                          final int nsf,
+                          final int pitch,
+                          final float[] pitch_gain,
+                          float comb_gain)
   {
     int i, j;
     float exc_energy=0.0f, new_exc_energy=0.0f;
@@ -394,7 +452,13 @@ public class Filters
    * @param M
    * @param mem
    */
-  public static final void qmf_decomp(float[] xx, float[] aa, float[] y1, float[] y2, int N, int M, float[] mem)
+  public static final void qmf_decomp(final float[] xx,
+                                      final float[] aa,
+                                      final float[] y1,
+                                      final float[] y2,
+                                      final int N,
+                                      final int M,
+                                      final float[] mem)
   {
     int i,j,k,M2;
     float[] a;

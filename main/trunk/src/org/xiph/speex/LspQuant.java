@@ -96,7 +96,10 @@ public abstract class LspQuant
    * @param order
    * @param bits - Speex bits buffer.
    */
-  public abstract void quant(float[] lsp, float[] qlsp, int order, Bits bits); 
+  public abstract void quant(final float[] lsp,
+                             final float[] qlsp,
+                             final int order,
+                             final Bits bits); 
   
   /**
    * Line Spectral Pair Unquantification.
@@ -116,7 +119,12 @@ public abstract class LspQuant
    * @param ti
    * @param li
    */
-  protected void unpackPlus(float[] lsp, int[] tab, Bits bits, float k, int ti, int li)
+  protected void unpackPlus(final float[] lsp,
+                            final int[] tab,
+                            final Bits bits,
+                            final float k,
+                            final int ti,
+                            final int li)
   {
     int id=bits.unpack(6);
     for (int i=0;i<ti;i++)
@@ -134,7 +142,11 @@ public abstract class LspQuant
    * @return the index of the best match in the codebook
    * (NB x is also modified).
    */
-  protected static int lsp_quant(float[] x, int xs, int[] cdbk, int nbVec, int nbDim)
+  protected static int lsp_quant(final float[] x,
+                                 final int xs,
+                                 final int[] cdbk,
+                                 final int nbVec,
+                                 final int nbDim)
   {
     int i, j;
     float dist, tmp;
@@ -172,7 +184,13 @@ public abstract class LspQuant
    * @return the index of the best match in the codebook
    * (NB x is also modified).
    */
-  protected static int lsp_weight_quant(float[] x, int xs, float[] weight, int ws, int[] cdbk, int nbVec, int nbDim)
+  protected static int lsp_weight_quant(final float[] x,
+                                        final int xs,
+                                        final float[] weight,
+                                        final int ws,
+                                        final int[] cdbk,
+                                        final int nbVec,
+                                        final int nbDim)
   {
     int i,j;
     float dist, tmp;

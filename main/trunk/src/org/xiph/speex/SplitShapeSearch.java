@@ -104,12 +104,12 @@ public class SplitShapeSearch
    * @param shape_bits
    * @param have_sign
    */
-  public SplitShapeSearch(int   subframesize,
-                          int   subvect_size,
-                          int   nb_subvect,
-                          int[] shape_cb,
-                          int   shape_bits,
-                          int   have_sign)
+  public SplitShapeSearch(final int   subframesize,
+                          final int   subvect_size,
+                          final int   nb_subvect,
+                          final int[] shape_cb,
+                          final int   shape_bits,
+                          final int   have_sign)
   {
     this.subframesize = subframesize;
     this.subvect_size = subvect_size;

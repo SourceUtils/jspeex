@@ -120,7 +120,10 @@ public class SpeexDecoder
    * @param enhanced   whether to enable perceptual enhancement or not.
    * @return true if initialisation successful.
    */
-  public boolean init(int mode, int sampleRate, int channels, boolean enhanced)
+  public boolean init(final int mode,
+                      final int sampleRate,
+                      final int channels,
+                      final boolean enhanced)
   {
     switch (mode) {
     case 0:
@@ -180,7 +183,7 @@ public class SpeexDecoder
    * @param offset
    * @return the number of bytes processed and just read.
    */
-  public int getProcessedData(byte[] data, int offset) 
+  public int getProcessedData(final byte[] data, final int offset) 
   {    
     if (outputSize<=0) {
       return outputSize;
@@ -202,7 +205,7 @@ public class SpeexDecoder
    * @param offset
    * @return the number of samples processed and just read.
    */
-  public int getProcessedData(short[] data, int offset)
+  public int getProcessedData(final short[] data, final int offset)
   {
     if (outputSize<=0) {
       return outputSize;
@@ -230,7 +233,9 @@ public class SpeexDecoder
    * @param len - the length of data to read (Speex frame size).
    * @throws StreamCorruptedException If the input stream is invalid.
    */
-  public void processData(byte[] data, int offset, int len)
+  public void processData(final byte[] data,
+                          final int offset,
+                          final int len)
     throws StreamCorruptedException
   {
     if (data == null) {
@@ -248,7 +253,7 @@ public class SpeexDecoder
    * @param lost - true if the Speex packet has been lost.
    * @throws StreamCorruptedException If the input stream is invalid.
    */
-  public void processData(boolean lost)
+  public void processData(final boolean lost)
     throws StreamCorruptedException
   {
     int i;

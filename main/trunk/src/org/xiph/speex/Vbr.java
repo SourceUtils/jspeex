@@ -178,7 +178,10 @@ public class Vbr
    * @param pitch_coef - pitch coefficient.
    * @return quality
    */
-  public float analysis(float[] sig, int len, int pitch, float pitch_coef)
+  public float analysis(final float[] sig,
+                        final int len,
+                        final int pitch,
+                        final float pitch_coef)
   {
     int i;
     float ener=0, ener1=0, ener2=0;

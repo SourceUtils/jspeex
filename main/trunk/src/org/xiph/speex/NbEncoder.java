@@ -127,7 +127,10 @@ public class NbEncoder
    * @param lpcSize
    * @param bufSize
    */
-  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
+  public void init(final int frameSize,
+                   final int subframeSize,
+                   final int lpcSize,
+                   final int bufSize)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize);
 
@@ -190,7 +193,7 @@ public class NbEncoder
    * @param in - the raw mono audio frame to encode.
    * @return return 1 if successful.
    */
-  public int encode(Bits bits, float[] in)
+  public int encode(final Bits bits, final float[] in)
   {
     int i;
     float[] res, target, mem;
@@ -852,6 +855,9 @@ public class NbEncoder
    */
   public void setMode(int mode)
   {
+    if (mode < 0) {
+      mode = 0;
+    }
     submodeID = submodeSelect = mode;
   }
   
@@ -868,7 +874,7 @@ public class NbEncoder
    * Sets the bitrate.
    * @param bitrate
    */
-  public void setBitRate(int bitrate)
+  public void setBitRate(final int bitrate)
   {
     for (int i=10; i>=0; i--) {
       setQuality(i);
@@ -881,7 +887,7 @@ public class NbEncoder
    * Sets whether or not to use Variable Bit Rate encoding.
    * @param vbr
    */
-  public void setVbr(boolean vbr)
+  public void setVbr(final boolean vbr)
   {
     vbr_enabled = vbr ? 1 : 0;
   }
@@ -899,7 +905,7 @@ public class NbEncoder
    * Sets whether or not to use Voice Activity Detection encoding.
    * @param vad
    */
-  public void setVad(boolean vad)
+  public void setVad(final boolean vad)
   {
     vad_enabled = vad ? 1 : 0;
   }
@@ -917,7 +923,7 @@ public class NbEncoder
    * Sets whether or not to use Discontinuous Transmission encoding.
    * @param dtx
    */
-  public void setDtx(boolean dtx)
+  public void setDtx(final boolean dtx)
   {
     dtx_enabled = dtx ? 1 : 0;
   }
@@ -935,7 +941,7 @@ public class NbEncoder
    * Sets the Average Bit Rate.
    * @param abr
    */
-  public void setAbr(int abr)
+  public void setAbr(final int abr)
   {
     abr_enabled = (abr!=0) ? 1 : 0;
     vbr_enabled = 1;
@@ -967,10 +973,10 @@ public class NbEncoder
    */
   public void setVbrQuality(float quality)
   {
-    if (quality < 0)
-      quality = 0;
-    if (quality > 10)
-      quality = 10;
+    if (quality < 0f)
+      quality = 0f;
+    if (quality > 10f)
+      quality = 10f;
     vbr_quality = quality;
   }
   
@@ -1009,7 +1015,7 @@ public class NbEncoder
    * Sets the sampling rate.
    * @param rate
    */
-  public void setSamplingRate(int rate)
+  public void setSamplingRate(final int rate)
   {
     sampling_rate = rate;
   }

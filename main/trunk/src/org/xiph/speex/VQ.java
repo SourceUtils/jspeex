@@ -84,7 +84,9 @@ public class VQ
    * @param entries - the size of the codebook.
    * @return the index of the entry in a codebook that best matches the input.
    */
-  public static final int index(float in, float[] codebook, int entries)
+  public static final int index(final float in,
+                                final float[] codebook,
+                                final int entries)
   {
     int i;
     float min_dist=0;
@@ -110,7 +112,10 @@ public class VQ
    * @param entries - the size of the codebook.
    * @return the index of the entry in a codebook that best matches the input.
    */
-  public static final int index(float[] in, float[] codebook, int len, int entries)
+  public static final int index(final float[] in,
+                                final float[] codebook,
+                                final int len,
+                                final int entries)
   {
     int i,j,k=0;
     float min_dist=0;
@@ -145,7 +150,15 @@ public class VQ
    * @param nbest
    * @param best_dist
    */
-  public static final void nbest(float[] in, int offset, float[] codebook, int len, int entries, float[] E, int N, int[] nbest, float[] best_dist)
+  public static final void nbest(final float[] in,
+                                 final int offset,
+                                 final float[] codebook,
+                                 final int len,
+                                 final int entries,
+                                 final float[] E,
+                                 final int N,
+                                 final int[] nbest,
+                                 final float[] best_dist)
   {
     int i, j, k, l=0, used=0;
     for (i=0;i<entries;i++)
@@ -177,7 +190,15 @@ public class VQ
    * @param nbest
    * @param best_dist
    */
-  public static final void nbest_sign(float[] in, int offset, float[] codebook, int len, int entries, float[] E, int N, int[] nbest, float[] best_dist)
+  public static final void nbest_sign(final float[] in,
+                                      final int offset,
+                                      final float[] codebook,
+                                      final int len,
+                                      final int entries,
+                                      final float[] E,
+                                      final int N,
+                                      final int[] nbest,
+                                      final float[] best_dist)
   {
     int i, j, k, l=0, sign, used=0;
     for (i=0;i<entries;i++) {

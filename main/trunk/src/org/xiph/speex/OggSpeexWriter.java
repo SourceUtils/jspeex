@@ -113,8 +113,11 @@ public class OggSpeexWriter
    * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes,
-                        boolean vbr)
+  public OggSpeexWriter(final int mode,
+                        final int sampleRate,
+                        final int channels,
+                        final int nframes,
+                        final boolean vbr)
   {
     this();
     setFormat(mode, sampleRate, channels, nframes, vbr);
@@ -129,7 +132,10 @@ public class OggSpeexWriter
    * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  private void setFormat(int mode, int sampleRate, int channels, int nframes,
+  private void setFormat(final int mode,
+                         final int sampleRate,
+                         final int channels,
+                         final int nframes,
                          boolean vbr)
   {
     this.mode       = mode;
@@ -144,7 +150,7 @@ public class OggSpeexWriter
    * Must not be changed mid stream.
    * @param serialNumber
    */
-  public void setSerialNumber(int serialNumber)
+  public void setSerialNumber(final int serialNumber)
   {
     this.streamSerialNumber = serialNumber;
   }
@@ -165,7 +171,7 @@ public class OggSpeexWriter
    * @param file - file to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(File file)
+  public void open(final File file)
     throws IOException
   {
     file.delete(); 
@@ -178,7 +184,7 @@ public class OggSpeexWriter
    * @param filename - file to open.
    * @exception IOException if there was an exception opening the Audio Writer.
    */
-  public void open(String filename)
+  public void open(final String filename)
     throws IOException 
   {
     open(new File(filename)); 
@@ -190,7 +196,7 @@ public class OggSpeexWriter
    * @param comment description to be included in the header.
    * @exception IOException
    */
-  public void writeHeader(String comment)
+  public void writeHeader(final String comment)
     throws IOException
   {
     int chksum;
@@ -223,7 +229,9 @@ public class OggSpeexWriter
    * @param len - the length of data to read.
    * @exception IOException
    */
-  public void writePacket(byte[] data, int offset, int len)
+  public void writePacket(final byte[] data,
+                          final int offset,
+                          final int len)
     throws IOException 
   {
     if (len <= 0) { // nothing to write
@@ -244,7 +252,7 @@ public class OggSpeexWriter
    * @param eos - end of stream
    * @exception IOException
    */
-  private void flush(boolean eos)
+  private void flush(final boolean eos)
     throws IOException
   {
     int chksum;

@@ -103,17 +103,17 @@ public class SubMode
   /**
    * Constructor
    */
-  public SubMode(int      lbr_pitch,
-                 int      forced_pitch_gain, 
-                 int      have_subframe_gain, 
-                 int      double_codebook,   
-                 LspQuant lspQuant,    
-                 Ltp      ltp,         
-                 CbSearch innovation,
-                 float    lpc_enh_k1,
-                 float    lpc_enh_k2,
-                 float    comb_gain,
-                 int      bits_per_frame)
+  public SubMode(final int      lbr_pitch,
+                 final int      forced_pitch_gain, 
+                 final int      have_subframe_gain, 
+                 final int      double_codebook,   
+                 final LspQuant lspQuant,    
+                 final Ltp      ltp,         
+                 final CbSearch innovation,
+                 final float    lpc_enh_k1,
+                 final float    lpc_enh_k2,
+                 final float    comb_gain,
+                 final int      bits_per_frame)
   {
     this.lbr_pitch          = lbr_pitch;
     this.forced_pitch_gain  = forced_pitch_gain;
