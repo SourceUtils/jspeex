@@ -83,6 +83,8 @@ public class Pcm2SpeexAudioInputStream
   private int     frameSize;
   /** The number of Speex frames that will be put in each Ogg packet. */
   private int     framesPerPacket;
+  /** The number of audio channels (1=mono, 2=stereo). */
+  private int     channels;
 
   // Ogg variables
   /** The comment String that will appear in the Ogg comment packet. */
@@ -168,7 +170,7 @@ public class Pcm2SpeexAudioInputStream
     int samplerate = (int) format.getSampleRate();
     if (samplerate < 0)
       samplerate = DEFAULT_SAMPLERATE;
-    int channels = format.getChannels();
+    channels = format.getChannels();
     if (channels < 0)
       channels = DEFAULT_CHANNELS;
     if (mode < 0)
@@ -461,9 +463,12 @@ public class Pcm2SpeexAudioInputStream
     else {
       // Calculate size of a packet of Speex data.
       int spxpacketsize = encoder.getEncoder().getEncodedFrameSize();
+      if (channels > 1) {
+        spxpacketsize += 17; // 1+4(14=inband)+4(9=stereo)+8(stereo data)
+      }
       spxpacketsize *= framesPerPacket;
       spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
-      // calculate size of an Ogg packet containing X Speex packets.
+      // Calculate size of an Ogg packet containing X Speex packets.
       // Ogg Packet = Ogg header + size of each packet + Ogg packets 
       int oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
       int pcmframesize; // size of PCM data necessary to encode 1 Speex packet.
