@@ -100,7 +100,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.4 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9.5 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
@@ -170,7 +170,7 @@ public class JSpeexDec
    * @param args Command line parameters.
    * @exception IOException
    */
-  public static void main(String[] args)
+  public static void main(final String[] args)
     throws IOException
   {
     JSpeexDec decoder = new JSpeexDec();
@@ -184,7 +184,7 @@ public class JSpeexDec
    * @param args Command line parameters.
    * @return true if the parsed arguments are sufficient to run the decoder.
    */
-  public boolean parseArgs(String[] args)
+  public boolean parseArgs(final String[] args)
   {
     // make sure we have command args
     if (args.length < 2) {
@@ -367,7 +367,7 @@ public class JSpeexDec
    * @param destPath
    * @exception IOException
    */
-  public void decode(File srcPath, File destPath)
+  public void decode(final File srcPath, final File destPath)
     throws IOException
   {
     byte[] header    = new byte[2048];
@@ -671,7 +671,9 @@ public class JSpeexDec
    * @param bytes
    * @return
    */
-  private boolean readSpeexHeader(byte[] packet, int offset, int bytes)
+  private boolean readSpeexHeader(final byte[] packet,
+                                  final int offset,
+                                  final int bytes)
   {
     if (bytes!=80) {
       System.out.println("Oooops");
@@ -693,7 +695,7 @@ public class JSpeexDec
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readInt(byte[] data, int offset)
+  protected static int readInt(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |
@@ -707,7 +709,7 @@ public class JSpeexDec
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  protected static int readShort(byte[] data, int offset)
+  protected static int readShort(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            (data[offset+1] << 8); // no 0xff on the last one to keep the sign
