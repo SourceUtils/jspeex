@@ -86,8 +86,6 @@ public class SbDecoder
   /** */
   protected Stereo  stereo;
   /** */
-  protected Inband  inband;
-  /** */
   protected boolean enhanced;
   
   private float[] innov2;
@@ -98,7 +96,6 @@ public class SbDecoder
   public SbDecoder()
   {
     stereo   = new Stereo();
-    inband   = new Inband(stereo);
     enhanced = true;
   }
 
