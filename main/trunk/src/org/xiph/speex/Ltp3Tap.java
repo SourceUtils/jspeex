@@ -70,15 +70,19 @@ package org.xiph.speex;
 
 /**
  * Long Term Prediction Quantisation and Unquantisation (3Tap)
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Ltp3Tap
   extends Ltp
 {
-  private float   gain[];
-  private int     gain_cdbk[];
-  private int     gain_bits;
-  private int     pitch_bits;
-  private float   e[][];
+  private float[]   gain;
+  private int[]     gain_cdbk;
+  private int       gain_bits;
+  private int       pitch_bits;
+  private float[][] e;
   
   /**
    * Constructor
@@ -93,7 +97,7 @@ public class Ltp3Tap
   }
     
   /**
-   * Quantification
+   * Long Term Prediction Quantification (3Tap).
    */
   public final int quant(float[] target, float sw[], int sws, float[] ak, float[] awk1, float awk2[],
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 
@@ -154,10 +158,22 @@ public class Ltp3Tap
   }
 
   /**
-   * Unquantification
+   * Long Term Prediction Unquantification (3Tap).
+   * @param exc - Excitation
+   * @param es - Excitation offset
+   * @param start - Smallest pitch value allowed
+   * @param pitch_coef - Voicing (pitch) coefficient
+   * @param nsf - Number of samples in subframe
+   * @param gain_val
+   * @param bits - Speex bits buffer.
+   * @param count_lost
+   * @param subframe_offset
+   * @param last_pitch_gain
+   * @return pitch
    */
-  public final int unquant(float exc[], int es, int start, float pitch_coef,  
-                           int nsf, float gain_val[], Bits bits)
+  public final int unquant(float[] exc, int es, int start, float pitch_coef,  
+                           int nsf, float[] gain_val, Bits bits,
+                           int count_lost, int subframe_offset, float last_pitch_gain)
   {
     int i, pitch, gain_index;
     
@@ -169,6 +185,27 @@ public class Ltp3Tap
     gain[1] = 0.015625f*(float)gain_cdbk[gain_index*3+1]+.5f;
     gain[2] = 0.015625f*(float)gain_cdbk[gain_index*3+2]+.5f;
     
+    if (count_lost != 0 && pitch > subframe_offset)
+    {
+      float gain_sum = Math.abs(gain[1]);
+      float tmp = count_lost < 4 ? last_pitch_gain : 0.4f * last_pitch_gain;
+      if (tmp>.95f)
+        tmp=.95f;
+      if (gain[0]>0)
+        gain_sum += gain[0];
+      else
+        gain_sum -= .5f*gain[0];
+      if (gain[2]>0)
+        gain_sum += gain[2];
+      else
+        gain_sum -= .5f*gain[0];
+      if (gain_sum > tmp) {
+        float fact = tmp/gain_sum;
+        for (i=0;i<3;i++)
+          gain[i]*=fact;
+      }
+    }
+
     gain_val[0]=gain[0];
     gain_val[1]=gain[1];
     gain_val[2]=gain[2];
@@ -180,40 +217,38 @@ public class Ltp3Tap
       tmp1=nsf;
       if (tmp1>pp)
         tmp1=pp;
-      
-      for (j=0;j<tmp1;j++)
-        e[i][j]=exc[es+j-pp];
-
       tmp2=nsf;
       if (tmp2>pp+pitch)
         tmp2=pp+pitch;
-      
+
+      for (j=0;j<tmp1;j++)
+        e[i][j]=exc[es+j-pp];
       for (j=tmp1;j<tmp2;j++)
         e[i][j]=exc[es+j-pp-pitch];
-      
       for (j=tmp2;j<nsf;j++)
         e[i][j]=0;
     }
 
-    for (i=0;i<nsf;i++)
+    for (i=0;i<nsf;i++) {
       exc[es+i]=gain[0]*e[2][i]+gain[1]*e[1][i]+gain[2]*e[0][i];
+    }
 
-    return (pitch);
+    return pitch;
   }
   
   /**
    * Finds the best quantized 3-tap pitch predictor by analysis by synthesis
    */
-  private float pitch_gain_search_3tap(float target[], /* Target vector */
-                                       float ak[],     /* LPCs for this subframe */
-                                       float awk1[],   /* Weighted LPCs #1 for this subframe */
-                                       float awk2[],   /* Weighted LPCs #2 for this subframe */
-                                       float exc[],    /* Excitation */
-                                       int   es,
-                                       int   pitch,    /* Pitch value */
-                                       int   p,        /* Number of LPC coeffs */
-                                       int   nsf,      /* Number of samples in subframe */
-                                       Bits  bits,
+  private float pitch_gain_search_3tap(float[] target, /* Target vector */
+                                       float[] ak,     /* LPCs for this subframe */
+                                       float[] awk1,   /* Weighted LPCs #1 for this subframe */
+                                       float[] awk2,   /* Weighted LPCs #2 for this subframe */
+                                       float[] exc,    /* Excitation */
+                                       int     es,
+                                       int     pitch,  /* Pitch value */
+                                       int     p,      /* Number of LPC coeffs */
+                                       int     nsf,    /* Number of samples in subframe */
+                                       Bits    bits,
                                        float[] exc2,
                                        int     e2s,
                                        float[] r,

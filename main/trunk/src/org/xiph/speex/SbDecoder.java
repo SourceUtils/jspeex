@@ -24,7 +24,7 @@
  *      Wimba S.A. is not liable for any consequence related to the           *
  *      use of the provided software.                                         *
  *                                                                            *
- * Class: WbDecoder.java                                                      *
+ * Class: SbDecoder.java                                                      *
  *                                                                            *
  * Author: James LAWRENCE                                                     *
  * Modified by: Marc GIMPEL                                                   *
@@ -69,96 +69,78 @@
 package org.xiph.speex;
 
 /**
- * Wideband Speex Decoder
+ * Sideband Speex Decoder
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
-public class WbDecoder
-  extends Decoder
-  implements QmfTables
+public class SbDecoder
+  extends SbCodec
+  implements Decoder
 {
   protected Decoder lowdec;
   
-  private int   full_frame_size;
-  private int   frame_size;
-  private int   subframeSize;
-  private int   nbSubframes;
-  private int   lpcSize;
-  private int   first;
-  private float folding_gain;
-
-  private float x0d[];
-  private float high[];
-  private float y0[], y1[];
-  private float g0_mem[], g1_mem[];
-
-  private float exc[];
-  private float qlsp[];
-  private float old_qlsp[];
-  private float interp_qlsp[];
-  private float interp_qlpc[];
-
-  private float mem_sp[];
-  private float pi_gain[];
-  private float awk1[], awk2[], awk3[];
   private float innov2[];
 
-  private SubMode  submodes[];
-  private int      submodeID;
+  protected Stereo  stereo;
+  protected Inband  inband;
+  protected boolean enhanced;
   
   /**
-   * Initialisation
+   * Constructor
    */
-  public void init()
+  public SbDecoder()
+  {
+    stereo   = new Stereo();
+    inband   = new Inband(stereo);
+    enhanced = true;
+  }
+
+  /**
+   * Wideband initialisation
+   */
+  public void wbinit()
   {
     lowdec = new NbDecoder();
-    sbinit(160, 40, 8, 640, ModesWB.wbsubmodes, 3, .7f);
+    ((NbDecoder)lowdec).nbinit();
+    lowdec.setPerceptualEnhancement(enhanced);
+    // Initialize SubModes
+    super.wbinit();
+    // Initialize variables
+    init(160, 40, 8, 640, .7f);
+  }
+
+  /**
+   * Ultra-wideband initialisation
+   */
+  public void uwbinit()
+  {
+    lowdec = new SbDecoder();
+    ((SbDecoder)lowdec).wbinit();
+    lowdec.setPerceptualEnhancement(enhanced);
+    // Initialize SubModes
+    super.uwbinit();
+    // Initialize variables
+    init(320, 80, 8, 1280, .5f);
   }
 
   /**
    * Initialisation
    */
-  protected void sbinit(int  mframeSize, int msubframeSize, int mlpcSize, int mbufSize, 
-                        SubMode msubmodes[], int mdefaultSubmode, float mfolding_gain)
+  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
   {
-    lowdec.init();
-
-    full_frame_size = 2*mframeSize;
-    frame_size      = mframeSize;
-    subframeSize    = msubframeSize;
-    nbSubframes     = mframeSize/msubframeSize;
-    lpcSize         = 8;
-    folding_gain    = mfolding_gain;
-    submodes        = msubmodes;
-    submodeID       = mdefaultSubmode;
-    first=1;
-
-    x0d         = new float[frame_size];
-    high        = new float[full_frame_size];
-    y0          = new float[full_frame_size];
-    y1          = new float[full_frame_size];
-
-    g0_mem      = new float[QMF_ORDER];
-    g1_mem      = new float[QMF_ORDER];
-
-    exc         = new float[frame_size];
-
-    qlsp        = new float[lpcSize];
-    old_qlsp    = new float[lpcSize];
-    interp_qlsp = new float[lpcSize];
-    interp_qlpc = new float[(lpcSize+1)];
-
-    pi_gain     = new float[nbSubframes];
-    mem_sp      = new float[2*lpcSize];
-    
-    awk1        = new float[9];
-    awk2        = new float[9];
-    awk3        = new float[9];  
+    super.init(frameSize, subframeSize, lpcSize, bufSize, foldingGain);
+    excIdx      = 0;
     innov2      = new float[subframeSize];
   }
 
   /**
-   * Decode the given bits
+   * Decode the given input bits.
+   * @param bits - Speex bits buffer.
+   * @param out - the decoded mono audio frame.
    */
-  public int decode(Bits bits, float out[])
+  public int decode(Bits bits, float[] out)
   {
     int i, sub, wideband, ret;
     float low_pi_gain[], low_exc[], low_innov[];
@@ -167,7 +149,12 @@ public class WbDecoder
     if ((ret = lowdec.decode(bits, x0d))!=0) {
       return ret;
     }
-    /* vheck "wideband bit" */
+    boolean dtx = lowdec.getDtx();
+    if (bits == null) {
+      decodeLost(out, dtx);
+      return 0;
+    }
+    /* Check "wideband bit" */
     wideband = bits.peek(); 
     if (wideband!=0) {
       /*Regular wideband frame, read the submode*/
@@ -179,21 +166,25 @@ public class WbDecoder
       submodeID = 0;
     }
 
-    for (i=0;i<frame_size;i++)
-      exc[i]=0;
+    for (i=0;i<frameSize;i++)
+      excBuf[i]=0;
 
     /* If null mode (no transmission), just set a couple things to zero*/
     if (submodes[submodeID] == null) {
-      for (i=0;i<frame_size;i++)
-        exc[i]=0;
+      if (dtx) {
+        decodeLost(out, true);
+        return 0;
+      }
+      for (i=0;i<frameSize;i++)
+        excBuf[i]=0;
 
       first=1;
       /* Final signal synthesis from excitation */
-      filters.iir_mem2(exc, 0, interp_qlpc, high, 0, frame_size, lpcSize, mem_sp);
-      filters.fir_mem_up(x0d, h0, y0, full_frame_size, QMF_ORDER, g0_mem);
-      filters.fir_mem_up(high, h1, y1, full_frame_size, QMF_ORDER, g1_mem);
+      filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp);
+      filters.fir_mem_up(x0d, h0, y0, fullFrameSize, QMF_ORDER, g0_mem);
+      filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
 
-      for (i=0;i<full_frame_size;i++)
+      for (i=0;i<fullFrameSize;i++)
         out[i]=2*(y0[i]-y1[i]);
       return 0;
     }
@@ -224,14 +215,16 @@ public class WbDecoder
 
       /* LSP to LPC */
       m_lsp.lsp2lpc(interp_qlsp, interp_qlpc, lpcSize);
-
-      float r=.9f, k1,k2,k3;
-      k1=submodes[submodeID].lpc_enh_k1;
-      k2=submodes[submodeID].lpc_enh_k2;
-      k3=k1-k2;
-      filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
-      filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
-      filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+  
+      if (enhanced) {
+        float k1, k2, k3;
+        k1=submodes[submodeID].lpc_enh_k1;
+        k2=submodes[submodeID].lpc_enh_k2;
+        k3=k1-k2;
+        filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+        filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+        filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+      }
 
       /* Calculate reponse ratio between low & high filter in band middle (4000 Hz) */      
       tmp=1;
@@ -248,7 +241,7 @@ public class WbDecoder
       
       /* reset excitation buffer */
       for (i=subIdx;i<subIdx+subframeSize;i++)
-        exc[i]=0;
+        excBuf[i]=0;
 
       if (submodes[submodeID].innovation==null) {
         float g;
@@ -260,7 +253,7 @@ public class WbDecoder
         
         /* High-band excitation using the low-band excitation and a gain */
         for (i=subIdx;i<subIdx+subframeSize;i++)
-          exc[i]=folding_gain*g*low_innov[i];
+          excBuf[i]=foldingGain*g*low_innov[i];
       } 
       else {
         float gc, scale;
@@ -271,10 +264,10 @@ public class WbDecoder
 
         gc    = (float)Math.exp((1/3.7f)*qgc-2);
         scale = gc*(float)Math.sqrt(1+el)/filter_ratio;
-        submodes[submodeID].innovation.unquant(exc, subIdx, subframeSize, bits); 
+        submodes[submodeID].innovation.unquant(excBuf, subIdx, subframeSize, bits); 
 
         for (i=subIdx;i<subIdx+subframeSize;i++)
-          exc[i]*=scale;
+          excBuf[i]*=scale;
 
         if (submodes[submodeID].double_codebook!=0) {
           for (i=0;i<subframeSize;i++)
@@ -283,21 +276,30 @@ public class WbDecoder
           for (i=0;i<subframeSize;i++)
             innov2[i]*=scale*(1/2.5f);
           for (i=0;i<subframeSize;i++)
-            exc[subIdx+i] += innov2[i];
+            excBuf[subIdx+i] += innov2[i];
         }
       }
 
       for (i=subIdx;i<subIdx+subframeSize;i++)
-        high[i]=exc[i];
+        high[i]=excBuf[i];
 
-      filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
-      filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
+      if (enhanced) {
+        /* Use enhanced LPC filter */
+        filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
+        filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
+      }
+      else {
+         /* Use regular filter */
+         for (i=0;i<lpcSize;i++)
+            mem_sp[lpcSize+i] = 0;
+         filters.iir_mem2(high, subIdx, interp_qlpc, high, subIdx, subframeSize, lpcSize, mem_sp);
+      }
     }
 
-    filters.fir_mem_up(x0d, h0, y0, full_frame_size, QMF_ORDER, g0_mem);
-    filters.fir_mem_up(high, h1, y1, full_frame_size, QMF_ORDER, g1_mem);
+    filters.fir_mem_up(x0d, h0, y0, fullFrameSize, QMF_ORDER, g0_mem);
+    filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
 
-    for (i=0;i<full_frame_size;i++)
+    for (i=0;i<fullFrameSize;i++)
       out[i]=2*(y0[i]-y1[i]);
 
     for (i=0;i<lpcSize;i++)
@@ -308,40 +310,101 @@ public class WbDecoder
   }
     
   /**
-   *
+   * Decode when packets are lost.
+   * @param out - the generated mono audio frame.
    */
-  public int  getFrameSize()
-  {
-    return full_frame_size;
-  }
-    
-  /**
-   * Returns the Pitch Gain array
-   */
-  public float[] getPiGain()
-  {
-    return pi_gain;
-  }
-  
-  /**
-   * Returns the excitation array
-   */
-  public float[] getExc()
+  public int decodeLost(float[] out, boolean dtx)
   {
     int i;
-    float[] excTmp = new float[full_frame_size];
-    for (i=0;i<full_frame_size;i++)
-      excTmp[i]=0;
-    for (i=0;i<frame_size;i++)
-      excTmp[2*i]=2*exc[i];
-    return excTmp;
+    int saved_modeid=0;
+
+    if (dtx) {
+      saved_modeid=submodeID;
+      submodeID=1;
+    }
+    else {
+      Filters.bw_lpc(0.99f, interp_qlpc, interp_qlpc, lpcSize);
+    }
+
+    first=1;
+    awk1=new float[lpcSize+1];
+    awk2=new float[lpcSize+1];
+    awk3=new float[lpcSize+1];
+    
+    if (enhanced) {
+      float k1,k2,k3;
+      if (submodes[submodeID] != null) {
+        k1=submodes[submodeID].lpc_enh_k1;
+        k2=submodes[submodeID].lpc_enh_k2;
+      }
+      else {
+        k1 = k2 = 0.7f;
+      }
+      k3=k1-k2;
+      filters.bw_lpc(k1, interp_qlpc, awk1, lpcSize);
+      filters.bw_lpc(k2, interp_qlpc, awk2, lpcSize);
+      filters.bw_lpc(k3, interp_qlpc, awk3, lpcSize);
+    }
+
+    /* Final signal synthesis from excitation */
+    if (!dtx) {
+      for (i=0;i<frameSize;i++)
+        excBuf[excIdx+i] *= .9;
+    }
+    for (i=0;i<frameSize;i++)
+      high[i]=excBuf[excIdx+i];
+
+    if (enhanced) {
+      /* Use enhanced LPC filter */
+      filters.filter_mem2(high, 0, awk2, awk1, high, 0, frameSize, lpcSize, mem_sp, lpcSize);
+      filters.filter_mem2(high, 0, awk3, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp, 0);
+    }
+    else { /* Use regular filter */
+      for (i=0;i<lpcSize;i++)
+        mem_sp[lpcSize+i] = 0;
+      Filters.iir_mem2(high, 0, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp);
+    }
+    /*iir_mem2(st->exc, st->interp_qlpc, st->high, st->frame_size, st->lpcSize, st->mem_sp);*/
+    
+    /* Reconstruct the original */
+    filters.fir_mem_up(x0d, h0, y0, fullFrameSize, QMF_ORDER, g0_mem);
+    filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
+    for (i=0;i<fullFrameSize;i++)
+      out[i]=2*(y0[i]-y1[i]);
+    
+    if (dtx) {
+      submodeID=saved_modeid;
+    }
+    return 0;
+  }
+
+  /**
+   * Decode the given bits to stereo.
+   * @param data - float array of size 2*frameSize, that contains the mono
+   * audio samples in the first half. When the function has completed, the
+   * array will contain the interlaced stereo audio samples.
+   * @param frameSize - the size of a frame of mono audio samples.
+   */
+  public void decodeStereo(float[] data, int frameSize)
+  {
+    stereo.decode(data, frameSize);
+  }
+
+  /**
+   * Enables or disables perceptual enhancement.
+   * @param enhanced
+   */
+  public void setPerceptualEnhancement(boolean enhanced)
+  {
+    this.enhanced = enhanced;
   }
   
   /**
-   * Returns the innovation array
+   * Returns whether perceptual enhancement is enabled or disabled.
+   * @return whether perceptual enhancement is enabled or disabled.
    */
-  public float[] getInnov()
+  public boolean getPerceptualEnhancement()
   {
-    return getExc();
+    return enhanced;
   }
 }

@@ -70,17 +70,20 @@ import org.xiph.speex.*;
 
 /**
  * Java Speex Command Line Encoder.
+ * 
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class JSpeexEnc
 {
-  public static final String VERSION = "Java Speex Command Line Encoder v0.7 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Encoder v0.8 ($Revision$)";
   
   private static int mode       = 0;
   private static int quality    = 8;
   private static int complexity = 3;
   private static int bitrate    = -1;
   private static int nframes    = 1;
-  private static int samplingRate  = -1;
+  private static int sampleRate = -1;
   private static float vbr_quality = -1;
   private static boolean vbr = false;
   private static boolean vad = false;
@@ -88,29 +91,31 @@ public class JSpeexEnc
   private static int channels   = 1;
   
   /**
-   * Main
-   * Command line entrance
+   * Command line entrance:
+   * <pre>
+   * Usage: JSpeexEnc [options] input.wav output.spx
+   * </pre>
    */
   public static void main(String[] args)
     throws IOException
   {
-	  // make sure we have command args
-	  if (args.length < 2) {
-      if (args.length==1 && (args[0].equals("-v") || args[0].equals("--version"))) {
+    // make sure we have command args
+    if (args.length < 2) {
+      if (args.length==1 && (args[0].equalsIgnoreCase("-v") || args[0].equalsIgnoreCase("--version"))) {
         version();
         return;
       }
       usage();
-		  return;
-	  }
+      return;
+    }
     String infile = args[args.length-2];
     String outfile = args[args.length-1];
     for (int i=0; i<args.length-2; i++) {
-      if (args[i].equals("-h") || args[i].equals("--help")) {
+      if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
         usage();
         return;
       }
-      else if (args.length==1 && (args[0].equals("-v") || args[0].equals("--version"))) {
+      else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
         version();
         return;
       }
@@ -177,71 +182,71 @@ public class JSpeexEnc
         return;
       }
     }
-    if (samplingRate < 0) {
+    if (sampleRate < 0) {
       switch(mode){
-        case 0:
-          samplingRate = 8000;
-          break;
-        case 1:
-          samplingRate = 16000;
-          break;
-        case 2:
-          samplingRate = 32000;
-          break;
+      case 0:
+        sampleRate = 8000;
+        break;
+      case 1:
+        sampleRate = 16000;
+        break;
+      case 2:
+        sampleRate = 32000;
+        break;
       }
     }
-	  // encode to Speex
+    // encode to Speex
     encode(infile, outfile);
   }
   
   /**
-   * Prints the usage guidelines
+   * Prints the usage guidelines.
    */
   public static void usage()
   {
-		System.out.println("Usage: JSpeexEnc [options] input.wav output.spx");
+    System.out.println("Usage: JSpeexEnc [options] input.wav output.spx");
     System.out.println("Where: input.wav the PCM wav file to use as input");
-		System.out.println("       output.spx the Speex file to create");
-		System.out.println("Options: -n             Narrowband (8kHz)");
-		System.out.println("         -w             Wideband (16kHz)");
-		System.out.println("         -u             Ultra-Wideband (32kHz)");
-		System.out.println("         --quality n    Encoding quality (0-10) default 8");
-		System.out.println("         --complexity n Encoding complexity (0-10) default 3");
-		System.out.println("         --nframes n    Number of frames per Ogg packet, default 1");
-		System.out.println("         --vbr          Enable varible bit-rate (VBR)");
-		System.out.println("         --vad          Enable voice activity detection (VAD)");
-		System.out.println("         --dtx          Enable file based discontinuous transmission (DTX)");
-		System.out.println("         --stereo       Consider input as stereo");
-		System.out.println("         -h, --help     This help");
-		System.out.println("         -v, --version  Version information");
+    System.out.println("       output.spx the Speex file to create");
+    System.out.println("Options: -h, --help     This help");
+    System.out.println("         -v, --version  Version information");
+    System.out.println("         -n             Narrowband (8kHz)");
+    System.out.println("         -w             Wideband (16kHz)");
+    System.out.println("         -u             Ultra-Wideband (32kHz)");
+    System.out.println("         --quality n    Encoding quality (0-10) default 8");
+    System.out.println("         --complexity n Encoding complexity (0-10) default 3");
+    System.out.println("         --nframes n    Number of frames per Ogg packet, default 1");
+    System.out.println("         --vbr          Enable varible bit-rate (VBR)");
+    System.out.println("         --vad          Enable voice activity detection (VAD)");
+    System.out.println("         --dtx          Enable file based discontinuous transmission (DTX)");
+    System.out.println("         --stereo       Consider input as stereo");
   }
 
   /**
-   * Prints the version
+   * Prints the version.
    */
   public static void version()
   {
-		System.out.println(VERSION);
-		System.out.println("using " + SpeexEncoder.VERSION);
-		System.out.println("Copyright (C) 2002-2003 Wimba S.A.");
+    System.out.println(VERSION);
+    System.out.println("using " + SpeexEncoder.VERSION);
+    System.out.println("Copyright (C) 2002-2003 Wimba S.A.");
   }
   
-	/**
-	 * Encodes a wave file to speex. 
-	 */
-	public static void encode(String inputPath, String outputPath)
+  /**
+   * Encodes a wave file to speex. 
+   */
+  public static void encode(String inputPath, String outputPath)
     throws IOException
   {
-		byte[] temp    = new byte[2048];
-		final int HEADERSIZE = 8;
-		final String RIFF      = "RIFF";
-		final String WAVE      = "WAVE";
-		final String DATA      = "data";
+    byte[] temp    = new byte[2048];
+    final int HEADERSIZE = 8;
+    final String RIFF      = "RIFF";
+    final String WAVE      = "WAVE";
+    final String DATA      = "data";
     // open the input stream
-		DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
-		// construct a new decoder
+    DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
+    // construct a new decoder
     SpeexEncoder speexEncoder = new SpeexEncoder();
-    speexEncoder.init(mode, quality, samplingRate, channels);
+    speexEncoder.init(mode, quality, sampleRate, channels);
     if (complexity > 0) {
       speexEncoder.getEncoder().setComplexity(complexity);
     }
@@ -277,7 +282,7 @@ public class JSpeexEnc
     String chunk = new String(temp, 0, 4);
     int size = readInt(temp, 4);
     while (!chunk.equals(DATA)) {
-//      System.out.println(chunk + " chunk, size: " + size);
+      //      System.out.println(chunk + " chunk, size: " + size);
       dis.readFully(temp, 0, size);
       dis.readFully(temp, 0, HEADERSIZE);
       chunk = new String(temp, 0, 4);
@@ -286,16 +291,16 @@ public class JSpeexEnc
 //    System.out.println("data size: " + size);
     
     OggSpeexWriter oggWriter = new OggSpeexWriter();
-    oggWriter.setFormat(mode, samplingRate, channels);
+    oggWriter.setFormat(mode, sampleRate, channels, nframes);
     oggWriter.open(outputPath);
-    oggWriter.writeHeader();
+    oggWriter.writeHeader("Encoded with: " + VERSION);
     int pcmPacketSize = 2 * channels * speexEncoder.getFrameSize();
     try {
       // read until we get to EOF
       while (true) {
-        dis.readFully(temp, 0, pcmPacketSize);
-        for (int i=0; i< nframes; i++)
-          speexEncoder.processData(temp, 0, pcmPacketSize);
+        dis.readFully(temp, 0, nframes*pcmPacketSize);
+        for (int i=0; i<nframes; i++)
+          speexEncoder.processData(temp, i*pcmPacketSize, pcmPacketSize);
         int encsize = speexEncoder.getProcessedData(temp, 0);
         if (encsize > 0) {
           oggWriter.writePacket(temp, 0, encsize);
@@ -307,7 +312,7 @@ public class JSpeexEnc
   }
   
   /**
-   * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian)
+   * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
    */
   private static int readInt(byte[] data, int offset)
   {

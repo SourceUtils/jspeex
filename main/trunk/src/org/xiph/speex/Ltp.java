@@ -71,21 +71,37 @@ package org.xiph.speex;
 /**
  * Abstract class that is the base for the various LTP (Long Term Prediction)
  * Quantisation and Unquantisation methods.
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public abstract class Ltp
 {
   /**
-   * Quantification
+   * Long Term Prediction Quantification.
    */
   public abstract int quant(float[] target, float sw[], int sws, float[] ak, float[] awk1, float awk2[],
                             float[] exc, int es, int start, int end, float pitch_coef, int p, 
                             int nsf, Bits bits, float[] exc2, int e2s, float[] r, int complexity);
 
   /**
-   * Unquantification
+   * Long Term Prediction Unquantification.
+   * @param exc - Excitation
+   * @param es - Excitation offset
+   * @param start - Smallest pitch value allowed
+   * @param pitch_coef - Voicing (pitch) coefficient
+   * @param nsf - Number of samples in subframe
+   * @param gain_val
+   * @param bits - Speex bits buffer.
+   * @param count_lost
+   * @param subframe_offset
+   * @param last_pitch_gain
+   * @return pitch
    */
   public abstract int unquant(float exc[], int es, int start, float pitch_coef,  
-                              int nsf, float gain_val[], Bits bits);
+                              int nsf, float gain_val[], Bits bits,
+                              int count_lost, int subframe_offset, float last_pitch_gain);
 
   /**
    * Calculates the inner product of the given vectors.
@@ -111,7 +127,7 @@ public abstract class Ltp
   }
 
   /**
-   * 
+   * Find the n-best pitch in Open Loop.
    */
   protected static void open_loop_nbest_pitch(float[] sw, int swIdx, int start, int end, int len, int[] pitch, float[] gain, int N)
   {

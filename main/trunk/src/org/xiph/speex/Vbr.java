@@ -73,6 +73,9 @@ package org.xiph.speex;
 /**
  * This class analyses the signal to help determine what bitrate to use when
  * the Varible BitRate option has been selected.
+ * 
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Vbr
 {
@@ -81,7 +84,7 @@ public class Vbr
   public static final float NOISE_POW  = 0.3f;
 
   /**
-   * Narrowband threshhold table
+   * Narrowband threshhold table.
    */
   public static final float[][] nb_thresh = { //[9][11]
     {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f}, /*   CNG   */
@@ -96,7 +99,7 @@ public class Vbr
   };
 
   /**
-   * Wideband threshhold table
+   * Wideband threshhold table.
    */
   public static final float[][] hb_thresh = { //[5][11]
     {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f}, /* silence */
@@ -107,7 +110,7 @@ public class Vbr
   };
 
   /**
-   * Ultra-wideband threshhold table
+   * Ultra-wideband threshhold table.
    */
   public static final float[][] uhb_thresh = { // [2][11]
     {-1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, -1.0f}, /* silence */
@@ -166,6 +169,10 @@ public class Vbr
    * <li>(wideband only) less bits in the high-band when signal is very 
    *     non-stationary (harder to notice high-frequency noise)???
    * </ul>
+   * @param sig - signal.
+   * @param len - signal length.
+   * @param pitch - signal pitch.
+   * @param pitch_coef - pitch coefficient.
    */
   public float analysis(float[] sig, int len, int pitch, float pitch_coef)
   {

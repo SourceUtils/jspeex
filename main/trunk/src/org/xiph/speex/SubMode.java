@@ -70,6 +70,10 @@ package org.xiph.speex;
 
 /**
  * Speex SubMode
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class SubMode
 {

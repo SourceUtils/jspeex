@@ -69,31 +69,38 @@
 package org.xiph.speex;
 
 /**
- * Speex bit packing and unpacking class
+ * Speex bit packing and unpacking class.
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Bits
 {
-  /**< "raw" data */
+  public static final int DEFAULT_BUFFER_SIZE = 1024;
+  
+  /** "raw" data */
   private byte bytes[];
   
-  /**< Position of the byte "cursor" */
+  /** Position of the byte "cursor" */
   private int  bytePtr;
   
-  /**< Position of the bit "cursor" within the current byte */
+  /** Position of the bit "cursor" within the current byte */
   private int  bitPtr;  
   
   /**
-   * Initialise
+   * Initialise the bit packing variables.
    */
   public void init()
   {
-    bytes = new byte[2000];
+    bytes = new byte[DEFAULT_BUFFER_SIZE];
     bytePtr=0;
     bitPtr=0;
   }
 
   /**
-   * Advance n bits
+   * Advance n bits.
+   * @param n - the number of bits to advance.
    */
   public void advance(int n)
   {
@@ -108,14 +115,15 @@ public class Bits
   }
 
   /**
-   * Sets the buffer to the given value
+   * Sets the buffer to the given value.
+   * @param newBuffer
    */
-  protected void setBuffer(byte[] pBuffer){
-    bytes = pBuffer;
+  protected void setBuffer(byte[] newBuffer){
+    bytes = newBuffer;
   }  
   
   /**
-   * Take a peek at the next bit
+   * Take a peek at the next bit.
    */
   public int peek()
   {
@@ -123,7 +131,10 @@ public class Bits
   }
 
   /**
-   * Read the given array into the buffer
+   * Read the given array into the buffer.
+   * @param newbytes
+   * @param offset
+   * @param len
    */
   public void read_from(byte newbytes[], int offset, int len)
   {
@@ -135,6 +146,7 @@ public class Bits
 
   /**
    * Read the next N bits from the buffer.
+   * @param nbBits - the number of bits to read.
    */
   public int unpack(int nbBits)  
   {
@@ -155,7 +167,9 @@ public class Bits
   }
   
   /**
-   * Write n bits of the given data to the buffer
+   * Write N bits of the given data to the buffer.
+   * @param data - the data to write.
+   * @param nbBits - the number of bits of the data to write.
    */
   public void pack(int data, int nbBits)
   {
@@ -186,7 +200,8 @@ public class Bits
   }
   
   /**
-   * Returns the current buffer array
+   * Returns the current buffer array.
+   * @return the current buffer array.
    */
   public byte[] getBuffer()
   {
@@ -194,7 +209,8 @@ public class Bits
   }
 
   /**
-   * Returns the number of bytes used in the current buffer 
+   * Returns the number of bytes used in the current buffer.
+   * @return the number of bytes used in the current buffer.
    */
   public int getBufferSize()
   {

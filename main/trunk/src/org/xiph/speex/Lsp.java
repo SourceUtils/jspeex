@@ -78,18 +78,22 @@ package org.xiph.speex;
 
 /**
  * Line Spectral Pair
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Lsp
 {
-    private float pw[];
- 
-    /**
-     * Constructor
-     */
-    public Lsp()
-    {
-      pw  = new float[42];
-    }
+  private float pw[];
+  
+  /**
+   * Constructor
+   */
+  public Lsp()
+  {
+    pw  = new float[42];
+  }
 
   /*---------------------------------------------------------------------------*\
 
@@ -103,10 +107,10 @@ public class Lsp
   \*---------------------------------------------------------------------------*/
 
   /**
-   * This function evaluates a series of Chebyshev polynomials
-   * @param coef - coefficients of the polynomial to be evaluated
-   * @param x    - the point where polynomial is to be evaluated
-   * @param m    - order of the polynomial
+   * This function evaluates a series of Chebyshev polynomials.
+   * @param coef - coefficients of the polynomial to be evaluated.
+   * @param x    - the point where polynomial is to be evaluated.
+   * @param m    - order of the polynomial.
    */
   public static final float cheb_poly_eva(float[] coef,float x,int m)
   {
@@ -143,12 +147,12 @@ public class Lsp
   \*---------------------------------------------------------------------------*/
 
   /**
-   * This function converts LPC coefficients to LSP coeficients
-   * @param a      - LPC coefficients
-   * @param lpcrdr - order of LPC coefficients (10)
-   * @param freq   - LSP frequencies in the x domain
-   * @param nb     - number of sub-intervals (4)
-   * @param delta  - grid spacing interval (0.02)
+   * This function converts LPC coefficients to LSP coeficients.
+   * @param a      - LPC coefficients.
+   * @param lpcrdr - order of LPC coefficients (10).
+   * @param freq   - LSP frequencies in the x domain.
+   * @param nb     - number of sub-intervals (4).
+   * @param delta  - grid spacing interval (0.02).
    */
   public static int lpc2lsp (float[] a, int lpcrdr, float[] freq, int nb, float delta)
   {
@@ -263,6 +267,9 @@ public class Lsp
 
   /**
    * Line Spectral Pair to Linear Prediction Coefficients
+   * @param freq
+   * @param ak
+   * @param lpcrdr
    */
   public void lsp2lpc(float freq[], float ak[], int lpcrdr)
   {
@@ -309,7 +316,10 @@ public class Lsp
   }
 
   /**
-   *  Makes sure the LSPs are stable
+   * Makes sure the LSPs are stable.
+   * @param lsp
+   * @param len
+   * @param margin
    */
   public static void enforce_margin(float lsp[], int len, float margin)
   {

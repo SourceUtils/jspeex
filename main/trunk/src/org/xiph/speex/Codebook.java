@@ -24,7 +24,7 @@
  *      Wimba S.A. is not liable for any consequence related to the           *
  *      use of the provided software.                                         *
  *                                                                            *
- * Class: Tables.java                                                         *
+ * Class: Codebook.java                                                       *
  *                                                                            *
  * Author: James LAWRENCE                                                     *
  * Modified by: Marc GIMPEL                                                   *
@@ -70,8 +70,12 @@ package org.xiph.speex;
 
 /**
  * Codebook tables
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
-public interface Tables
+public interface Codebook
 {
   public static final int exc_20_32_table[] = {
     12,32,25,46,36,33,9,14,-3,6,1,-8,0,-10,-5,-7,-7,-7,-5,-5,
@@ -1084,6 +1088,12 @@ public interface Tables
     13,9,-4,30,-22,-65,15,0,
     -45,4,-4,1,5,22,11,23 
   };
+
+  public static final int NB_CDBK_SIZE       = 64;
+  public static final int NB_CDBK_SIZE_LOW1  = 64;
+  public static final int NB_CDBK_SIZE_LOW2  = 64;
+  public static final int NB_CDBK_SIZE_HIGH1 = 64;
+  public static final int NB_CDBK_SIZE_HIGH2 = 64;
 
   public static final int cdbk_nb[]={ //640
     30,19,38,34,40,32,46,43,58,43,

@@ -69,143 +69,85 @@ package org.xiph.speex;
 
 /**
  * Narrowband Speex Encoder
+ * 
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class NbEncoder
-  extends Encoder
+  extends NbCodec
+  implements Encoder
 {
+  /** The Narrowband Quality map indicates which narrowband submode to use for the given narrowband quality setting */
   public static final int[] NB_QUALITY_MAP = {1, 8, 2, 3, 3, 4, 4, 5, 5, 6, 7};
   
-  /*  ================================================
-      PACKAGE STATIC DATA MEMBERS
-      ================================================ */
-  public static final float exc_gain_quant_scal3[] = {-2.794750f, -1.810660f,
-                                                      -1.169850f, -0.848119f, 
-                                                      -0.587190f, -0.329818f,
-                                                      -0.063266f, 0.282826f};
-
-  public static final float exc_gain_quant_scal1[] = {-0.35f, 0.05f};
-  
-  /*  ================================================
-      PRIVATE DATA MEMBERS
-      ================================================ */
-
-  private int    first;             /**< Is this the first frame? */
-  private int    frameSize;         /**< Size of frames */
-  private int    subframeSize;      /**< Size of sub-frames */
-  private int    nbSubframes;       /**< Number of sub-frames */
-  private int    windowSize;        /**< Analysis (LPC) window length */
-  private int    lpcSize;           /**< LPC order */
-  private int    bufSize;           /**< Buffer size */
-  private int    min_pitch;         /**< Minimum pitch value allowed */
-  private int    max_pitch;         /**< Maximum pitch value allowed */
-
-  private int    bounded_pitch;  /**< Next frame should not rely on previous frames for pitch */
+  private int    bounded_pitch;  /** Next frame should not rely on previous frames for pitch */
   private int    pitch[];        /** */
-  private float  gamma1;         /**< Perceptual filter: A(z/gamma1) */
-  private float  gamma2;         /**< Perceptual filter: A(z/gamma2) */
-  private float  lag_factor;     /**< Lag windowing Gaussian width */
-  private float  lpc_floor;      /**< Noise floor multiplier for A[0] in LPC analysis*/
-  private float  preemph;        /**< Pre-emphasis: P(z) = 1 - a*z^-1*/
-  private float  pre_mem;        /**< 1-element memory for pre-emphasis */
-  private float  pre_mem2;       /**< 1-element memory for pre-emphasis */
-  private float  frmBuf[];          /**< Input buffer (original signal) */
-  private int    frmIdx;
-  private float  excBuf[];          /**< Excitation buffer */
-  private int    excIdx;            /**< Start of excitation frame */
-  private float  exc2Buf[];      /**< "Pitch enhanced" excitation */
-  private int    exc2Idx;        /**< "Pitch enhanced" excitation */
-  private float  swBuf[];        /**< Weighted signal buffer */
-  private int    swIdx;          /**< Start of weighted signal frame */
-  private float[]  innov;           /**< Innovation for the frame */
-  private float[]  window;       /**< Temporary (Hanning) window */
-  private float[]  buf2;         /**< 2nd temporary buffer */
-  private float[]  autocorr;     /**< auto-correlation */
-  private float[]  lagWindow;    /**< Window applied to auto-correlation */
-  private float[]  lpc;          /**< LPCs for current frame */
-  private float[]  lsp;          /**< LSPs for current frame */
-  private float[]  qlsp;            /**< Quantized LSPs for current frame */
-  private float[]  old_lsp;      /**< LSPs for previous frame */
-  private float[]  old_qlsp;        /**< Quantized LSPs for previous frame */
-  private float[]  interp_lsp;   /**< Interpolated LSPs */
-  private float[]  interp_qlsp;     /**< Interpolated quantized LSPs */
-  private float[]  interp_lpc;   /**< Interpolated LPCs */
-  private float[]  interp_qlpc;     /**< Interpolated quantized LPCs */
-  private float[]  bw_lpc1;      /**< LPCs after bandwidth expansion by gamma1 for perceptual weighting*/
-  private float[]  bw_lpc2;      /**< LPCs after bandwidth expansion by gamma2 for perceptual weighting*/
-  private float[]  rc;           /**< Reflection coefficients */
-  private float[]  mem_sp;          /**< Filter memory for synthesis signal */
-  private float[]  mem_sw;       /**< Filter memory for perceptually-weighted signal */
-  private float[]  mem_sw_whole; /**< Filter memory for perceptually-weighted signal (whole frame)*/
-  private float[]  mem_exc;      /**< Filter memory for excitation (whole frame) */
-  private float[]  pi_gain;         /**< Gain of LPC filter at theta=pi (fe/2) */
+  private float  pre_mem2;       /** 1-element memory for pre-emphasis */
+  private float  exc2Buf[];      /** "Pitch enhanced" excitation */
+  private int    exc2Idx;        /** "Pitch enhanced" excitation */
+  private float  swBuf[];        /** Weighted signal buffer */
+  private int    swIdx;          /** Start of weighted signal frame */
+  private float[]  window;       /** Temporary (Hanning) window */
+  private float[]  buf2;         /** 2nd temporary buffer */
+  private float[]  autocorr;     /** auto-correlation */
+  private float[]  lagWindow;    /** Window applied to auto-correlation */
+  private float[]  lsp;          /** LSPs for current frame */
+  private float[]  old_lsp;      /** LSPs for previous frame */
+  private float[]  interp_lsp;   /** Interpolated LSPs */
+  private float[]  interp_lpc;   /** Interpolated LPCs */
+  private float[]  bw_lpc1;      /** LPCs after bandwidth expansion by gamma1 for perceptual weighting*/
+  private float[]  bw_lpc2;      /** LPCs after bandwidth expansion by gamma2 for perceptual weighting*/
+  private float[]  rc;           /** Reflection coefficients */
+  private float[]  mem_sw;       /** Filter memory for perceptually-weighted signal */
+  private float[]  mem_sw_whole; /** Filter memory for perceptually-weighted signal (whole frame)*/
+  private float[]  mem_exc;      /** Filter memory for excitation (whole frame) */
 
-  private Vbr    vbr;            /**< State of the VBR data */
-  private int    dtx_count;      /**< Number of consecutive DTX frames */
+  private Vbr    vbr;            /** State of the VBR data */
+  private int    dtx_count;      /** Number of consecutive DTX frames */
 
-  private float[]  awk1, awk2, awk3;
-//  private float  lpc[];
   private float[]  innov2;
 
-  /*Vocoder data*/
-  private float  voc_m1;
-  private float  voc_m2;
-  private float  voc_mean;
-  private int    voc_offset;
+  protected int complexity;     /** Complexity setting (0-10 from least complex to most complex) */
+  protected int vbr_enabled;    /** 1 for enabling VBR, 0 otherwise */
+  protected int vad_enabled;    /** 1 for enabling VAD, 0 otherwise */
+  protected int abr_enabled;    /** ABR setting (in bps), 0 if off */
+  protected float vbr_quality;      /** Quality setting for VBR encoding */
+  protected float relative_quality; /** Relative quality that will be needed by VBR */
+  protected float abr_drift;
+  protected float abr_drift2;
+  protected float abr_count;
+  protected int sampling_rate;
 
- /*  ================================================
-     PACKAGE INSTANCE METHODS
-     ================================================ */
+  protected int     submodeSelect;  /** Mode chosen by the user (may differ from submodeID if VAD is on) */
 
   /**
    * Initialisation
    */
-  public void init()
+  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize)
   {
-    super.init();
-    first=1;
-    
-    /* Codec parameters, should eventually have several "modes"*/
-    frameSize    = 160;
-    windowSize   = frameSize*3/2;
-    subframeSize = 40;
-    nbSubframes  = frameSize/subframeSize;
-    lpcSize      = 10;
-    bufSize      = 640;
-    min_pitch    = 17;
-    max_pitch    = 144;
-    gamma1       = 0.9f;
-    gamma2       = 0.6f;
-    lag_factor   = .01f;
-    lpc_floor    = 1.0001f;
-    preemph      = 0.0f;
+    super.init(frameSize, subframeSize, lpcSize, bufSize);
 
-    submodes      = ModesNB.nbsubmodes;
-    submodeID     = 5;
+    complexity  = 3; // in C it's 2 here, but set to 3 automatically by the encoder
+    vbr_enabled = 0; // disabled by default
+    vad_enabled = 0; // disabled by default
+    abr_enabled = 0; // disabled by default
+    vbr_quality = 8;
+
     submodeSelect = 5;
-    pre_mem       = 0;
     pre_mem2      = 0;
     bounded_pitch = 1;
 
-    frmBuf   = new float[bufSize];
-    frmIdx   = bufSize - windowSize;
-    excBuf   = new float[bufSize];
-    excIdx   = bufSize - windowSize;
     exc2Buf  = new float[bufSize];
     exc2Idx  = bufSize - windowSize;
     swBuf    = new float[bufSize];
     swIdx    = bufSize - windowSize;
-    innov    = new float[frameSize];
 
-    window = window(windowSize, subframeSize);
-    /* Create the window for autocorrelation (lag-windowing) */
-    lagWindow = new float[lpcSize+1];
-    for (int i=0; i<lpcSize+1; i++)
-      lagWindow[i]=(float)Math.exp(-.5*(2*Math.PI*lag_factor*i)*(2*Math.PI*lag_factor*i));
+    window = Misc.window(windowSize, subframeSize);
+    lagWindow = Misc.lagWindow(lpcSize, lag_factor);
 
     autocorr = new float[lpcSize+1];
     buf2     = new float[windowSize];
 
-    lpc         = new float[lpcSize+1];
     interp_lpc  = new float[lpcSize+1];
     interp_qlpc = new float[lpcSize+1];
     bw_lpc1     = new float[lpcSize+1];
@@ -228,24 +170,20 @@ public class NbEncoder
     abr_count   = 0;
     sampling_rate = 8000;
 
-    awk1   =  new float[11];
-    awk2   =  new float[11];
-    awk3   =  new float[11];
+    awk1   =  new float[lpcSize+1];
+    awk2   =  new float[lpcSize+1];
+    awk3   =  new float[lpcSize+1];
     innov2 =  new float[40];
-//    lpc    =  new float[40];
 
     filters.init ();
 
-    pi_gain = new float[nbSubframes];
-
     pitch = new int[nbSubframes];
-
-    voc_m1=voc_m2=voc_mean=0;
-    voc_offset=0;    
   }
 
   /**
    * Encode the given input signal.
+   * @param bits - Speex bits buffer.
+   * @param in - the raw mono audio frame to encode.
    */
   public int encode(Bits bits, float in[])
   {
@@ -281,7 +219,7 @@ public class NbEncoder
        autocorr[i] *= lagWindow[i];
 
     /* Levinson-Durbin */
-    float tmperr = Lpc.wld(lpc, autocorr, rc, lpcSize);
+    Lpc.wld(lpc, autocorr, rc, lpcSize); // tmperr  
     System.arraycopy(lpc, 0, lpc, 1, lpcSize);
     lpc[0]=1;
     
@@ -477,7 +415,7 @@ public class NbEncoder
     bits.pack(0, 1);
 
     /* Transmit the sub-mode we use for this frame */
-    bits.pack(submodeID, ModesNB.NB_SUBMODE_BITS);
+    bits.pack(submodeID, NB_SUBMODE_BITS);
 
     /* If null mode (no transmission), just set a couple things to zero*/
     if (submodes[submodeID] == null)
@@ -566,7 +504,7 @@ public class NbEncoder
     for (int sub=0;sub<nbSubframes;sub++)
     {
       float tmp;
-      int   offset;
+      int offset;
       int sp, sw, exc, exc2;
       int pitchval;
 
@@ -852,14 +790,6 @@ public class NbEncoder
   //---------------------------------------------------------------------------
 
   /**
-   * 
-   */
-  public int getFrameSize()
-  {
-    return frameSize;
-  }
-  
-  /**
    * Sets the Quality
    */
   public void setQuality(int quality)
@@ -881,7 +811,7 @@ public class NbEncoder
     if (submodes[submodeID] != null)
       return sampling_rate*submodes[submodeID].bits_per_frame/frameSize;
     else
-      return sampling_rate*(ModesNB.NB_SUBMODE_BITS+1)/frameSize;
+      return sampling_rate*(NB_SUBMODE_BITS+1)/frameSize;
   }
   
   /**
@@ -891,29 +821,192 @@ public class NbEncoder
 //  {
 //  }
   
+  //---------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
+
   /**
-   * Returns the Pitch Gain array
+   * Sets the encoding submode.
+   * @param mode
    */
-  public float[] getPiGain()
+  public void setMode(int mode)
   {
-    return pi_gain;
+    submodeID = submodeSelect = mode;
   }
   
   /**
-   * Returns the excitation array
+   * Returns the encoding submode currently in use.
+   * @return the encoding submode currently in use.
    */
-  public float[] getExc()
+  public int getMode()
   {
-    float[] excTmp = new float[frameSize];
-    System.arraycopy(excBuf, excIdx, excTmp, 0, frameSize);
-    return excTmp;
+    return submodeID;
   }
   
   /**
-   * Returns the innovation array
+   * Sets the bitrate.
+   * @param bitrate
    */
-  public float[] getInnov()
+  public void setBitRate(int bitrate)
   {
-    return innov;
+    for (int i=10; i>=0; i--) {
+      setQuality(i);
+      if (getBitRate() <= bitrate)
+        return;
+    }
+  }
+  
+  /**
+   * Sets whether or not to use Variable Bit Rate encoding.
+   * @param vbr
+   */
+  public void setVbr(boolean vbr)
+  {
+    vbr_enabled = vbr ? 1 : 0;
+  }
+  
+  /**
+   * Returns whether or not we are using Variable Bit Rate encoding.
+   * @return whether or not we are using Variable Bit Rate encoding.
+   */
+  public boolean getVbr()
+  {
+    return vbr_enabled != 0;
+  }
+  
+  /**
+   * Sets whether or not to use Voice Activity Detection encoding.
+   * @param vad
+   */
+  public void setVad(boolean vad)
+  {
+    vad_enabled = vad ? 1 : 0;
+  }
+  
+  /**
+   * Returns whether or not we are using Voice Activity Detection encoding.
+   * @return whether or not we are using Voice Activity Detection encoding.
+   */
+  public boolean getVad()
+  {
+    return vad_enabled != 0;
+  }
+  
+  /**
+   * Sets whether or not to use Discontinuous Transmission encoding.
+   * @param dtx
+   */
+  public void setDtx(boolean dtx)
+  {
+    dtx_enabled = dtx ? 1 : 0;
+  }
+  
+  /**
+   * Returns the Average Bit Rate used (0 if ABR is not turned on).
+   * @return the Average Bit Rate used (0 if ABR is not turned on).
+   */
+  public int getAbr()
+  {
+    return abr_enabled;
+  }
+  
+  /**
+   * Sets the Average Bit Rate.
+   * @param abr
+   */
+  public void setAbr(int abr)
+  {
+    abr_enabled = (abr!=0) ? 1 : 0;
+    vbr_enabled = 1;
+    {
+      int i=10, rate, target;
+      float vbr_qual;
+      target = abr;
+      while (i>=0)
+      {
+        setQuality(i);
+        rate = getBitRate();
+        if (rate <= target)
+          break;
+        i--;
+      }
+      vbr_qual=i;
+      if (vbr_qual<0)
+        vbr_qual=0;
+      setVbrQuality(vbr_qual);
+      abr_count=0;
+      abr_drift=0;
+      abr_drift2=0;
+    }
+  }
+
+  /**
+   * Sets the Varible Bit Rate Quality.
+   * @param quality
+   */
+  public void setVbrQuality(float quality)
+  {
+    if (quality < 0)
+      quality = 0;
+    if (quality > 10)
+      quality = 10;
+    vbr_quality = quality;
+  }
+  
+  /**
+   * Returns the Varible Bit Rate Quality.
+   * @return the Varible Bit Rate Quality.
+   */
+  public float getVbrQuality()
+  {
+    return vbr_quality;
+  }
+  
+  /**
+   * Sets the algorthmic complexity.
+   * @param complexity
+   */
+  public void setComplexity(int complexity)
+  {
+    if (complexity < 0)
+      complexity = 0;
+    if (complexity > 10)
+      complexity = 10;
+    this.complexity = complexity;
+  }
+  
+  /**
+   * Returns the algorthmic complexity.
+   * @return the algorthmic complexity.
+   */
+  public int getComplexity()
+  {
+    return complexity;
+  }
+  
+  /**
+   * Sets the sampling rate.
+   * @param rate
+   */
+  public void setSamplingRate(int rate)
+  {
+    sampling_rate = rate;
+  }
+    
+  /**
+   * Returns the sampling rate.
+   * @return the sampling rate.
+   */
+  public int getSamplingRate()
+  {
+    return sampling_rate;
+  }
+
+  /**
+   * Returns the relative quality.
+   * @return the relative quality.
+   */
+  public float getRelativeQuality()
+  {
+    return relative_quality;
   }
 }

@@ -1,16 +1,12 @@
 DECODER
 =======
-- DTX in any shape or form.
-- Perceptual Enhancement is always on.
+- DTX implemented but untested.
 - Can't force decoder to run at another rate, mode, or channel count.
-- No packet loss support.
 
 ENCODER
 =======
-- DTX, VAD and ABR implemented but untested
-- In the narrowband encoder, the code to skip wideband packets doesn't work
+- DTX, VAD and ABR implemented but untested.
 
 MISCELLANEOUS
 =============
-- org.xiph.speex.SpeexDecoder expects the Ogg Speex header and then ignores the comment packet. It would probably be better for the Speex header to be interpreted in JSpeexDec and then the info used to initialise SpeexDecoder (that way the class could also be used to decode raw speex streams or RTP Speex streams).
 - implement all those options in the C command line encoder and decoder.

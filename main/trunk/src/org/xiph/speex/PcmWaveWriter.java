@@ -55,6 +55,8 @@ import java.io.*;
  * </pre>
  *
  * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class PcmWaveWriter
 {

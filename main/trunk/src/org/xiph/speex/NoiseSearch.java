@@ -70,12 +70,16 @@ package org.xiph.speex;
 
 /**
  * Noise codebook search
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class NoiseSearch
   extends CbSearch
 {
   /**
-   * Quantification
+   * Codebook Search Quantification (Noise).
    */
   public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
                           int p, int nsf, float exc[], int es, float[] r,
@@ -92,7 +96,11 @@ public class NoiseSearch
   }
 
   /**
-   * Unquantification
+   * Codebook Search Unquantification (Noise).
+   * @param exc - excitation array.
+   * @param es - position in excitation array.
+   * @param nsf - number of samples in subframe.
+   * @param bits - Speex bits buffer.
    */
   public final void unquant(float exc[], int es, int nsf, Bits bits)
   {

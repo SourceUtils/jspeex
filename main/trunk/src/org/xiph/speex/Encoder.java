@@ -68,275 +68,168 @@
 package org.xiph.speex;
 
 /**
- * Abstract Speex Encoder, used as a base for the Narrowband, Wideband and
- * Ultra-wideband encoders.
+ * Speex Encoder interface, used as a base for the Narrowband and sideband
+ * encoders.
+ * 
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
-public abstract class Encoder
+public interface Encoder
 {
-  protected Lsp      m_lsp;
-  protected Filters  filters;
-  
-  protected int complexity;     /**< Complexity setting (0-10 from least complex to most complex) */
-  protected int vbr_enabled;    /**< 1 for enabling VBR, 0 otherwise */
-  protected int vad_enabled;    /**< 1 for enabling VAD, 0 otherwise */
-  protected int dtx_enabled;    /**< 1 for enabling DTX, 0 otherwise */
-  protected int abr_enabled;    /**< ABR setting (in bps), 0 if off */
-  protected float vbr_quality;      /**< Quality setting for VBR encoding */
-  protected float relative_quality; /**< Relative quality that will be needed by VBR */
-  protected float abr_drift;
-  protected float abr_drift2;
-  protected float abr_count;
-  protected int sampling_rate;
-
-  protected SubMode submodes[];     /**< Sub-mode data */
-  protected int     submodeID;      /**< Activated sub-mode */
-  protected int     submodeSelect;  /**< Mode chosen by the user (may differ from submodeID if VAD is on) */
-
   /**
-   * Constructor
+   * Encode the given input signal.
+   * @param bits - Speex bits buffer.
+   * @param in - the raw mono audio frame to encode.
    */
-  public Encoder()
-  {
-    m_lsp   = new Lsp();
-    filters = new Filters();
-  }
+  public int encode(Bits bits, float in[]);
 
-  /**
-   * Initialisation
-   */
-  public void init()
-  {
-    complexity  = 3; // in C it's 2 here, but set to 3 automatically by the encoder
-    vbr_enabled = 0; // disabled by default
-    vad_enabled = 0; // disabled by default
-    dtx_enabled = 0; // disabled by default
-    abr_enabled = 0; // disabled by default
-    vbr_quality = 8;
-  }
-
-  /**
-   * Encode the given input signal
-   */
-  abstract public int encode(Bits bits, float in[]);
-
-  //---------------------------------------------------------------------------
-  // Tools
-  //---------------------------------------------------------------------------
-  
-  /**
-   * Builds an Asymmetric "pseudo-Hamming" window
-   */
-  protected float[] window(int windowSize, int subFrameSize)
-  {
-    int i;
-    int part1 = subFrameSize*7/2;
-    int part2 = subFrameSize*5/2;
-    float[] window = new float[windowSize];
-    for (i=0; i<part1; i++)
-      window[i]=(float)(.54-.46*Math.cos(Math.PI*i/part1));
-    for (i=0; i<part2; i++)
-      window[part1+i]=(float)(.54+.46*Math.cos(Math.PI*i/part2));
-    return window;
-  }
-  
   //---------------------------------------------------------------------------
   // Speex Control Functions
   //---------------------------------------------------------------------------
 
-  public abstract int     getFrameSize();
-  public abstract void    setQuality(int quality);
-  public abstract int     getBitRate();
-//  public abstract void    resetState();
+  /**
+   * Returns the size of a frame.
+   * @return the size of a frame.
+   */
+  public int  getFrameSize();
+
+  /**
+   * Sets the Quality (between 0 and 10).
+   * @param quality - the desired Quality (between 0 and 10).
+   */
+  public void    setQuality(int quality);
+
+  /**
+   * Get the current Bit Rate.
+   * @return the current Bit Rate.
+   */
+  public int     getBitRate();
+
+//  public void    resetState();
 
   /**
    * Returns the Pitch Gain array.
+   * @return the Pitch Gain array.
    */
-  public abstract float[] getPiGain();
+  public float[] getPiGain();
 
   /**
    * Returns the excitation array.
+   * @return the excitation array.
    */
-  public abstract float[] getExc();
+  public float[] getExc();
   
   /**
    * Returns the innovation array.
+   * @return the innovation array.
    */
-  public abstract float[] getInnov();
+  public float[] getInnov();
 
   /**
    * Sets the encoding submode.
+   * @param mode
    */
-  public void setMode(int mode)
-  {
-    submodeID = submodeSelect = mode;
-  }
+  public void setMode(int mode);
   
   /**
    * Returns the encoding submode currently in use.
+   * @return the encoding submode currently in use.
    */
-  public int getMode()
-  {
-    return submodeID;
-  }
+  public int getMode();
   
   /**
    * Sets the bitrate.
+   * @param bitrate
    */
-  public void setBitRate(int bitrate)
-  {
-    for (int i=10; i>=0; i--) {
-      setQuality(i);
-      if (getBitRate() <= bitrate)
-        return;
-    }
-  }
+  public void setBitRate(int bitrate);
   
   /**
    * Sets whether or not to use Variable Bit Rate encoding.
+   * @param vbr
    */
-  public void setVbr(boolean vbr)
-  {
-    vbr_enabled = vbr ? 1 : 0;
-  }
+  public void setVbr(boolean vbr);
   
   /**
    * Returns whether or not we are using Variable Bit Rate encoding.
+   * @return whether or not we are using Variable Bit Rate encoding.
    */
-  public boolean getVbr()
-  {
-    return vbr_enabled != 0;
-  }
+  public boolean getVbr();
   
   /**
    * Sets whether or not to use Voice Activity Detection encoding.
+   * @param vad
    */
-  public void setVad(boolean vad)
-  {
-    vad_enabled = vad ? 1 : 0;
-  }
+  public void setVad(boolean vad);
   
   /**
    * Returns whether or not we are using Voice Activity Detection encoding.
+   * @return whether or not we are using Voice Activity Detection encoding.
    */
-  public boolean getVad()
-  {
-    return vad_enabled != 0;
-  }
+  public boolean getVad();
   
   /**
    * Sets whether or not to use Discontinuous Transmission encoding.
+   * @param dtx
    */
-  public void setDtx(boolean dtx)
-  {
-    dtx_enabled = dtx ? 1 : 0;
-  }
+  public void setDtx(boolean dtx);
   
   /**
    * Returns whether or not we are using Discontinuous Transmission encoding.
+   * @return whether or not we are using Discontinuous Transmission encoding.
    */
-  public boolean getDtx()
-  {
-    return dtx_enabled != 0;
-  }
+  public boolean getDtx();
 
   /**
    * Returns the Average Bit Rate used (0 if ABR is not turned on).
+   * @return the Average Bit Rate used (0 if ABR is not turned on).
    */
-  public int getAbr()
-  {
-    return abr_enabled;
-  }
+  public int getAbr();
   
   /**
    * Sets the Average Bit Rate.
+   * @param abr - the desired Average Bit Rate.
    */
-  public void    setAbr(int abr)
-  {
-    abr_enabled = (abr!=0) ? 1 : 0;
-    vbr_enabled = 1;
-    {
-      int i=10, rate, target;
-      float vbr_qual;
-      target = abr;
-      while (i>=0)
-      {
-        setQuality(i);
-        rate = getBitRate();
-        if (rate <= target)
-          break;
-        i--;
-      }
-      vbr_qual=i;
-      if (vbr_qual<0)
-        vbr_qual=0;
-      setVbrQuality(vbr_qual);
-      abr_count=0;
-      abr_drift=0;
-      abr_drift2=0;
-    }
-  }
+  public void setAbr(int abr);
 
   /**
    * Sets the Varible Bit Rate Quality.
+   * @param quality - the desired Varible Bit Rate Quality.
    */
-  public void setVbrQuality(float quality)
-  {
-    if (quality < 0)
-      quality = 0;
-    if (quality > 10)
-      quality = 10;
-    vbr_quality = quality;
-  }
+  public void setVbrQuality(float quality);
   
   /**
    * Returns the Varible Bit Rate Quality.
+   * @return the Varible Bit Rate Quality.
    */
-  public float getVbrQuality()
-  {
-    return vbr_quality;
-  }
+  public float getVbrQuality();
   
   /**
-   * Sets the algorthmic complexity.
+   * Sets the algorithmic complexity.
+   * @param complexity - the desired algorithmic complexity (between 1 and 10 - default is 3).
    */
-  public void setComplexity(int complexity)
-  {
-    if (complexity < 0)
-      complexity = 0;
-    if (complexity > 10)
-      complexity = 10;
-    this.complexity = complexity;
-  }
+  public void setComplexity(int complexity);
   
   /**
    * Returns the algorthmic complexity.
+   * @return the algorthmic complexity.
    */
-  public int getComplexity()
-  {
-    return complexity;
-  }
+  public int getComplexity();
   
   /**
    * Sets the sampling rate.
+   * @param rate - the sampling rate.
    */
-  public void setSamplingRate(int rate)
-  {
-    sampling_rate = rate;
-  }
+  public void setSamplingRate(int rate);
     
   /**
    * Returns the sampling rate.
+   * @return the sampling rate.
    */
-  public int getSamplingRate()
-  {
-    return sampling_rate;
-  }
+  public int getSamplingRate();
 
   /**
    * Returns the relative quality.
+   * @return the relative quality.
    */
-  public float getRelativeQuality()
-  {
-    return relative_quality;
-  }
+  public float getRelativeQuality();
 }

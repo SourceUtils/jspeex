@@ -96,6 +96,9 @@ package org.xiph.speex;
  * values of the autocorrelation function.
  * 
  * <p>Invented by N. Levinson in 1947, modified by J. Durbin in 1959.
+ * 
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Lpc
 {

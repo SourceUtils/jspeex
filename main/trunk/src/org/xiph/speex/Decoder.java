@@ -69,129 +69,70 @@
 package org.xiph.speex;
 
 /**
- * Abstract Speex Decoder, used as a base for the Narrowband, Wideband and
- * Ultra-wideband decoders.
+ * Speex Decoder inteface, used as a base for the Narrowband and sideband
+ * decoders.
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
-public abstract class Decoder
+public interface Decoder
 {
-  protected Lsp      m_lsp;
-  protected Filters  filters;
-  protected Stereo   stereo;
-
   /**
-   * Constructor
+   * Decode the given input bits.
+   * @param bits - Speex bits buffer.
+   * @param out - the decoded mono audio frame.
    */
-  public Decoder()
-  {
-    m_lsp   = new Lsp();
-    filters = new Filters();
-    stereo  = new Stereo();
-  }
-
-  /**
-   * Initialise
-   */
-  public abstract void init();
+  public int  decode(Bits bits, float out[]);
   
   /**
-   * decode the given bits.
+   * Decode the given bits to stereo.
+   * @param data - float array of size 2*frameSize, that contains the mono
+   * audio samples in the first half. When the function has completed, the
+   * array will contain the interlaced stereo audio samples.
+   * @param frameSize - the size of a frame of mono audio samples.
    */
-  public abstract int  decode(Bits bits, float out[]);
+  public void decodeStereo(float data[], int frameSize);
+
+  /**
+   * Enables or disables perceptual enhancement.
+   * @param enhanced
+   */
+  public void setPerceptualEnhancement(boolean enhanced);
   
   /**
-   * decode the given bits to stereo.
+   * Returns whether perceptual enhancement is enabled or disabled.
+   * @return whether perceptual enhancement is enabled or disabled.
    */
-  public void decodeStereo(float out[], int frameSize)
-  {
-    stereo.decode(out, frameSize);
-  }
+  public boolean getPerceptualEnhancement();
 
   /**
-   * Returns the size of a frame
+   * Returns the size of a frame.
+   * @return the size of a frame.
    */
-  public abstract int  getFrameSize();
+  public int  getFrameSize();
 
   /**
-   * Returns the Pitch Gain array
+   * Returns whether or not we are using Discontinuous Transmission encoding.
+   * @return whether or not we are using Discontinuous Transmission encoding.
    */
-  public abstract float[] getPiGain();
+  public boolean getDtx();
 
   /**
-   * Returns the excitation array
+   * Returns the Pitch Gain array.
+   * @return the Pitch Gain array.
    */
-  public abstract float[] getExc();
+  public float[] getPiGain();
+
+  /**
+   * Returns the excitation array.
+   * @return the excitation array.
+   */
+  public float[] getExc();
   
   /**
-   * Returns the innovation array
+   * Returns the innovation array.
+   * @return the innovation array.
    */
-  public abstract float[] getInnov();
-
-  /**
-   * Speex in-band request (submode=14)
-   */
-  protected int speexInbandRequest(Bits bits)
-  {
-    int code = bits.unpack(4);
-    int tmp;
-    switch (code) {
-      case 0: // asks the decoder to set perceptual enhancment off (0) or on (1)
-        tmp = bits.unpack(1);
-        break;
-      case 1: // asks (if 1) the encoder to be less "aggressive" due to high packet loss
-        tmp = bits.unpack(1);
-        break;
-      case 2: // asks the encoder to switch to mode N
-        tmp = bits.unpack(4);
-        break;
-      case 3: // asks the encoder to switch to mode N for low-band
-        tmp = bits.unpack(4);
-        break;
-      case 4: // asks the encoder to switch to mode N for high-band
-        tmp = bits.unpack(4);
-        break;
-      case 5: // asks the encoder to switch to quality N for VBR
-        tmp = bits.unpack(4);
-        break;
-      case 6: // request acknowledgement (0=no, 1=all, 2=only for inband data)
-        tmp = bits.unpack(4);
-        break;
-      case 7: // asks the encoder to set CBR(0), VAD(1), DTX(3), VBR(5), VBR+DTX(7)
-        tmp = bits.unpack(4);
-        break;
-      case 8: // transmit (8-bit) character to the other end
-        tmp = bits.unpack(8);
-        break;
-      case 9: // intensity stereo information
-        // setup the stereo decoder; to skip: tmp = bits.unpack(8); break;
-        return stereo.init(bits); // read 8 bits
-      case 10: // announce maximum bit-rate acceptable (N in byets/second)
-        tmp = bits.unpack(16);
-        break;
-      case 11: // reserved
-        tmp = bits.unpack(16);
-        break;
-      case 12: // Acknowledge receiving packet N
-        tmp = bits.unpack(32);
-        break;
-      case 13: // reserved
-        tmp = bits.unpack(32);
-        break;
-      case 14: // reserved
-        tmp = bits.unpack(64);
-        break;
-      case 15: // reserved
-        tmp = bits.unpack(64);
-        break;
-      default:
-    }
-    return 1;
-  }
-  
-  /**
-   * User in-band request (submode=13)
-   */
-  protected int userInbandRequest(Bits bits)
-  {
-    return 1;
-  }
+  public float[] getInnov();
 }

@@ -70,22 +70,18 @@ package org.xiph.speex;
 
 /**
  * Filters
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Filters
 {
-  /*  ================================================
-        PRIVATE DATA MEMBERS
-      ================================================ */
-
   private int   last_pitch;
   private float last_pitch_gain[];
   private float smooth_gain;
   private float xx[];    
    
-  /*  ================================================
-        PRIVATE DATA MEMBERS
-      ================================================ */
-
   /**
    * Constructor
    */
@@ -258,16 +254,18 @@ public class Filters
   }
 
   /**
-   *
+   * Comb Filter
+   * @param exc - decoded excitation
+   * @param esi
+   * @param new_exc - enhanced excitation
+   * @param nsi
+   * @param nsf - sub-frame size
+   * @param pitch - pitch period
+   * @param pitch_gain - pitch gain (3-tap)
+   * @param comb_gain - gain of comb filter
    */
-  public void comb_filter(float exc[],        /*decoded excitation*/
-                          int   esi,
-                          float new_exc[],    /*enhanced excitation*/
-                          int   nsi,
-                          int   nsf,          /*sub-frame size*/
-                          int   pitch,        /*pitch period*/
-                          float pitch_gain[], /*pitch gain (3-tap)*/
-                          float comb_gain     /*gain of comb filter*/ )
+  public void comb_filter(float[] exc, int esi, float[] new_exc, int nsi,
+                          int nsf, int pitch, float[] pitch_gain, float comb_gain)
   {
     int i, j;
     float exc_energy=0.0f, new_exc_energy=0.0f;

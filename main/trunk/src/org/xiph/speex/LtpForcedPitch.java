@@ -70,12 +70,16 @@ package org.xiph.speex;
 
 /**
  * Long Term Prediction Quantisation and Unquantisation (Forced Pitch)
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class LtpForcedPitch
   extends Ltp
 {
   /**
-   * Quantification
+   * Long Term Prediction Quantification (Forced Pitch).
    */
   public final int quant(float[] target, float sw[], int sws, float[] ak, float[] awk1, float awk2[],
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 
@@ -91,10 +95,22 @@ public class LtpForcedPitch
   }
 
   /**
-   * Unquantification
+   * Long Term Prediction Unquantification (Forced Pitch).
+   * @param exc - Excitation
+   * @param es - Excitation offset
+   * @param start - Smallest pitch value allowed
+   * @param pitch_coef - Voicing (pitch) coefficient
+   * @param nsf - Number of samples in subframe
+   * @param gain_val
+   * @param bits - Speex bits buffer.
+   * @param count_lost
+   * @param subframe_offset
+   * @param last_pitch_gain
+   * @return pitch
    */
   public final int unquant(float exc[], int es, int start, float pitch_coef,  
-                           int nsf, float gain_val[], Bits bits)
+                           int nsf, float gain_val[], Bits bits,
+                           int count_lost, int subframe_offset, float last_pitch_gain)
   {
     int i;
     if (pitch_coef>.99f) {

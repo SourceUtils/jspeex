@@ -70,12 +70,20 @@ package org.xiph.speex;
 
 /**
  * LSP Quantisation and Unquantisation (high)
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class HighLspQuant
   extends LspQuant
 {
   /**
-   * Quantification
+   * Line Spectral Pair Quantification (high).
+   * @param lsp - Line Spectral Pairs table.
+   * @param qlsp - Quantified Line Spectral Pairs table.
+   * @param order
+   * @param bits - Speex bits buffer.
    */
   public final void quant(float lsp[], float qlsp[], int order, Bits bits)
   {
@@ -98,12 +106,12 @@ public class HighLspQuant
       qlsp[i]-=(.3125*i+.75);
     for (i=0;i<order;i++)
       qlsp[i]*=256;
-    id = lsp_quant(qlsp, 0, Tables.high_lsp_cdbk, 64, order);
+    id = lsp_quant(qlsp, 0, high_lsp_cdbk, 64, order);
     bits.pack(id, 6);
 
     for (i=0;i<order;i++)
       qlsp[i]*=2;
-    id = lsp_weight_quant(qlsp, 0, quant_weight, 0, Tables.high_lsp_cdbk2, 64, order);
+    id = lsp_weight_quant(qlsp, 0, quant_weight, 0, high_lsp_cdbk2, 64, order);
     bits.pack(id, 6);
 
     for (i=0;i<order;i++)
@@ -113,14 +121,17 @@ public class HighLspQuant
   }
 
   /**
-   * Unquantification
+   * Line Spectral Pair Unquantification (high).
+   * @param lsp - Line Spectral Pairs table.
+   * @param order
+   * @param bits - Speex bits buffer.
    */
   public final void unquant(float lsp[], int order, Bits bits)
   {
     for (int i=0;i<order;i++) {
       lsp[i]=.3125f*i+.75f;
     }
-    unpackPlus(lsp, Tables.high_lsp_cdbk, bits, 0.0039062f, order, 0);
-    unpackPlus(lsp, Tables.high_lsp_cdbk2, bits, 0.0019531f, order, 0);
+    unpackPlus(lsp, high_lsp_cdbk, bits, 0.0039062f, order, 0);
+    unpackPlus(lsp, high_lsp_cdbk2, bits, 0.0019531f, order, 0);
   } 
 }

@@ -43,16 +43,18 @@ import java.util.Random;
 /**
  * Ogg Speex Writer
  * 
- * @author Marc Gimpel, wimba.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class OggSpeexWriter
 {
   private Random random;
-  private RandomAccessFile raf; 
+  private OutputStream out;
 
   private int    mode;
   private int    sampleRate;
   private int    channels;
+  private int    nframes;
   private int    size;
   private int    streamSerialNumber;
   private byte[] dataBuffer;
@@ -64,7 +66,7 @@ public class OggSpeexWriter
   private long   granulepos;
   
   /**
-   * Constructor. 
+   * Builds an Ogg Speex Writer. 
    */
   public OggSpeexWriter()
   {
@@ -86,7 +88,7 @@ public class OggSpeexWriter
     throws IOException 
   {
     flush(true);
-    raf.close(); 
+    out.close(); 
   }
   
   /**
@@ -97,26 +99,37 @@ public class OggSpeexWriter
     throws IOException 
   {
     new File(filename).delete(); 
-    raf = new RandomAccessFile(filename, "rw");
+    out  = new FileOutputStream(filename);
     size = 0;   
   }
   
   /**
+   * Sets the output stream to the given stream.
+   * @param os - output stream.
+   */
+  public void open(OutputStream os)
+  {
+    out = os;
+    size = 0;   
+  }
+
+  /**
    * Sets the output format.
    * Must be called before WriteHeader().
    */
-  public void setFormat(int mode, int sampleRate, int channels)
+  public void setFormat(int mode, int sampleRate, int channels, int nframes)
   {
     this.mode       = mode;
     this.sampleRate = sampleRate;
     this.channels   = channels;
+    this.nframes    = nframes;
   }
   
   /**
    *  Writes the header pages that start the Ogg Speex file. 
    *  Prepares file for data to be written.
    */
-  public void writeHeader()
+  public void writeHeader(String comment)
     throws IOException
   {
     // writes the OGG header page
@@ -141,9 +154,9 @@ public class OggSpeexWriter
     writeInt(baos, 4);                        // 44 - 47: mode_bitstream_version
     writeInt(baos, channels);                 // 48 - 51: nb_channels
     writeInt(baos, -1);                       // 52 - 55: bitrate
-    writeInt(baos, 160);                      // 56 - 59: frame_size
+    writeInt(baos, mode==0?160:mode==1?320:640); // 56 - 59: frame_size
     writeInt(baos, 0);                        // 60 - 63: vbr
-    writeInt(baos, 1);                        // 64 - 67: frames_per_packet
+    writeInt(baos, nframes);                  // 64 - 67: frames_per_packet
     writeInt(baos, 0);                        // 68 - 71: extra_headers
     writeInt(baos, 0);                        // 72 - 75: reserved1
     writeInt(baos, 0);                        // 76 - 79: reserved2
@@ -154,10 +167,9 @@ public class OggSpeexWriter
     ogg[23] = (byte)(0xff & (chksum >>>  8));
     ogg[24] = (byte)(0xff & (chksum >>> 16));
     ogg[25] = (byte)(0xff & (chksum >>> 24));
-    raf.write(ogg);
+    out.write(ogg);
     /* writes the OGG comment page */
     baos = new ByteArrayOutputStream(64);
-    String comment = "Encoded with jspeex 0.2 beta";
     baos.write("OggS".getBytes(), 0, 4); //  0 -  3: capture_pattern
     baos.write(0xff & 0);                //       4: stream_structure_version
     baos.write(0xff & 0);                //       5: header_type_flag
@@ -166,11 +178,11 @@ public class OggSpeexWriter
     writeInt(baos, pageCount++);         // 18 - 21: page sequence no
     writeInt(baos, 0);                   // 22 - 25: page checksum
     baos.write(0xff & 1);                //      26: page_segments
-    baos.write(0xff & (comment.length()+8)); //      27: segment_table (1 segment, size 80 = Speex Header)
+    baos.write(0xff & (comment.length()+8)); //  27: segment_table (1 segment, size 80 = Speex Header)
     /* writes the Comment */
-    writeInt(baos, comment.length());                    // comment size
-    baos.write(comment.getBytes(), 0, comment.length()); // comment
-    writeInt(baos, 0);                                   // ?
+    writeInt(baos, comment.length());                    // vendor comment size
+    baos.write(comment.getBytes(), 0, comment.length()); // vendor comment
+    writeInt(baos, 0);                                   // user comment list length
     /* Calculate Checksum */
     ogg = baos.toByteArray();
     chksum = OggCrc.checksum(0, ogg, 0, ogg.length);
@@ -178,12 +190,12 @@ public class OggSpeexWriter
     ogg[23] = (byte)(0xff & (chksum >>>  8));
     ogg[24] = (byte)(0xff & (chksum >>> 16));
     ogg[25] = (byte)(0xff & (chksum >>> 24));
-    raf.write(ogg);
+    out.write(ogg);
   }
   
   /**
    *  Writes a packet of audio. 
-   *  @param data audio data
+   *  @param data - audio data.
    */
   public void writePacket(byte[] data, int offset, int len)
     throws IOException 
@@ -226,16 +238,18 @@ public class OggSpeexWriter
     ogg[23] = (byte)(0xff & (chksum >>>  8));
     ogg[24] = (byte)(0xff & (chksum >>> 16));
     ogg[25] = (byte)(0xff & (chksum >>> 24));
-    raf.write(ogg);
-    raf.write(dataBuffer, 0, dataBufferPtr);
+    out.write(ogg);
+    out.write(dataBuffer, 0, dataBufferPtr);
     dataBufferPtr   = 0;
     headerBufferPtr = 0;
     packetCount     = 0;
   }
   
   /**
-   * Writes a Little-endian short
-   */  
+   * Writes a Little-endian short.
+   * @param os - the output stream to write to.
+   * @param v - the value to write.
+   */
   private static void writeShort(OutputStream os, short v)
     throws IOException 
   {
@@ -244,7 +258,9 @@ public class OggSpeexWriter
   }
   
   /**
-   * Writes a Little-endian int
+   * Writes a Little-endian int.
+   * @param os - the output stream to write to.
+   * @param v - the value to write.
    */
   private static void writeInt(OutputStream os, int v)
     throws IOException 
@@ -256,7 +272,9 @@ public class OggSpeexWriter
   }
 
   /**
-   * Writes a Little-endian long
+   * Writes a Little-endian long.
+   * @param os - the output stream to write to.
+   * @param v - the value to write.
    */
   private static void writeLong(OutputStream os, long v) throws IOException 
   {

@@ -70,16 +70,16 @@ package org.xiph.speex;
 
 /**
  * Split shape codebook search
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class SplitShapeSearch
   extends CbSearch
 {
   public static final int MAX_COMPLEXITY = 10;
   
-  /*  ================================================
-        PRIVATE DATA MEMBERS
-      ================================================ */
-
   private int   subframesize;
   private int   subvect_size;
   private int   nb_subvect;
@@ -94,10 +94,6 @@ public class SplitShapeSearch
   private float[][] ot, nt;
   private int[][]   nind, oind;
    
-  /*  ================================================
-        PRIVATE DATA MEMBERS
-      ================================================ */
-
   /**
    * Constructor
    */
@@ -128,7 +124,7 @@ public class SplitShapeSearch
   }
 
   /**
-   * Quantification
+   * Codebook Search Quantification (Split Shape).
    */
   public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
                           int p, int nsf, float exc[], int es, float[] r,
@@ -327,7 +323,11 @@ public class SplitShapeSearch
   }
 
   /**
-   * Unquantization
+   * Codebook Search Unquantification (Split Shape).
+   * @param exc - excitation array.
+   * @param es - position in excitation array.
+   * @param nsf - number of samples in subframe.
+   * @param bits - Speex bits buffer.
    */
   public final void unquant(float exc[], int es, int nsf, Bits bits)
   {

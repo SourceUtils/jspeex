@@ -71,16 +71,15 @@ package org.xiph.speex;
 /**
  * Abstract class that is the base for the various LSP Quantisation and
  * Unquantisation methods.
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public abstract class LspQuant
+  implements Codebook
 {
   public static final int MAX_LSP_SIZE       = 20;
-
-  public static final int NB_CDBK_SIZE       = 64;
-  public static final int NB_CDBK_SIZE_LOW1  = 64;
-  public static final int NB_CDBK_SIZE_LOW2  = 64;
-  public static final int NB_CDBK_SIZE_HIGH1 = 64;
-  public static final int NB_CDBK_SIZE_HIGH2 = 64;
 
   protected float[] quant_weight;
 
@@ -93,22 +92,33 @@ public abstract class LspQuant
   }
 
   /**
-   * Quantification
+   * Line Spectral Pair Quantification.
+   * @param lsp - Line Spectral Pairs table.
+   * @param qlsp - Quantified Line Spectral Pairs table.
+   * @param order
+   * @param bits - Speex bits buffer.
    */
   public abstract void quant(float lsp[], float qlsp[], int order, Bits bits); 
   
   /**
-   * Unquantification
+   * Line Spectral Pair Unquantification.
+   * @param lsp - Line Spectral Pairs table.
+   * @param order
+   * @param bits - Speex bits buffer.
    */
   public abstract void unquant(float lsp[], int order, Bits bits); 
   
   /**
-   *
+   * Read the next 6 bits from the buffer, and using the value read and the
+   * given codebook, rebuild LSP table.
+   * @param lsp
+   * @param tab
+   * @param bits - Speex bits buffer.
    */
   protected void unpackPlus(float lsp[], int tab[], Bits bits, float k, int ti, int li)
   {
-    int id=bits.unpack(6), i=0;
-    for (;i<ti;i++)
+    int id=bits.unpack(6);
+    for (int i=0;i<ti;i++)
       lsp[i+li] += k * (float)tab[id*ti+i];
   }
   
@@ -145,6 +155,7 @@ public abstract class LspQuant
   }
 
   /**
+   * LSP weighted quantification
    * Note: x is modified
    */
   protected static int lsp_weight_quant(float[] x, int xs, float[] weight, int ws, int[] cdbk, int nbVec, int nbDim)

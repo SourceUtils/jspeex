@@ -25,7 +25,7 @@
 <!-- **********************************************************************/-->
 <!-- $Id$ -->
 
-<project name="jspeex" default="compile" basedir=".">
+<project name="jspeex" default="package" basedir=".">
   <description>JSpeex build file</description>
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
            classpath="../proguard/proguard.jar" />
@@ -33,34 +33,31 @@
   <!-- set global properties for this build -->
   <property name="root"    location="."/>
   <property name="src"     location="."/>
+  <property name="include" location="../include"/>
   <property name="build"   location="../build"/>
   <property name="temp"    location="../temp"/>
   <property name="lib"     location="../lib"/>
   <property name="log"     location="../log"/>
   <property name="doc"     location="../doc"/>
 
-  <target name="init" description="initialise ant" depends="clean">
+  <target name="init" description="Initialise ant" depends="clean">
     <tstamp/>
     <mkdir dir="${build}"/>
     <mkdir dir="${temp}"/>
-    <input message="Do you want to compile JSpeex for just narrowband (smaller footprint), choose "
-           validargs="y,n" addproperty="question"/>
-    <condition property="narrowband">
-      <equals arg1="y" arg2="${question}"/>
-    </condition>
   </target>
 
-  <target name="compile-wb" depends="init" unless="narrowband"
-          description="compile JSpeex" >
+  <target name="compile" depends="init"
+          description="Compile JSpeex" >
     <javac srcdir="${src}" destdir="${build}">
       <include name="JSpeexEnc.java"/>
       <include name="JSpeexDec.java"/>
       <include name="org/xiph/speex/*.java"/>
+      <include name="org/xiph/speex/spi/*.java"/>
     </javac>
   </target>
 
-  <target name="compile-nb" depends="init" if="narrowband"
-          description="compile JSpeex (narrowband only)" >
+  <target name="compile-nb" depends="init"
+          description="Compile JSpeex (narrowband only)" >
     <copy toDir="${temp}/" overwrite="true">
       <fileset dir="${src}/"/>
       <filterset begintoken="//Wideba" endtoken="d">
@@ -74,9 +71,10 @@
     </javac>
   </target>
 
-  <target name="compile" depends="compile-wb,compile-nb"
-          description="compile JSpeex" >
+  <target name="package" depends="compile"
+          description="Package JSpeex library" >
     <jar jarfile="${lib}/jspeex.jar" basedir="${build}">
+      <metainf dir="${include}/"/>
       <manifest>
         <section name="build">
           <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
@@ -88,12 +86,39 @@
     </jar>
   </target>
 
-  <target name="compress" depends="compile"
-          description="obfuscate code" >
+  <target name="compress" depends="package"
+          description="Package obfuscated JSpeex library" >
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
 -injars      ../lib/jspeex.jar
 -outjar      ../lib/jspeex-obf.jar
+-renamesourcefileattribute SourceFile
+-keepattributes InnerClasses,SourceFile
+-overloadaggressively
+
+-keep public class * {
+    public protected *;
+}
+    </proguard>
+  </target>
+
+  <target name="compress-encdec" depends="compile"
+          description="Package obfuscated JSpeex encoder and decoder (without SPI)" >
+    <jar jarfile="${lib}/jspeex-encdec.jar">
+      <fileset dir="${build}" excludes="**/spi/*.class"/>
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexEnc"/>
+      </manifest>
+    </jar>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ../lib/jspeex-encdec.jar
+-outjar      ../lib/jspeex-encdec-obf.jar
 -overloadaggressively
 -defaultpackage ''
 
@@ -106,34 +131,10 @@
     </proguard>
   </target>
 
-  <target name="compress-encoder" depends="compile"
-          description="obfuscate code" >
-    <jar jarfile="${lib}/jspeexenc.jar" basedir="${build}">
-      <manifest>
-        <section name="build">
-          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
-          <attribute name="Built-By" value="${user.name}"/>
-          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
-        </section>
-        <attribute name="Main-Class" value="JSpeexEnc"/>
-      </manifest>
-    </jar>
-    <proguard>
--libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeexenc.jar
--outjar      ../lib/jspeexenc-obf.jar
--overloadaggressively
--defaultpackage ''
-
--keep public class JSpeexEnc {
-    public static void main(java.lang.String[]);
-}
-    </proguard>
-  </target>
-
-  <target name="compress-decoder" depends="compile"
-          description="obfuscate code" >
-    <jar jarfile="${lib}/jspeexdec.jar" basedir="${build}">
+  <target name="compress-dec" depends="compile"
+          description="Package obfuscated JSpeex decoder (without SPI)" >
+    <jar jarfile="${lib}/jspeex-dec.jar">
+      <fileset dir="${build}" excludes="**/spi/*.class"/>
       <manifest>
         <section name="build">
           <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
@@ -145,8 +146,34 @@
     </jar>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ../lib/jspeexdec.jar
--outjar      ../lib/jspeexdec-obf.jar
+-injars      ../lib/jspeex-dec.jar
+-outjar      ../lib/jspeex-dec-obf.jar
+-overloadaggressively
+-defaultpackage ''
+
+-keep public class JSpeexDec {
+    public static void main(java.lang.String[]);
+}
+    </proguard>
+  </target>
+
+  <target name="compress-dec-nb" depends="compile-nb"
+          description="Package obfuscated JSpeex decoder (without SPI) (narrowband only)" >
+    <jar jarfile="${lib}/jspeex-dec-nb.jar">
+      <fileset dir="${build}" excludes="${build}/org/xiph/speex/spi/*.class"/>
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexDec"/>
+      </manifest>
+    </jar>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ../lib/jspeex-dec-nb.jar
+-outjar      ../lib/jspeex-dec-nb-obf.jar
 -overloadaggressively
 -defaultpackage ''
 
@@ -157,19 +184,23 @@
   </target>
 
   <target name="javadoc"
-          description="generate javadoc documentation" >
+          description="Generate JSpeex javadoc documentation" >
     <!-- Create the documentation directory -->
     <mkdir dir="${doc}"/>
-    <javadoc sourcepath="${src}" destdir="${doc}" author="true" version="true"
-             packagenames="org.xiph.speex"
-             use="true"
-             Windowtitle="JSpeex javadoc">
+    <javadoc sourcepath="${src}" destdir="${doc}" access="private"
+             packagenames="org.xiph.speex.*"
+             Author="true" Version="true" Use="true"
+             Overview="${src}/Overview.html"
+             Windowtitle="JSpeex API Specification"
+             DocTitle="JSpeex API Specification">
       <bottom><![CDATA[<i>Copyright &#169; 1999-2003 Wimba S.A. All Rights Reserved.</i>]]></bottom>
+      <group title="Core JSpeex codec package" packages="org.xiph.speex"/>
+      <group title="JavaSound SPI for JSpeex package" packages="org.xiph.speex.spi"/>
     </javadoc>
   </target>
 
   <target name="clean"
-          description="clean up" >
+          description="Clean up" >
     <delete dir="${build}"/>
     <delete dir="${temp}"/>
   </target>

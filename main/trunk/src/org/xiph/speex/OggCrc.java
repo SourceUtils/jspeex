@@ -64,6 +64,10 @@ package org.xiph.speex;
  * 
  * <p>Ogg uses the same generator polynomial as ethernet, although with an
  * unreflected alg and an init/final of 0, not 0xffffffff.
+ * 
+ * @author Jim Lawrence, helloNetwork.com
+ * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class OggCrc
 {
