@@ -434,6 +434,9 @@ public class Speex2PcmAudioInputStream
       }
     }
     int avail = super.available();
+    if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
+      readOggPageHeader();
+    }
     // See how much we could decode from the underlying stream.
     if (packetCount < packetsPerOggPage) {
       int undecoded = precount - prepos + in.available();
