@@ -235,6 +235,12 @@ public interface Encoder
   public int getSamplingRate();
 
   /**
+   * Return LookAhead.
+   * @return LookAhead.
+   */
+  public int getLookAhead();
+
+  /**
    * Returns the relative quality.
    * @return the relative quality.
    */

@@ -1024,6 +1024,15 @@ public class NbEncoder
   }
 
   /**
+   * Return LookAhead.
+   * @return LookAhead.
+   */
+  public int getLookAhead()
+  {
+    return windowSize - frameSize;
+  }
+  
+  /**
    * Returns the relative quality.
    * @return the relative quality.
    */

@@ -719,6 +719,15 @@ public class SbEncoder
   }
     
   /**
+   * Return LookAhead.
+   * @return LookAhead.
+   */
+  public int getLookAhead()
+  {
+    return 2*lowenc.getLookAhead() + QMF_ORDER - 1;
+  }
+
+  /**
    * 
    */
 //  public void resetState()

@@ -155,12 +155,15 @@ public abstract class Ltp
     for (i=0; i<N; i++) {
       best_score[i]=-1;
       gain[i]=0;
+      pitch[i]=start;
     }
     energy[0]=inner_prod(sw, swIdx-start, sw, swIdx-start, len);
     e0=inner_prod(sw, swIdx, sw, swIdx, len);
     for (i=start; i<=end; i++) {
       /* Update energy for next pitch*/
       energy[i-start+1] = energy[i-start] + sw[swIdx-i-1]*sw[swIdx-i-1] - sw[swIdx-i+len-1]*sw[swIdx-i+len-1];
+      if (energy[i-start+1] < 1)
+        energy[i-start+1]=1; 
     }
     for (i=start; i<=end; i++) {
       corr[i-start]=0;
