@@ -99,7 +99,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.2 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9.3 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
@@ -429,8 +429,8 @@ public class JSpeexDec
                 }
                 /* once Speex header read, initialize the wave writer with output format */
                 if (outputFormat == FILE_FORMAT_WAVE) {
-                  writer = new PcmWaveWriter(speexDecoder.getChannels(),
-                                             speexDecoder.getSampleRate());
+                  writer = new PcmWaveWriter(speexDecoder.getSampleRate(),
+                                             speexDecoder.getChannels());
                   if (printlevel <= DEBUG) {
                     System.out.println("");
                     System.out.println("Output File: " + outputPath);
@@ -580,7 +580,7 @@ public class JSpeexDec
             }
             /* initialize the wave writer with output format */
             if (outputFormat == FILE_FORMAT_WAVE) {
-              writer = new PcmWaveWriter(channels, sampleRate);
+              writer = new PcmWaveWriter(sampleRate, channels);
               if (printlevel <= DEBUG) {
                 System.out.println("");
                 System.out.println("Output File: " + outputPath);

@@ -73,6 +73,7 @@ import java.io.FileInputStream;
 import org.xiph.speex.SpeexEncoder;
 import org.xiph.speex.AudioFileWriter;
 import org.xiph.speex.OggSpeexWriter;
+import org.xiph.speex.PcmWaveWriter;
 import org.xiph.speex.RawWriter;
 
 /**
@@ -86,7 +87,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexEnc
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.9.2 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Encoder v0.9.3 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
@@ -475,7 +476,8 @@ public class JSpeexEnc
       writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
     }
     else if (outputFormat == FILE_FORMAT_WAVE) {
-      writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
+      nframes = PcmWaveWriter.WAVE_FRAME_SIZES[mode-1][channels-1][quality];
+      writer = new PcmWaveWriter(mode, quality, sampleRate, channels, nframes, vbr);
     }
     else {
       writer = new RawWriter();

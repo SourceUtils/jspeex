@@ -123,13 +123,14 @@ public class OggSpeexWriter
   /**
    * Sets the output format.
    * Must be called before WriteHeader().
-   * @param mode
-   * @param sampleRate
-   * @param channels
-   * @param nframes
+   * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
+   * @param sampleRate the number of samples per second.
+   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+   * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
-  private void setFormat(int mode, int sampleRate, int channels, int nframes, boolean vbr)
+  private void setFormat(int mode, int sampleRate, int channels, int nframes,
+                         boolean vbr)
   {
     this.mode       = mode;
     this.sampleRate = sampleRate;
