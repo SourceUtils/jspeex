@@ -79,7 +79,7 @@ public class SpeexEncoder
   /**
    * Version of the Speex Encoder
    */
-  public static final String VERSION = "Java Speex Encoder v0.9.5 ($Revision$)";
+  public static final String VERSION = "Java Speex Encoder v0.9.6 ($Revision$)";
 
   private Encoder encoder;
   private Bits    bits;

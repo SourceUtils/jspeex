@@ -100,7 +100,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.5 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9.6 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
@@ -578,6 +578,7 @@ public class JSpeexDec
                   case 0:
                     bodybytes = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[quality]];
                     break;
+//Wideband
                   case 1:
                     bodybytes = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[quality]];
                     bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
@@ -587,7 +588,9 @@ public class JSpeexDec
                     bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
                     bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[quality]];
                     break;
+//*/
                   default:
+                    throw new IOException("Illegal mode encoundered.");
                 }
                 bodybytes = (bodybytes + 7) >> 3;
               }
