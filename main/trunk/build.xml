@@ -234,6 +234,16 @@
   <!-- * Miscellaneous                                                      -->
   <!-- ******************************************************************** -->
 
+  <target name="release" description="Builds the release zip" depends="clean">
+    <zip destfile="../jspeex.zip">
+      <zipfileset dir="../main" prefix="jspeex">
+        <include name="**/*"/>
+        <exclude name="doc/**"/>
+        <exclude name="log/**"/>
+      </zipfileset>
+    </zip>
+  </target>
+
   <target name="usage" description="Display usage information" >
     <echo taskname="usage">
 ant [options] target
@@ -248,6 +258,7 @@ Other Targets of interest:
   compress-dec     Package and compress only the decoder (52k)
   compress-encdec  Package and compress only the codec, not javasound SPI (69k)
 Other Targets:
+  release          Builds a zip file containing the JSpeex release
   usage            Display this message
   clean            Clean the build directories
     </echo>
