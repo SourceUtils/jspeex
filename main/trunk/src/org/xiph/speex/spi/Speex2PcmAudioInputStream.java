@@ -90,7 +90,7 @@ public class Speex2PcmAudioInputStream
   /**
    * Constructor
    * @param in     the underlying input stream.
-   * @param format the format of this stream's audio data.
+   * @param format the target format of this stream's audio data.
    * @param length the length in sample frames of the data in this stream.
    */
   public Speex2PcmAudioInputStream(InputStream in, AudioFormat format,
@@ -102,7 +102,7 @@ public class Speex2PcmAudioInputStream
   /**
    * Constructor
    * @param in     the underlying input stream.
-   * @param format the format of this stream's audio data.
+   * @param format the target format of this stream's audio data.
    * @param length the length in sample frames of the data in this stream.
    * @param size   the buffer size.
    * @exception IllegalArgumentException if size <= 0.
@@ -291,8 +291,11 @@ public class Speex2PcmAudioInputStream
    * @param data the array of data to decode.
    * @param offset the offset from which to start reading the data.
    * @param len the length of data to read from the array.
+   * @throws StreamCorruptedException If the input stream not valid Ogg Speex
+   * data.
    */
   protected void decode(byte[] data, int offset, int len)
+    throws StreamCorruptedException
   {
     int i;
     short val;

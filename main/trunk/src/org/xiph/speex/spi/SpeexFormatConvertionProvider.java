@@ -83,7 +83,9 @@ public class SpeexFormatConvertionProvider
    */
   public AudioFormat.Encoding[] getSourceEncodings()
   {
-    return BOTH_ENCODINGS;
+    AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX,
+                                        AudioFormat.Encoding.PCM_SIGNED};
+    return encodings;
   }
   
   /**
@@ -94,7 +96,30 @@ public class SpeexFormatConvertionProvider
    */
   public AudioFormat.Encoding[] getTargetEncodings()
   {
-    return BOTH_ENCODINGS;
+    AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
+                                        SpeexEncoding.SPEEX_Q1,
+                                        SpeexEncoding.SPEEX_Q2,
+                                        SpeexEncoding.SPEEX_Q3,
+                                        SpeexEncoding.SPEEX_Q4,
+                                        SpeexEncoding.SPEEX_Q5,
+                                        SpeexEncoding.SPEEX_Q6,
+                                        SpeexEncoding.SPEEX_Q7,
+                                        SpeexEncoding.SPEEX_Q8,
+                                        SpeexEncoding.SPEEX_Q9,
+                                        SpeexEncoding.SPEEX_Q10,
+                                        SpeexEncoding.SPEEX_VBR0,
+                                        SpeexEncoding.SPEEX_VBR1,
+                                        SpeexEncoding.SPEEX_VBR2,
+                                        SpeexEncoding.SPEEX_VBR3,
+                                        SpeexEncoding.SPEEX_VBR4,
+                                        SpeexEncoding.SPEEX_VBR5,
+                                        SpeexEncoding.SPEEX_VBR6,
+                                        SpeexEncoding.SPEEX_VBR7,
+                                        SpeexEncoding.SPEEX_VBR8,
+                                        SpeexEncoding.SPEEX_VBR9,
+                                        SpeexEncoding.SPEEX_VBR10,
+                                        AudioFormat.Encoding.PCM_SIGNED};
+    return encodings;
   }
   
   /**
@@ -107,13 +132,37 @@ public class SpeexFormatConvertionProvider
   public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat)
   {
     if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
-      return SPEEX_ENCODING;
+      AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
+                                          SpeexEncoding.SPEEX_Q1,
+                                          SpeexEncoding.SPEEX_Q2,
+                                          SpeexEncoding.SPEEX_Q3,
+                                          SpeexEncoding.SPEEX_Q4,
+                                          SpeexEncoding.SPEEX_Q5,
+                                          SpeexEncoding.SPEEX_Q6,
+                                          SpeexEncoding.SPEEX_Q7,
+                                          SpeexEncoding.SPEEX_Q8,
+                                          SpeexEncoding.SPEEX_Q9,
+                                          SpeexEncoding.SPEEX_Q10,
+                                          SpeexEncoding.SPEEX_VBR0,
+                                          SpeexEncoding.SPEEX_VBR1,
+                                          SpeexEncoding.SPEEX_VBR2,
+                                          SpeexEncoding.SPEEX_VBR3,
+                                          SpeexEncoding.SPEEX_VBR4,
+                                          SpeexEncoding.SPEEX_VBR5,
+                                          SpeexEncoding.SPEEX_VBR6,
+                                          SpeexEncoding.SPEEX_VBR7,
+                                          SpeexEncoding.SPEEX_VBR8,
+                                          SpeexEncoding.SPEEX_VBR9,
+                                          SpeexEncoding.SPEEX_VBR10};
+      return encodings;
     }
-    else if (sourceFormat.getEncoding().equals(SpeexEncoding.SPEEX)) {
-      return PCM_ENCODING;
+    else if (sourceFormat.getEncoding() instanceof SpeexEncoding) {
+      AudioFormat.Encoding[] encodings = {AudioFormat.Encoding.PCM_SIGNED};
+      return encodings;
     }
     else {
-      return NO_ENCODING;
+      AudioFormat.Encoding[] encodings = {};
+      return encodings;
     }
   }
 
@@ -128,13 +177,15 @@ public class SpeexFormatConvertionProvider
   public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
                                         AudioFormat sourceFormat)
   {
-    if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
+    if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
+        targetEncoding instanceof SpeexEncoding) {
       if (sourceFormat.getChannels() > 2 || sourceFormat.getChannels() <= 0 ||
-          !sourceFormat.isBigEndian()) {
-        return NO_FORMAT;
+          sourceFormat.isBigEndian()) {
+        AudioFormat[] formats = {};
+        return formats;
       }
       else {
-        AudioFormat[] formats = {new AudioFormat(SpeexEncoding.SPEEX,
+        AudioFormat[] formats = {new AudioFormat(targetEncoding,
                                                  sourceFormat.getSampleRate(),
                                                  -1, // sample size in bits
                                                  sourceFormat.getChannels(),
@@ -144,7 +195,8 @@ public class SpeexFormatConvertionProvider
         return formats;
       }
     }
-    else if (sourceFormat.getEncoding().equals(SpeexEncoding.SPEEX)) {
+    else if (sourceFormat.getEncoding() instanceof SpeexEncoding &&
+             targetEncoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
       AudioFormat[] formats = {new AudioFormat(sourceFormat.getSampleRate(),
                                                16, // sample size in bits
                                                sourceFormat.getChannels(),
@@ -153,7 +205,8 @@ public class SpeexFormatConvertionProvider
       return formats;
     }
     else {
-      return NO_FORMAT;
+      AudioFormat[] formats = {};
+      return formats;
     }
   }
   
@@ -179,12 +232,12 @@ public class SpeexFormatConvertionProvider
         if (sourceFormat.equals(targetFormat)) {
           return sourceStream;
         }
-        else if (sourceFormat.getEncoding().equals(SpeexEncoding.SPEEX) &&
+        else if (sourceFormat.getEncoding() instanceof SpeexEncoding &&
                  targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
           return new Speex2PcmAudioInputStream(sourceStream, targetFormat, -1);
         }
         else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
-                 targetFormat.getEncoding().equals(SpeexEncoding.SPEEX)) {
+                 targetFormat.getEncoding() instanceof SpeexEncoding) {
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {
@@ -222,12 +275,12 @@ public class SpeexFormatConvertionProvider
         if (sourceFormat.equals(targetFormat)) {
           return sourceStream;
         }
-        else if (sourceFormat.getEncoding().equals(SpeexEncoding.SPEEX) &&
+        else if (sourceFormat.getEncoding() instanceof SpeexEncoding &&
                  targetFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
           return new Speex2PcmAudioInputStream(sourceStream, targetFormat, -1);
         }
         else if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
-                 targetFormat.getEncoding().equals(SpeexEncoding.SPEEX)) {
+                 targetFormat.getEncoding() instanceof SpeexEncoding) {
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {

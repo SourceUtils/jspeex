@@ -105,7 +105,7 @@ public class Pcm2SpeexAudioInputStream
   /**
    * Constructor
    * @param in      the underlying input stream.
-   * @param format  the format of this stream's audio data.
+   * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    */
   public Pcm2SpeexAudioInputStream(InputStream in,
@@ -119,7 +119,7 @@ public class Pcm2SpeexAudioInputStream
    * @param mode    the mode of the encoder (0=NB, 1=WB, 2=UWB).
    * @param quality the quality setting of the encoder (between 0 and 10).
    * @param in      the underlying input stream.
-   * @param format  the format of this stream's audio data.
+   * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    */
   public Pcm2SpeexAudioInputStream(int mode, int quality, InputStream in,
@@ -131,7 +131,7 @@ public class Pcm2SpeexAudioInputStream
   /**
    * Constructor
    * @param in      the underlying input stream.
-   * @param format  the format of this stream's audio data.
+   * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
@@ -147,7 +147,7 @@ public class Pcm2SpeexAudioInputStream
    * @param mode    the mode of the encoder (0=NB, 1=WB, 2=UWB).
    * @param quality the quality setting of the encoder (between 0 and 10).
    * @param in      the underlying input stream.
-   * @param format  the format of this stream's audio data.
+   * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
@@ -174,14 +174,29 @@ public class Pcm2SpeexAudioInputStream
     if (mode < 0)
       mode = (samplerate < 12000) ? 0 : ((samplerate < 24000) ? 1 : 2);
     this.mode = mode;
-    if (quality < 0)
-      quality = DEFAULT_QUALITY;
+    AudioFormat.Encoding encoding = format.getEncoding();
+    if (quality < 0) {
+      if (encoding instanceof SpeexEncoding) {
+        quality = ((SpeexEncoding) encoding).getQuality();
+      }
+      else {
+        quality = DEFAULT_QUALITY;
+      }
+    }
     encoder = new SpeexEncoder();
     encoder.init(mode, quality, samplerate, channels);
+    if (encoding instanceof SpeexEncoding &&
+        ((SpeexEncoding) encoding).isVBR()) {
+      setVbr(true);
+    }
+    else {
+      setVbr(false);
+    }
     frameSize = 2 * channels * encoder.getFrameSize();
     // Misc initialsation
     comment = "Encoded with " + encoder.VERSION;
     first = true;
+    System.out.println("++++++ Stream initialized correctly");
   }
 
   /**
