@@ -99,7 +99,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.1 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9.2 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 

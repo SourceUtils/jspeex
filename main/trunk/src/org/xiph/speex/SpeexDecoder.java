@@ -91,7 +91,7 @@ public class SpeexDecoder
   /**
    * Version of the Speex Decoder
    */
-  public static final String VERSION = "Java Speex Decoder v0.9.1 ($Revision$)";
+  public static final String VERSION = "Java Speex Decoder v0.9.2 ($Revision$)";
 
   private int     sampleRate;
   private int     channels;
