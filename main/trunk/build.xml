@@ -105,6 +105,8 @@
       <fileset dir="${build}">
         <include name="**/*.class"/>
         <exclude name="**/Test*"/>
+        <exclude name="**/ant/**"/>
+        <exclude name="**/player/**"/>
       </fileset>
       <metainf dir="${include}/metainf/"/>
       <manifest>
