@@ -206,7 +206,7 @@ public class Pcm2SpeexAudioInputStream
   public void setFramesPerPacket(int framesPerPacket)
   {
     if (framesPerPacket <= 0) {
-      packetsPerOggPage = DEFAULT_FRAMES_PER_PACKET;
+      framesPerPacket = DEFAULT_FRAMES_PER_PACKET;
     }
     this.framesPerPacket = framesPerPacket;
   }
@@ -290,6 +290,12 @@ public class Pcm2SpeexAudioInputStream
       first = false;
     }
     while (true) {
+      if ((prebuf.length - prepos) < framesPerPacket*frameSize*packetsPerOggPage) { // grow prebuf
+        int nsz = prepos + framesPerPacket*frameSize*packetsPerOggPage;
+        byte[] nbuf = new byte[nsz];
+        System.arraycopy(prebuf, 0, nbuf, 0, precount);
+        prebuf = nbuf;
+      }
       int n = in.read(prebuf, precount, prebuf.length - precount);
       if (n < 0) { // inputstream has ended
         if ((precount-prepos) % 2 != 0) { // we don't have a complete last PCM sample
@@ -298,13 +304,6 @@ public class Pcm2SpeexAudioInputStream
         while (prepos < precount) { // still data to encode
           if ((precount - prepos) < framesPerPacket*frameSize) {
             // fill end of frame with zeros
-            if ((prebuf.length - prepos) < framesPerPacket*frameSize) {
-              // grow prebuf
-              int nsz = prepos + framesPerPacket*frameSize;
-              byte[] nbuf = new byte[nsz];
-              System.arraycopy(prebuf, 0, nbuf, 0, precount);
-              prebuf = nbuf;
-            }
             for (;precount < (prepos+framesPerPacket*frameSize); precount++) {
               prebuf[precount] = 0;
             }
@@ -314,8 +313,8 @@ public class Pcm2SpeexAudioInputStream
           }
           for (int i=0; i<framesPerPacket; i++) {
             encoder.processData(prebuf, prepos, frameSize);
+            prepos += frameSize;
           }
-          prepos += framesPerPacket*frameSize;
           int size = encoder.getProcessedDataByteSize();
           while ((buf.length - oggCount) < size) { // grow buffer
             int nsz = buf.length * 2;
@@ -346,26 +345,28 @@ public class Pcm2SpeexAudioInputStream
       }
       else if (n > 0) {
         precount += n;
-        if ((precount - prepos) >= framesPerPacket*frameSize) { // enough data to encode frame
-          while ((precount - prepos) >= framesPerPacket*frameSize) { // lets encode all we can
+        if ((precount - prepos) >= framesPerPacket*frameSize*packetsPerOggPage) { // enough data to encode frame
+          while ((precount - prepos) >= framesPerPacket*frameSize*packetsPerOggPage) { // lets encode all we can
             if (packetCount == 0) {
               writeOggPageHeader(packetsPerOggPage, 0);
             }
-            for (int i=0; i<framesPerPacket; i++) {
-              encoder.processData(prebuf, prepos, frameSize);
+            while (packetCount < packetsPerOggPage) {
+              for (int i=0; i<framesPerPacket; i++) {
+                encoder.processData(prebuf, prepos, frameSize);
+                prepos += frameSize;
+              }
+              int size = encoder.getProcessedDataByteSize();
+              while ((buf.length - oggCount) < size) { // grow buffer
+                int nsz = buf.length * 2;
+                byte[] nbuf = new byte[nsz];
+                System.arraycopy(buf, 0, nbuf, 0, oggCount);
+                buf = nbuf;
+              }
+              buf[count + 27 + packetCount] = (byte)(0xff & size);
+              encoder.getProcessedData(buf, oggCount);
+              oggCount += size;
+              packetCount++;
             }
-            prepos += framesPerPacket*frameSize;
-            int size = encoder.getProcessedDataByteSize();
-            while ((buf.length - oggCount) < size) { // grow buffer
-              int nsz = buf.length * 2;
-              byte[] nbuf = new byte[nsz];
-              System.arraycopy(buf, 0, nbuf, 0, oggCount);
-              buf = nbuf;
-            }
-            buf[count + 27 + packetCount] = (byte)(0xff & size);
-            encoder.getProcessedData(buf, oggCount);
-            oggCount += size;
-            packetCount++;
             if (packetCount >= packetsPerOggPage) {
               writeOggPageChecksum();
             }
@@ -373,13 +374,10 @@ public class Pcm2SpeexAudioInputStream
           System.arraycopy(prebuf, prepos, prebuf, 0, precount-prepos);
           precount -= prepos;
           prepos = 0;
-          if (packetCount >= packetsPerOggPage) {
-            writeOggPageChecksum();
-            // we have encoded some data (all that we could),
-            // so we can leave now, otherwise we return to a potentially
-            // blocking read of the underlying inputstream.
-            return;
-          }
+          // we have encoded some data (all that we could),
+          // so we can leave now, otherwise we return to a potentially
+          // blocking read of the underlying inputstream.
+          return;
         }
       }
       else { // n == 0
@@ -447,31 +445,45 @@ public class Pcm2SpeexAudioInputStream
       }
     }
     else {
-      int packetsize;
+      int spxpacketsize; // size of a packet of Speex data.
+      int oggpacketsize; // size of an Ogg packet containing X Speex packets.
+      int pcmframesize; // size of PCM data necessary to encode 1 Speex packet.
       switch (mode) {
         case 0: // Narrowband
-          packetsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          // 1 frame = 20ms = 160ech = 320bytes
-          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
-                   (unencoded / (packetsPerOggPage * framesPerPacket * 320));
+          spxpacketsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize *= framesPerPacket;
+          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
+          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
+          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
+          // 1 frame = 20ms = 160ech * channels = 320bytes * channels
+          pcmframesize = framesPerPacket * 320 * encoder.getChannels();
+          avail += oggpacketsize *
+                   (unencoded / (packetsPerOggPage * pcmframesize));
           return avail;
         case 1: // Wideband
-          packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          // 1 frame = 20ms = 320ech = 640bytes
-          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
-                   (unencoded / (packetsPerOggPage * framesPerPacket * 640));
+          spxpacketsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize *= framesPerPacket;
+          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
+          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
+          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
+          // 1 frame = 20ms = 320ech * channels = 640bytes * channels
+          pcmframesize = framesPerPacket * 640 * encoder.getChannels();
+          avail += oggpacketsize *
+                   (unencoded / (packetsPerOggPage * pcmframesize));
           return avail;
         case 2: // Ultra wideband
-          packetsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
-          // 1 frame = 20ms = 640ech = 1280bytes
-          avail += (27 + packetsPerOggPage + packetsPerOggPage * packetsize) *
-                   (unencoded / (packetsPerOggPage * framesPerPacket * 1280));
+          spxpacketsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[encoder.getEncoder().getMode()]];
+          spxpacketsize *= framesPerPacket;
+          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
+          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
+          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
+          // 1 frame = 20ms = 640ech * channels = 1280bytes * channels
+          pcmframesize = framesPerPacket * 1280 * encoder.getChannels();
+          avail += oggpacketsize *
+                   (unencoded / (packetsPerOggPage * pcmframesize));
           return avail;
         default:
           return avail;
@@ -516,7 +528,7 @@ public class Pcm2SpeexAudioInputStream
   private void writeOggPageChecksum()
   {
     // write the granulpos
-    granulpos += frameSize*packetCount/2;
+    granulpos += framesPerPacket * frameSize * packetCount / 2;
     writeLong(buf, count+6, granulpos);
     // write the checksum
     int chksum = OggCrc.checksum(0, buf, count, oggCount-count);
