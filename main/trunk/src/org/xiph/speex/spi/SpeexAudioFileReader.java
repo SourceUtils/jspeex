@@ -180,7 +180,7 @@ public class SpeexAudioFileReader
       chksum=OggCrc.checksum(0, header, 0, OGG_HEADERSIZE);
       // make sure its a OGG header
       if (!OGGID.equals(new String(header, 0, 4))) {
-        throw new UnsupportedAudioFileException("missing ogg id!");;
+        throw new UnsupportedAudioFileException("missing ogg id!");
       }
       // how many segments are there?
       segments = header[SEGOFFSET] & 0xFF;
