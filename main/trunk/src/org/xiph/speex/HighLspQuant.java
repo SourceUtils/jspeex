@@ -90,6 +90,7 @@ public class HighLspQuant
     int i;
     float tmp1, tmp2;
     int id;
+    float[] quant_weight = new float[MAX_LSP_SIZE];
 
     for (i=0;i<order;i++)
       qlsp[i]=lsp[i];

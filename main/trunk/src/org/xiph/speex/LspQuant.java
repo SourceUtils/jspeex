@@ -81,14 +81,11 @@ public abstract class LspQuant
 {
   public static final int MAX_LSP_SIZE       = 20;
 
-  protected float[] quant_weight;
-
   /**
    * Constructor
    */
   protected LspQuant()
   {
-    quant_weight = new float[MAX_LSP_SIZE];
   }
 
   /**

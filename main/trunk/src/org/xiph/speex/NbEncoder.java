@@ -431,7 +431,7 @@ public class NbEncoder
     if (submodes[submodeID] == null)
     {
        for (i=0;i<frameSize;i++)
-          excBuf[excIdx+i]=exc2Buf[exc2Idx+i]=swBuf[swIdx+i]=0;
+          excBuf[excIdx+i]=exc2Buf[exc2Idx+i]=swBuf[swIdx+i]=VERY_SMALL;
 
        for (i=0;i<lpcSize;i++)
           mem_sw[i]=0;
@@ -484,7 +484,7 @@ public class NbEncoder
 
     /*Quantize and transmit open-loop excitation gain*/
     {
-      int qe = (int)(Math.floor(3.5*Math.log(ol_gain)));
+      int qe = (int)(Math.floor(0.5+3.5*Math.log(ol_gain)));
       if (qe<0)
         qe=0;
       if (qe>31)

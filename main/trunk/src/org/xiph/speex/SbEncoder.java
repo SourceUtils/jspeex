@@ -363,7 +363,7 @@ public class SbEncoder
     if (dtx != 0 || submodes[submodeID] == null)
     {
       for (i=0; i<frameSize; i++)
-        excBuf[excIdx+i]=swBuf[i]=0;
+        excBuf[excIdx+i]=swBuf[i]=VERY_SMALL;
 
       for (i=0; i<lpcSize; i++)
         mem_sw[i]=0;

@@ -51,6 +51,8 @@ public class NbCodec
   //---------------------------------------------------------------------------
   // Constants
   //---------------------------------------------------------------------------
+  /** Very small initial value for some of the buffers. */
+  public static float VERY_SMALL = (float) 0e-30;
   /** The Narrowband Frame Size gives the size in bits of a Narrowband frame for a given narrowband submode. */
   public static final int[] NB_FRAME_SIZE = {5, 43, 119, 160, 220, 300, 364, 492, 79, 1, 1, 1, 1, 1, 1, 1};
   /** The Narrowband Submodes gives the number of submodes possible for the Narrowband codec. */

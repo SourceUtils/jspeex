@@ -90,6 +90,8 @@ public class NbLspQuant
     int i;
     float tmp1, tmp2;
     int id;
+    float[] quant_weight = new float[MAX_LSP_SIZE];
+
     for (i=0;i<order;i++)
       qlsp[i]=lsp[i];
     quant_weight[0] = 1/(qlsp[1]-qlsp[0]);

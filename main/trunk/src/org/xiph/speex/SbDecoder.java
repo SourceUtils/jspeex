@@ -183,7 +183,7 @@ public class SbDecoder
         return 0;
       }
       for (i=0;i<frameSize;i++)
-        excBuf[i]=0;
+        excBuf[i]=VERY_SMALL;
 
       first=1;
       /* Final signal synthesis from excitation */

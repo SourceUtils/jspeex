@@ -42,6 +42,7 @@ import  java.io.IOException;
 import  java.io.DataInputStream;
 import  java.io.FileInputStream;
 import  java.io.SequenceInputStream;
+import  java.io.BufferedInputStream;
 import  java.io.ByteArrayInputStream;
 import  java.io.ByteArrayOutputStream;
 import  java.net.URL;
@@ -159,6 +160,13 @@ public class SpeexAudioFileReader
   {
     AudioFormat format;
     try {
+      // If we can't read the format of this stream, we must restore stream to
+      // beginning so other providers can attempt to read the stream.
+      if (!bitStream.markSupported()) {
+        bitStream = new BufferedInputStream(bitStream);
+      }
+      bitStream.mark(OGG_HEADERSIZE+SPEEX_HEADERSIZE+1); // maximum number of bytes to determine the stream encoding
+
       int sampleRate = 0;
       int channels   = 0;
       byte[] header  = new byte[128];
@@ -211,7 +219,15 @@ public class SpeexAudioFileReader
         throw new IOException("Ogg CheckSums do not match");
       format = new AudioFormat(SpeexEncoding.SPEEX, (float)sampleRate, AudioSystem.NOT_SPECIFIED, channels, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false);
     }
+    catch(UnsupportedAudioFileException e) {
+      // reset the stream for other providers
+      bitStream.reset();
+      // just rethrow this exception
+      throw e;
+    }
     catch (IOException ioe) {
+      // reset the stream for other providers
+      bitStream.reset();
       throw new UnsupportedAudioFileException(ioe.getMessage());
     }
     return new AudioFileFormat(SpeexFileFormatType.SPEEX, format, AudioSystem.NOT_SPECIFIED);
