@@ -52,21 +52,42 @@ import java.util.Random;
 public class OggSpeexWriter
   extends AudioFileWriter
 {
+  /** Number of packets in an Ogg page (must be less than 255) */
+  public static final int PACKETS_PER_OGG_PAGE = 250;
+  
+  /** The OutputStream */
   private OutputStream out;
 
+  /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
   private int     mode;
+  /** Defines the sampling rate of the audio input. */
   private int     sampleRate;
+  /** Defines the number of channels of the audio input (1=mono, 2=stereo). */
   private int     channels;
+  /** Defines the number of frames per speex packet. */
   private int     nframes;
+  /** Defines whether or not to use VBR (Variable Bit Rate). */
   private boolean vbr;
+  /** */
   private int     size;
+  /** Ogg Stream Serial Number */
   private int     streamSerialNumber;
+  /** Data buffer */
   private byte[]  dataBuffer;
+  /** Pointer within the Data buffer */
   private int     dataBufferPtr;
+  /** Header buffer */
   private byte[]  headerBuffer;
+  /** Pointer within the Header buffer */
   private int     headerBufferPtr;
+  /** Ogg Page count */
   private int     pageCount;
+  /** Speex packet count within an Ogg Page */
   private int     packetCount;
+  /**
+   * Absolute granule position
+   * (the number of audio samples from beginning of file to end of Ogg Packet).
+   */
   private long    granulepos;
   
   /**
@@ -87,10 +108,10 @@ public class OggSpeexWriter
 
   /**
    * Builds an Ogg Speex Writer. 
-   * @param mode
-   * @param sampleRate
-   * @param channels
-   * @param nframes
+   * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
+   * @param sampleRate the number of samples per second.
+   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+   * @param nframes    the number of frames per speex packet.
    * @param vbr
    */
   public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes, boolean vbr)
@@ -234,14 +255,14 @@ public class OggSpeexWriter
     if (len <= 0) { // nothing to write
       return;
     }
-    if (packetCount > 250) { // this mustn't go beyond 255
+    if (packetCount > PACKETS_PER_OGG_PAGE) {
       flush(false);
     }
     System.arraycopy(data, offset, dataBuffer, dataBufferPtr, len);
     dataBufferPtr += len;
     headerBuffer[headerBufferPtr++]=(byte)len;
     packetCount++;
-    granulepos += (mode==0 ? 160 : 320);
+    granulepos += nframes * (mode==2 ? 640 : (mode==1 ? 320 : 160));
   }
 
   /**
