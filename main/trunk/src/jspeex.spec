@@ -4,7 +4,7 @@
 #--------------------------------------------------------------------
 
 %define name     jspeex
-%define version  0.8.2
+%define version  0.9
 %define release  1
 
 Name:           %{name}
@@ -50,7 +50,7 @@ find . -name "*.class" -exec rm -f {} \;
 # Source Build
 #--------------------------------------------------------------------
 %build
-cd jspeex/src
+cd jspeex
 ant package
 ant javadoc
 cd ..
@@ -61,7 +61,7 @@ cd ..
 %install
 # jar
 install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
-install -m 644 %{name}/lib/%{name}.jar \
+install -m 644 %{name}/dist/%{name}.jar \
 $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 (cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}*; do \
 ln -sf ${jar} ${jar/-%{version}/}; done)
