@@ -41,29 +41,35 @@
   <description>JSpeex build file</description>
 
   <!-- set global properties for this build -->
-  <property name="root"    location="."/>
-  <property name="src"     location="src"/>
-  <property name="include" location="include"/>
-  <property name="build"   location="build"/>
-  <property name="dist"    location="dist"/>
-  <property name="temp"    location="temp"/>
-  <property name="lib"     location="lib"/>
-  <property name="log"     location="log"/>
-  <property name="doc"     location="doc"/>
+  <property name="root"       location="."/>
+  <property name="src"        location="src"/>
+  <property name="src.java"   location="${src}/java"/>
+  <property name="src.test"   location="${src}/test"/>
+  <property name="build"      location="build"/>
+  <property name="build.java" location="${build}/java"/>
+  <property name="build.test" location="${build}/test"/>
+  <property name="include"    location="include"/>
+  <property name="dist"       location="dist"/>
+  <property name="temp"       location="temp"/>
+  <property name="lib"        location="lib"/>
+  <property name="log"        location="log"/>
+  <property name="doc"        location="doc"/>
 
-  <property name="version" value="0.9.4"/>
+  <property name="version" value="0.9.5"/>
 
   <!-- Define additional tasks -->
   <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
-           classpath="${lib}/proguard.jar" />
+           classpath="${lib}/proguard3.0.7.jar" />
 
   <target name="init" description="Initialise ant" depends="clean">
     <tstamp>
       <format property="NOW" pattern="dd/MM/yyyy HH:mm" locale="en"/>
     </tstamp>
-    <mkdir dir="${build}"/>
-    <mkdir dir="${dist}"/>
     <mkdir dir="${temp}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.test}"/>
   </target>
 
   <!-- ******************************************************************** -->
@@ -72,14 +78,12 @@
 
   <target name="compile" depends="init"
           description="Compile JSpeex" >
-    <javac srcdir="${src}" destdir="${build}">
+    <javac srcdir="${src.java}" destdir="${build.java}">
       <include name="*.java"/>
-      <include name="JSpeexEnc.java"/>
-      <include name="JSpeexDec.java"/>
-      <include name="org/xiph/speex/*.java"/>
-      <include name="org/xiph/speex/spi/*.java"/>
-      <include name="org/xiph/speex/ant/*.java"/>
-      <include name="org/xiph/speex/player/*.java"/>
+      <include name="org/xiph/speex/**/*.java"/>
+    </javac>
+    <javac srcdir="${src.test}" destdir="${build.test}">
+      <include name="*.java"/>
       <include name="org/xiph/speex/**/*.java"/>
     </javac>
   </target>
@@ -87,12 +91,12 @@
   <target name="compile-nb" depends="init"
           description="Compile JSpeex (narrowband only)" >
     <copy toDir="${temp}/" overwrite="true">
-      <fileset dir="${src}/"/>
+      <fileset dir="${src.java}/"/>
       <filterset begintoken="//Wideba" endtoken="d">
         <filter token="n" value="/*/Wideband"/>
       </filterset>
     </copy>
-    <javac srcdir="${temp}" destdir="${build}">
+    <javac srcdir="${temp}" destdir="${build.java}">
       <include name="JSpeexEnc.java"/>
       <include name="JSpeexDec.java"/>
       <include name="org/xiph/speex/*.java"/>
@@ -102,7 +106,7 @@
   <target name="package" depends="compile"
           description="Package JSpeex library" >
     <jar jarfile="${dist}/jspeex.jar">
-      <fileset dir="${build}">
+      <fileset dir="${build.java}">
         <include name="**/*.class"/>
         <exclude name="**/Test*"/>
         <exclude name="**/ant/**"/>
@@ -146,7 +150,7 @@
   <target name="compress-dec-nb" depends="compile-nb"
           description="Package obfuscated JSpeex decoder (without SPI) (narrowband only)" >
     <jar jarfile="${dist}/jspeex-dec-nb.jar">
-      <fileset dir="${build}" excludes="${build}/org/xiph/speex/spi/*.class"/>
+      <fileset dir="${build.java}" excludes="${build.java}/org/xiph/speex/spi/*.class"/>
       <manifest>
         <attribute name="Main-Class" value="JSpeexDec"/>
       </manifest>
@@ -173,16 +177,46 @@
           description="Generate JSpeex javadoc documentation" >
     <!-- Create the documentation directory -->
     <mkdir dir="${doc}"/>
-    <javadoc sourcepath="${src}" destdir="${doc}" access="private"
+    <mkdir dir="${doc}/javadoc"/>
+    <javadoc sourcepath="${src.java}" destdir="${doc}/javadoc" access="private"
              packagenames="org.xiph.speex.*"
              Author="true" Version="true" Use="true"
-             Overview="${src}/Overview.html"
+             Overview="${src.java}/Overview.html"
              Windowtitle="JSpeex API Specification"
              DocTitle="JSpeex API Specification">
       <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Wimba S.A. All Rights Reserved.</i>]]></bottom>
       <group title="Core JSpeex codec package" packages="org.xiph.speex"/>
       <group title="JavaSound SPI for JSpeex package" packages="org.xiph.speex.spi"/>
     </javadoc>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Tests                                                              -->
+  <!-- ******************************************************************** -->
+
+  <target name="test" description="Execute Junit tests" >
+    <mkdir dir="${doc}"/>
+    <mkdir dir="${doc}/junit"/>
+    <junit printsummary="yes" haltonfailure="no">
+      <classpath>
+        <pathelement location="${build.test}"/>
+        <fileset dir="${lib}">
+          <include name="**/*.jar"/>
+        </fileset>
+      </classpath>
+      <formatter type="xml"/>
+      <batchtest fork="yes" todir="${doc}/junit">
+        <fileset dir="${src.test}">
+          <include name="**/Test*.java"/>
+        </fileset>
+      </batchtest>
+    </junit>
+    <junitreport todir="${doc}/junit">
+      <fileset dir="${doc}/junit">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="noframes" todir="${doc}/junit"/>
+    </junitreport>
   </target>
 
   <!-- ******************************************************************** -->
