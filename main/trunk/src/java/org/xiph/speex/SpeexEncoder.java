@@ -135,7 +135,7 @@ public class SpeexEncoder
     this.frameSize  = encoder.getFrameSize();
     this.sampleRate = sampleRate;
     this.channels   = channels;
-    rawData         = new float[sampleRate*channels];
+    rawData         = new float[channels*frameSize];
 
     bits.init();
     return true;
@@ -229,6 +229,10 @@ public class SpeexEncoder
                              final int offset,
                              final int numShorts)
   {
+    int numSamplesRequired = channels * frameSize;
+    if (numShorts != numSamplesRequired) {
+      throw new IllegalArgumentException("SpeexEncoder requires " + numSamplesRequired + " samples to process a Frame, not " + numShorts);
+    }
     // convert shorts into float samples,
     for (int i=0; i<numShorts; i++) {
       rawData[i] = (float) data[offset + i ];
@@ -245,13 +249,13 @@ public class SpeexEncoder
    */
   public boolean processData(final float[] data, final int numSamples)
   {
-    int numSamplesRequired = channels * getFrameSize();
+    int numSamplesRequired = channels * frameSize;
     if (numSamples != numSamplesRequired) {
-      throw new RuntimeException("SpeexEncoder requires " + numSamplesRequired + " samples to process a Frame, not " + numSamples );
+      throw new IllegalArgumentException("SpeexEncoder requires " + numSamplesRequired + " samples to process a Frame, not " + numSamples );
     }
     // encode the bitstream
     if (channels==2) {
-      Stereo.encode(bits, data, getFrameSize());
+      Stereo.encode(bits, data, frameSize);
     }
     encoder.encode(bits, data);
     return true;
