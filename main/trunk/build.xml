@@ -78,6 +78,8 @@
       <include name="JSpeexDec.java"/>
       <include name="org/xiph/speex/*.java"/>
       <include name="org/xiph/speex/spi/*.java"/>
+      <include name="org/xiph/speex/ant/*.java"/>
+      <include name="org/xiph/speex/player/*.java"/>
       <include name="org/xiph/speex/**/*.java"/>
     </javac>
   </target>
@@ -104,7 +106,7 @@
         <include name="**/*.class"/>
         <exclude name="**/Test*"/>
       </fileset>
-      <metainf dir="${include}/"/>
+      <metainf dir="${include}/metainf/"/>
       <manifest>
         <section name="build">
           <attribute name="Build-Date" value="${NOW}"/>
@@ -135,53 +137,6 @@
 
 -keep public class * {
     public protected *;
-}
-    </proguard>
-  </target>
-
-  <target name="compress-encdec" depends="compile"
-          description="Package obfuscated JSpeex encoder and decoder (without SPI)" >
-    <jar jarfile="${dist}/jspeex-encdec.jar">
-      <fileset dir="${build}" excludes="**/spi/*.class"/>
-      <manifest>
-        <attribute name="Main-Class" value="JSpeexEnc"/>
-      </manifest>
-    </jar>
-    <proguard>
--libraryjars ${java.home}/lib/rt.jar
--injars      ${dist}/jspeex-encdec.jar
--outjar      ${dist}/jspeex-encdec-obf.jar
--printmapping ${log}/jspeex-encdec-obf.map
--overloadaggressively
--defaultpackage ''
-
--keep public class JSpeexEnc {
-    public static void main(java.lang.String[]);
-}
--keep public class JSpeexDec {
-    public static void main(java.lang.String[]);
-}
-    </proguard>
-  </target>
-
-  <target name="compress-dec" depends="compile"
-          description="Package obfuscated JSpeex decoder (without SPI)" >
-    <jar jarfile="${dist}/jspeex-dec.jar">
-      <fileset dir="${build}" excludes="**/spi/*.class"/>
-      <manifest>
-        <attribute name="Main-Class" value="JSpeexDec"/>
-      </manifest>
-    </jar>
-    <proguard>
--libraryjars ${java.home}/lib/rt.jar
--injars      ${dist}/jspeex-dec.jar
--outjar      ${dist}/jspeex-dec-obf.jar
--printmapping ${log}/jspeex-dec-obf.map
--overloadaggressively
--defaultpackage ''
-
--keep public class JSpeexDec {
-    public static void main(java.lang.String[]);
 }
     </proguard>
   </target>
@@ -280,8 +235,6 @@ Principal Targets of interest:
 Other Targets of interest:
   compile-nb       Compile classes for narrowband use only
   compress-dec-nb  Package and compress only the decoder for narrowband (48k)
-  compress-dec     Package and compress only the decoder (52k)
-  compress-encdec  Package and compress only the codec, not javasound SPI (69k)
 Other Targets:
   release          Builds a zip file containing the JSpeex release
   usage            Display this message
