@@ -76,21 +76,34 @@ import org.xiph.speex.*;
  */
 public class JSpeexEnc
 {
-  /**
-   * Version of the Speex Encoder
-   */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.8.2 ($Revision$)";
+  /** Version of the Speex Encoder */
+  public static final String VERSION = "Java Speex Command Line Encoder v0.8.3 ($Revision$)";
+  /** Copyright display String */
+  public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
+  /** Defines whether or not the input uses the Wav File Format or is raw. */
+  private static boolean wav    = true;
+  /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
   private static int mode       = 0;
+  /** Defines the encoder quality setting (integer from 0 to 10). */
   private static int quality    = 8;
+  /** Defines the encoders algorithmic complexity. */
   private static int complexity = 3;
+  /** Defines the desired bitrate for the encoded audio. */
   private static int bitrate    = -1;
+  /** Defines the number of frames per speex packet. */
   private static int nframes    = 1;
+  /** Defines the sampling rate of the audio input. */
   private static int sampleRate = -1;
+  /** Defines the encoder VBR quality setting (float from 0 to 10). */
   private static float vbr_quality = -1;
-  private static boolean vbr = false;
-  private static boolean vad = false;
-  private static boolean dtx = false;
+  /** Defines whether or not to use VBR (Variable Bit Rate). */
+  private static boolean vbr    = false;
+  /** Defines whether or not to use VAD (Voice Activity Detection). */
+  private static boolean vad    = false;
+  /** Defines whether or not to use DTX (Discontinuous Transmission). */
+  private static boolean dtx    = false;
+  /** Defines the number of channels of the audio input (1=mono, 2=stereo). */
   private static int channels   = 1;
   
   /**
@@ -121,6 +134,9 @@ public class JSpeexEnc
       else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
         version();
         return;
+      }
+      else if (args[i].equalsIgnoreCase("--raw")) {
+        wav = false;
       }
       else if (args[i].equalsIgnoreCase("-n") || args[i].equalsIgnoreCase("--narrowband")) {
         mode = 0;
@@ -177,6 +193,15 @@ public class JSpeexEnc
           return;
         }
       }
+      else if (args[i].equalsIgnoreCase("--rate")) {
+        try {
+          sampleRate = Integer.parseInt(args[++i]);
+        }
+        catch (NumberFormatException e) {
+          usage();
+          return;
+        }
+      }
       else if (args[i].equalsIgnoreCase("--stereo")) {
         channels = 2;
       }
@@ -212,9 +237,9 @@ public class JSpeexEnc
     System.out.println("       output.spx the Speex file to create");
     System.out.println("Options: -h, --help     This help");
     System.out.println("         -v, --version  Version information");
-    System.out.println("         -n             Narrowband (8kHz)");
-    System.out.println("         -w             Wideband (16kHz)");
-    System.out.println("         -u             Ultra-Wideband (32kHz)");
+    System.out.println("         -n             Narrowband (8kHz) input file");
+    System.out.println("         -w             Wideband (16kHz) input file");
+    System.out.println("         -u             Ultra-Wideband (32kHz) input file");
     System.out.println("         --quality n    Encoding quality (0-10) default 8");
     System.out.println("         --complexity n Encoding complexity (0-10) default 3");
     System.out.println("         --nframes n    Number of frames per Ogg packet, default 1");
@@ -222,6 +247,9 @@ public class JSpeexEnc
     System.out.println("         --vad          Enable voice activity detection (VAD)");
     System.out.println("         --dtx          Enable file based discontinuous transmission (DTX)");
     System.out.println("         --stereo       Consider input as stereo");
+		System.out.println("         if the input file is raw PCM (not a Wave file)");
+		System.out.println("         --raw          Input file is raw PCM");
+    System.out.println("         --rate n       Sampling rate for raw input");
   }
 
   /**
@@ -231,7 +259,7 @@ public class JSpeexEnc
   {
     System.out.println(VERSION);
     System.out.println("using " + SpeexEncoder.VERSION);
-    System.out.println("Copyright (C) 2002-2003 Wimba S.A.");
+    System.out.println(COPYRIGHT);
   }
   
   /**
@@ -243,11 +271,13 @@ public class JSpeexEnc
   public static void encode(String inputPath, String outputPath)
     throws IOException
   {
-    byte[] temp    = new byte[2048];
+    byte[] temp    = new byte[2560]; // stereo UWB requires one to read 2560b
     final int HEADERSIZE = 8;
     final String RIFF      = "RIFF";
     final String WAVE      = "WAVE";
+    final String FORMAT    = "fmt ";
     final String DATA      = "data";
+    final int WAVE_FORMAT_PCM = 0x0001;
     // open the input stream
     DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
     // construct a new decoder
@@ -272,29 +302,54 @@ public class JSpeexEnc
       speexEncoder.getEncoder().setDtx(dtx);
     }
 
-    // read the WAVE header
-    dis.readFully(temp, 0, HEADERSIZE+4);
-    // make sure its a WAVE header
-    if (!RIFF.equals(new String(temp, 0, 4)) &&
-        !WAVE.equals(new String(temp, 8, 4))) {
-      System.err.println("Not a WAVE file");
-      return;
-    }
-    else {
-//      System.out.println("Wave file size: " + readInt(temp, 4));
-    }
-    // Read other header chunks
-    dis.readFully(temp, 0, HEADERSIZE);
-    String chunk = new String(temp, 0, 4);
-    int size = readInt(temp, 4);
-    while (!chunk.equals(DATA)) {
-      //      System.out.println(chunk + " chunk, size: " + size);
-      dis.readFully(temp, 0, size);
+    if (wav) {
+      // read the WAVE header
+      dis.readFully(temp, 0, HEADERSIZE+4);
+      // make sure its a WAVE header
+      if (!RIFF.equals(new String(temp, 0, 4)) &&
+          !WAVE.equals(new String(temp, 8, 4))) {
+        System.err.println("Not a WAVE file");
+        return;
+      }
+      else {
+//        System.out.println("Wave file size: " + readInt(temp, 4));
+      }
+      // Read other header chunks
       dis.readFully(temp, 0, HEADERSIZE);
-      chunk = new String(temp, 0, 4);
-      size = readInt(temp, 4);
+      String chunk = new String(temp, 0, 4);
+      int size = readInt(temp, 4);
+      while (!chunk.equals(DATA)) {
+        //      System.out.println(chunk + " chunk, size: " + size);
+        dis.readFully(temp, 0, size);
+        if (chunk.equals(FORMAT)) {
+          /*
+          typedef struct waveformat_extended_tag {
+          WORD wFormatTag; // format type
+          WORD nChannels; // number of channels (i.e. mono, stereo...)
+          DWORD nSamplesPerSec; // sample rate
+          DWORD nAvgBytesPerSec; // for buffer estimation
+          WORD nBlockAlign; // block size of data
+          WORD wBitsPerSample; // Number of bits per sample of mono data
+          WORD cbSize; // The count in bytes of the extra size 
+          } WAVEFORMATEX;
+          */
+          if (readShort(temp, 0) != WAVE_FORMAT_PCM) {
+            System.err.println("Not a PCM file");
+            return;
+          }
+          channels = readShort(temp, 2);
+          sampleRate = readInt(temp, 4);
+          if (readShort(temp, 14) != 16) {
+            System.err.println("Not a 16 bit file " + readShort(temp, 18));
+            return;
+          }
+        }
+        dis.readFully(temp, 0, HEADERSIZE);
+        chunk = new String(temp, 0, 4);
+        size = readInt(temp, 4);
+      }
+//      System.out.println("data size: " + size);
     }
-//    System.out.println("data size: " + size);
     
     OggSpeexWriter oggWriter = new OggSpeexWriter();
     oggWriter.setFormat(mode, sampleRate, channels, nframes);
@@ -325,5 +380,15 @@ public class JSpeexEnc
   private static int readInt(byte[] data, int offset)
   {
     return (data[offset] & 0xff) | ((data[offset+1] & 0xff) << 8) | ((data[offset+2] & 0xff) << 16) | (data[offset+3] << 24); // no 0xff on the last one to keep the sign
+  }
+
+  /**
+   * Converts Little Endian (Windows) bytes to an short (Java uses Big Endian).
+   * @param data
+   * @param offset
+   */
+  private static int readShort(byte[] data, int offset)
+  {
+    return (data[offset] & 0xff) | (data[offset+1] << 8); // no 0xff on the last one to keep the sign
   }
 }

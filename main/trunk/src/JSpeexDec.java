@@ -89,7 +89,7 @@ import org.xiph.speex.*;
  */
 public class JSpeexDec
 {
-  public static final String VERSION = "Java Speex Command Line Decoder v0.8.2 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.8.3 ($Revision$)";
 
   private static Random random = new Random();
   private static PcmWaveWriter waveWriter;
@@ -99,8 +99,6 @@ public class JSpeexDec
   private static boolean enhanced  = true;
   private static int mode          = 0;
   private static int quality       = 8;
-  private static int complexity    = 3;
-  private static int bitrate       = -1;
   private static int nframes       = 1;
   private static int sampleRate    = -1;
   private static float vbr_quality = -1;
@@ -141,7 +139,7 @@ public class JSpeexDec
         enhanced = true;
       }
       else if (args[i].equalsIgnoreCase("--no-enh")) {
-        enhanced = true;
+        enhanced = false;
       }
       else if (args[i].equalsIgnoreCase("--packet-loss")) {
         try {
@@ -168,24 +166,6 @@ public class JSpeexDec
         try {
           vbr_quality = Float.parseFloat(args[++i]);
           quality = (int) vbr_quality;
-        }
-        catch (NumberFormatException e) {
-          usage();
-          return;
-        }
-      }
-      else if (args[i].equalsIgnoreCase("--complexity")) {
-        try {
-          complexity = Integer.parseInt(args[++i]);
-        }
-        catch (NumberFormatException e) {
-          usage();
-          return;
-        }
-      }
-      else if (args[i].equalsIgnoreCase("--bitrate")) {
-        try {
-          bitrate = Integer.parseInt(args[++i]);
         }
         catch (NumberFormatException e) {
           usage();
@@ -260,7 +240,7 @@ public class JSpeexDec
   {
 		System.out.println(VERSION);
 		System.out.println("using " + SpeexDecoder.VERSION);
-		System.out.println("Copyright (C) 2002-2003 Wimba S.A.");
+		System.out.println("Copyright (C) 2002-2004 Wimba S.A.");
   }
 
   /**
