@@ -5,10 +5,22 @@
 <!-- *                                                                    * -->
 <!-- * COPYRIGHT:                                                         * -->
 <!-- *      This software is the property of Wimba S.A.                   * -->
-<!-- *      It cannot be copied, used, or modified without obtaining an   * -->
-<!-- *      authorization from the authors or a mandated member of Wimba. * -->
-<!-- *      If such an authorization is provided, any modified version    * -->
-<!-- *      or copy of the software has to contain this header.           * -->
+<!-- *      This software is redistributed under the Xiph.org variant of  * -->
+<!-- *      the BSD license.                                              * -->
+<!-- *      Redistribution and use in source and binary forms, with or    * -->
+<!-- *      without modification, are permitted provided that the         * -->
+<!-- *      following conditions are met:                                 * -->
+<!-- *      - Redistributions of source code must retain the above        * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer.                                                   * -->
+<!-- *      - Redistributions in binary form must reproduce the above     * -->
+<!-- *      copyright notice, this list of conditions and the following   * -->
+<!-- *      disclaimer in the documentation and/or other materials        * -->
+<!-- *      provided with the distribution.                               * -->
+<!-- *      - Neither the name of Wimba, the Xiph.org Foundation nor the  * -->
+<!-- *      names of its contributors may be used to endorse or promote   * -->
+<!-- *      products derived from this software without specific prior    * -->
+<!-- *      written permission.                                           * -->
 <!-- *                                                                    * -->
 <!-- * WARRANTIES:                                                        * -->
 <!-- *      This software is made available by the authors in the hope    * -->
@@ -20,21 +32,24 @@
 <!-- *                                                                    * -->
 <!-- * Author: Marc GIMPEL                                                * -->
 <!-- *                                                                    * -->
-<!-- * Date: 22nd April 2003                                              * -->
+<!-- * Date: 12nd January 2004                                            * -->
 <!-- *                                                                    * -->
 <!-- **********************************************************************/-->
 <!-- $Id$ -->
 
 <project name="jspeex-player" default="package" basedir=".">
   <description>JSpeex Player build file</description>
-  <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
-           classpath="dist/proguard.jar" />
 
   <!-- set global properties for this build -->
   <property name="root"    location="."/>
   <property name="dist"    location="dist"/>
   <property name="temp"    location="temp"/>
   <property name="lib"     location="lib"/>
+  <property name="log"     location="log"/>
+
+  <!-- Define additional tasks -->
+  <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
+           classpath="${lib}/proguard.jar" />
 
   <target name="init" description="Initialise ant" depends="clean">
     <tstamp/>
@@ -111,7 +126,11 @@
 
   <target name="package" depends="build"
           description="Package JSpeex Player" >
-    <jar jarfile="${dist}/jlgui2.2spx.jar" basedir="${temp}/player">
+    <jar jarfile="${dist}/jlgui2.2spx-full.jar">
+      <fileset dir="${temp}/player">
+        <include name="**/*"/>
+        <exclude name="**/Test*.class"/>
+      </fileset>
       <manifest>
         <section name="build">
           <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
@@ -123,9 +142,46 @@
     </jar>
   </target>
 
+  <target name="compress" depends="package"
+          description="Obfuscate JSpeex Player" >
+    <mkdir dir="${log}"/>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ${dist}/jlgui2.2spx-full.jar
+-outjar      ${dist}/jlgui2.2spx.jar
+-renamesourcefileattribute SourceFile
+-keepattributes InnerClasses,SourceFile
+-printmapping ${log}/jlgui2.2spx-obf.map
+-overloadaggressively
+
+-keep public class * extends javax.sound.sampled.spi.FormatConversionProvider {
+    public *;
+}
+-keep public class * extends javax.sound.sampled.spi.AudioFileReader {
+    public *;
+}
+-keep public class javazoom.jlGui.** {
+    public *;
+}
+    </proguard>
+  </target>
+
   <!-- ******************************************************************** -->
   <!-- * Miscellaneous                                                      -->
   <!-- ******************************************************************** -->
+
+  <target name="usage" description="Display usage information" >
+    <echo taskname="usage">
+ant [options] target
+Principal Targets of interest:
+  build            Build the player
+  package          Package player into library jar
+  compress         Obfuscate library to reduce size
+Other Targets:
+  usage            Display this message
+  clean            Clean the build directories
+    </echo>
+  </target>
 
   <target name="clean"
           description="Clean up" >
