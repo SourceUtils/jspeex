@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--/********************************************************************** -->
+<!-- *                                                                    * -->
+<!-- * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.           * -->
+<!-- *                                                                    * -->
+<!-- * COPYRIGHT:                                                         * -->
+<!-- *      This software is the property of Wimba S.A.                   * -->
+<!-- *      It cannot be copied, used, or modified without obtaining an   * -->
+<!-- *      authorization from the authors or a mandated member of Wimba. * -->
+<!-- *      If such an authorization is provided, any modified version    * -->
+<!-- *      or copy of the software has to contain this header.           * -->
+<!-- *                                                                    * -->
+<!-- * WARRANTIES:                                                        * -->
+<!-- *      This software is made available by the authors in the hope    * -->
+<!-- *      that it will be useful, but without any warranty.             * -->
+<!-- *      Wimba S.A. is not liable for any consequence related to the   * -->
+<!-- *      use of the provided software.                                 * -->
+<!-- *                                                                    * -->
+<!-- * Class: build.xml                                                   * -->
+<!-- *                                                                    * -->
+<!-- * Author: Marc GIMPEL                                                * -->
+<!-- *                                                                    * -->
+<!-- * Date: 22nd April 2003                                              * -->
+<!-- *                                                                    * -->
+<!-- **********************************************************************/-->
+<!-- $Id$ -->
+
+<project name="jspeex-player" default="package" basedir=".">
+  <description>JSpeex Player build file</description>
+  <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
+           classpath="dist/proguard.jar" />
+
+  <!-- set global properties for this build -->
+  <property name="root"    location="."/>
+  <property name="dist"    location="dist"/>
+  <property name="temp"    location="temp"/>
+  <property name="lib"     location="lib"/>
+
+  <target name="init" description="Initialise ant" depends="clean">
+    <tstamp/>
+    <mkdir dir="${temp}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Build                                                              -->
+  <!-- ******************************************************************** -->
+
+  <target name="depend" if="depend"
+          description="Build JSpeex Dependencies" >
+    <ant dir="../main" inheritAll="false"/>
+    <copy file="../main/dist/jspeex.jar"
+          todir="${lib}"/>
+  </target>
+
+  <target name="build" depends="init, depend"
+          description="Build JSpeex Player" >
+    <!-- Unzip the jlGui archive -->
+    <mkdir dir="${temp}/jlgui"/>
+    <unzip src="${lib}/jlgui2.2.zip" dest="${temp}/jlgui"/>
+    <!-- modify and rebuild jlGui jar -->
+    <replace file="${temp}/jlgui/src/javazoom/Util/Config.java"
+             token=",mp3,ogg" value=",mp3,ogg,spx"/>
+    <ant dir="${temp}/jlgui" target="dist" inheritAll="false"/>
+    <!-- Unzip all the library jars into one location -->
+    <mkdir dir="${temp}/player"/>
+    <unjar src="${lib}/jspeex.jar" dest="${temp}/player"/>
+    <unjar src="${temp}/jlgui/jlGui2.2.jar" dest="${temp}/player"/>
+    <unjar dest="${temp}/player">
+      <fileset dir="${temp}/jlgui/lib">
+        <include name="*.jar"/>
+      </fileset>
+    </unjar>
+    <!-- Build Services Meta-inf -->
+    <mkdir dir="${temp}/services"/>
+    <unjar src="${lib}/jspeex.jar" dest="${temp}/services" >
+      <patternset includes="META-INF/services/**"/>
+    </unjar>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.AudioFileReader" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.AudioFileReader"/>
+    </concat>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.FormatConversionProvider" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.FormatConversionProvider"/>
+    </concat>
+    <delete dir="${temp}/services/META-INF"/>
+    <unjar src="${temp}/jlgui/lib/vorbisspi0.7.jar" dest="${temp}/services" >
+      <patternset includes="META-INF/services/**"/>
+    </unjar>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.AudioFileReader" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.AudioFileReader"/>
+    </concat>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.FormatConversionProvider" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.FormatConversionProvider"/>
+    </concat>
+    <delete dir="${temp}/services/META-INF"/>
+    <unjar src="${temp}/jlgui/lib/mp3sp.1.6.jar" dest="${temp}/services" >
+      <patternset includes="META-INF/services/**"/>
+    </unjar>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.AudioFileReader" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.AudioFileReader"/>
+    </concat>
+    <concat destfile="${temp}/services/javax.sound.sampled.spi.FormatConversionProvider" append="true">
+      <fileset dir="${temp}/services/META-INF/services" includes="javax.sound.sampled.spi.FormatConversionProvider"/>
+    </concat>
+    <delete dir="${temp}/services/META-INF"/>
+    <copy file="${temp}/services/javax.sound.sampled.spi.AudioFileReader"
+          todir="${temp}/player/META-INF/services"/>
+    <copy file="${temp}/services/javax.sound.sampled.spi.FormatConversionProvider"
+          todir="${temp}/player/META-INF/services"/>
+  </target>
+
+  <target name="package" depends="build"
+          description="Package JSpeex Player" >
+    <jar jarfile="${dist}/jlgui2.2spx.jar" basedir="${temp}/player">
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="javazoom.jlGui.Player"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <!-- ******************************************************************** -->
+  <!-- * Miscellaneous                                                      -->
+  <!-- ******************************************************************** -->
+
+  <target name="clean"
+          description="Clean up" >
+    <delete dir="${temp}"/>
+  </target>
+</project>
