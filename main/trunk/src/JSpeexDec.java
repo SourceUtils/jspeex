@@ -90,7 +90,7 @@ import org.xiph.speex.*;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.8.3 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
@@ -546,6 +546,7 @@ public class JSpeexDec
    * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
    * @param data the data to read.
    * @param offset the offset from which to start reading.
+   * @return the integer value of the reassembled bytes.
    */
   private static int readInt(byte[] data, int offset)
   {

@@ -75,8 +75,8 @@ public class OggSpeexWriter
    */
   public OggSpeexWriter()
   {
-    random             = new Random();
-    streamSerialNumber = random.nextInt();
+    if (streamSerialNumber == 0)
+      streamSerialNumber = new Random().nextInt();
     dataBuffer         = new byte[65565];
     dataBufferPtr      = 0;
     headerBuffer       = new byte[255];
@@ -114,6 +114,16 @@ public class OggSpeexWriter
     this.channels   = channels;
     this.nframes    = nframes;
     this.vbr        = vbr;
+  }
+
+  /**
+   * Sets the Stream Serial Number.
+   * Must not be changed mid stream.
+   * @param serialNumber
+   */
+  public void setSerialNumber(int serialNumber)
+  {
+    this.streamSerialNumber = serialNumber;
   }
 
   /**
