@@ -142,6 +142,11 @@ public class JSpeexDec
   /** The percentage of packets to lose in the packet loss simulation. */
   private static int loss          = 0;
 
+  /** The audio input file */
+  protected static String infile;
+  /** The audio output file */
+  protected static String outfile;
+
   /**
    * Command line entrance:
    * <pre>
@@ -153,18 +158,30 @@ public class JSpeexDec
   public static void main(String[] args)
     throws IOException
   {
+    if (parseArgs(args)) {
+      decode(infile, outfile);
+    }
+  }
+
+  /**
+   * Parse the command line arguments.
+   * @param args Command line parameters.
+   * @return true if the parsed arguments are sufficient to run the decoder.
+   */
+  public static boolean parseArgs(String[] args)
+  {
     // make sure we have command args
     if (args.length < 2) {
       if (args.length==1 && (args[0].equals("-v") || args[0].equals("--version"))) {
         version();
-        return;
+        return false;
       }
       usage();
-      return;
+      return false;
     }
     // Determine input, output and file formats
-    String infile = args[args.length-2];
-    String outfile = args[args.length-1];
+    infile = args[args.length-2];
+    outfile = args[args.length-1];
     if (infile.toLowerCase().endsWith(".spx")) {
       ogg = true;
     }
@@ -181,11 +198,11 @@ public class JSpeexDec
     for (int i=0; i<args.length-2; i++) {
       if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
         usage();
-        return;
+        return false;
       }
       else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
         version();
-        return;
+        return false;
       }
       else if (args[i].equalsIgnoreCase("--enh")) {
         enhanced = true;
@@ -199,7 +216,7 @@ public class JSpeexDec
           }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("-n") ||
@@ -224,7 +241,7 @@ public class JSpeexDec
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--nframes")) {
@@ -233,7 +250,7 @@ public class JSpeexDec
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--vbr")) {
@@ -244,7 +261,7 @@ public class JSpeexDec
       }
       else {
         usage();
-        return;
+        return false;
       }
     }
     if (sampleRate < 0) {
@@ -262,8 +279,7 @@ public class JSpeexDec
           sampleRate = 8000;
       }
     }
-    // decode the spx
-    decode(infile, outfile);
+    return true;
   }
   
   /**
@@ -313,7 +329,7 @@ public class JSpeexDec
    * @param inputPath
    * @param outputPath
    * @exception IOException
-	 */
+   */
   public static void decode(String inputPath, String outputPath)
     throws IOException
   {

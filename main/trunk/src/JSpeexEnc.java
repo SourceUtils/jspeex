@@ -127,7 +127,12 @@ public class JSpeexEnc
   protected static boolean vad    = false;
   /** Defines whether or not to use DTX (Discontinuous Transmission). */
   protected static boolean dtx    = false;
-  
+
+  /** The audio input file */
+  protected static String infile;
+  /** The audio output file */
+  protected static String outfile;
+
   /**
    * Command line entrance:
    * <pre>
@@ -139,18 +144,30 @@ public class JSpeexEnc
   public static void main(String[] args)
     throws IOException
   {
+    if (parseArgs(args)) {
+      encode(infile, outfile);
+    }
+  }
+
+  /**
+   * Parse the command line arguments.
+   * @param args Command line parameters.
+   * @return true if the parsed arguments are sufficient to run the encoder.
+   */
+  public static boolean parseArgs(String[] args)
+  {
     // make sure we have command args
     if (args.length < 2) {
       if (args.length==1 && (args[0].equalsIgnoreCase("-v") || args[0].equalsIgnoreCase("--version"))) {
         version();
-        return;
+        return false;
       }
       usage();
-      return;
+      return false;
     }
     // Determine input, output and file formats
-    String infile = args[args.length-2];
-    String outfile = args[args.length-1];
+    infile = args[args.length-2];
+    outfile = args[args.length-1];
     if (infile.toLowerCase().endsWith(".wav")) {
       wav = true;
     }
@@ -167,11 +184,11 @@ public class JSpeexEnc
     for (int i=0; i<args.length-2; i++) {
       if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
         usage();
-        return;
+        return false;
       }
       else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
         version();
-        return;
+        return false;
       }
       else if (args[i].equalsIgnoreCase("--verbose")) {
         printlevel = DEBUG;
@@ -201,7 +218,7 @@ public class JSpeexEnc
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--complexity")) {
@@ -210,7 +227,7 @@ public class JSpeexEnc
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--nframes")) {
@@ -219,7 +236,7 @@ public class JSpeexEnc
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--vbr")) {
@@ -237,7 +254,7 @@ public class JSpeexEnc
         }
         catch (NumberFormatException e) {
           usage();
-          return;
+          return false;
         }
       }
       else if (args[i].equalsIgnoreCase("--stereo")) {
@@ -245,11 +262,10 @@ public class JSpeexEnc
       }
       else {
         usage();
-        return;
+        return false;
       }
     }
-    // encode to Speex
-    encode(infile, outfile);
+    return true;
   }
 
   /**
@@ -401,7 +417,7 @@ public class JSpeexEnc
       if (sampleRate < 100) // Sample Rate has probably been given in kHz
         sampleRate *= 1000;
       if (sampleRate < 12000)
-        mode = 0; // Narowband
+        mode = 0; // Narrowband
       else if (sampleRate < 24000)
         mode = 1; // Wideband
       else
