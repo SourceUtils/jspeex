@@ -195,7 +195,7 @@ public class Pcm2SpeexAudioInputStream
     }
     frameSize = 2 * channels * encoder.getFrameSize();
     // Misc initialsation
-    comment = "Encoded with " + encoder.VERSION;
+    comment = "Encoded with " + SpeexEncoder.VERSION;
     first = true;
   }
 
@@ -253,7 +253,7 @@ public class Pcm2SpeexAudioInputStream
   {
     this.comment = comment;
     if (appendVersion) {
-      comment += encoder.VERSION;
+      comment += SpeexEncoder.VERSION;
     }
   }
 

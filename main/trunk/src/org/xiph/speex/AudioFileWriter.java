@@ -39,7 +39,6 @@ package org.xiph.speex;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
  * Abstract Class that defines an Audio File Writer.

@@ -361,9 +361,10 @@ public class NbEncoder
           float thresh;
           v1=(int)Math.floor(vbr_quality);
           if (v1==10)
-            thresh = vbr.nb_thresh[mode][v1];
+            thresh = Vbr.nb_thresh[mode][v1];
           else
-            thresh = (vbr_quality-v1)*vbr.nb_thresh[mode][v1+1] + (1+v1-vbr_quality)*vbr.nb_thresh[mode][v1];
+            thresh = (vbr_quality-v1)*Vbr.nb_thresh[mode][v1+1] +
+                     (1+v1-vbr_quality)*Vbr.nb_thresh[mode][v1];
           if (relative_quality > thresh && 
               relative_quality-thresh<min_diff)
           {
