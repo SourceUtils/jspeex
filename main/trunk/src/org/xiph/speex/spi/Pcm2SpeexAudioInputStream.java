@@ -196,7 +196,6 @@ public class Pcm2SpeexAudioInputStream
     // Misc initialsation
     comment = "Encoded with " + encoder.VERSION;
     first = true;
-    System.out.println("++++++ Stream initialized correctly");
   }
 
   /**
@@ -460,41 +459,28 @@ public class Pcm2SpeexAudioInputStream
       }
     }
     else {
-      int spxpacketsize; // size of a packet of Speex data.
-      int oggpacketsize; // size of an Ogg packet containing X Speex packets.
+      // Calculate size of a packet of Speex data.
+      int spxpacketsize = encoder.getEncoder().getEncodedFrameSize();
+      spxpacketsize *= framesPerPacket;
+      spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
+      // calculate size of an Ogg packet containing X Speex packets.
+      // Ogg Packet = Ogg header + size of each packet + Ogg packets 
+      int oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
       int pcmframesize; // size of PCM data necessary to encode 1 Speex packet.
       switch (mode) {
         case 0: // Narrowband
-          spxpacketsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize *= framesPerPacket;
-          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
-          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
-          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
           // 1 frame = 20ms = 160ech * channels = 320bytes * channels
           pcmframesize = framesPerPacket * 320 * encoder.getChannels();
           avail += oggpacketsize *
                    (unencoded / (packetsPerOggPage * pcmframesize));
           return avail;
         case 1: // Wideband
-          spxpacketsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize *= framesPerPacket;
-          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
-          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
-          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
           // 1 frame = 20ms = 320ech * channels = 640bytes * channels
           pcmframesize = framesPerPacket * 640 * encoder.getChannels();
           avail += oggpacketsize *
                    (unencoded / (packetsPerOggPage * pcmframesize));
           return avail;
         case 2: // Ultra wideband
-          spxpacketsize = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[encoder.getEncoder().getMode()]];
-          spxpacketsize *= framesPerPacket;
-          spxpacketsize = (spxpacketsize + 7) >> 3; // convert bits to bytes
-          // Ogg Packet = Ogg header + size of each packet + Ogg packets 
-          oggpacketsize = 27 + packetsPerOggPage * (spxpacketsize + 1);
           // 1 frame = 20ms = 640ech * channels = 1280bytes * channels
           pcmframesize = framesPerPacket * 1280 * encoder.getChannels();
           avail += oggpacketsize *
