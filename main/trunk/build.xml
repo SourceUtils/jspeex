@@ -240,6 +240,7 @@
         <include name="**/*"/>
         <exclude name="doc/**"/>
         <exclude name="log/**"/>
+        <exclude name="proguard/**"/>
       </zipfileset>
     </zip>
   </target>
