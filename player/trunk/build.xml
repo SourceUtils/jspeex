@@ -126,7 +126,7 @@
 
   <target name="package" depends="build"
           description="Package JSpeex Player" >
-    <jar jarfile="${dist}/jlgui2.2spx-full.jar">
+    <jar jarfile="${dist}/jlGui2.2spx.jar">
       <fileset dir="${temp}/player">
         <include name="**/*"/>
         <exclude name="**/Test*.class"/>
@@ -147,8 +147,8 @@
     <mkdir dir="${log}"/>
     <proguard>
 -libraryjars ${java.home}/lib/rt.jar
--injars      ${dist}/jlgui2.2spx-full.jar
--outjar      ${dist}/jlgui2.2spx.jar
+-injars      ${dist}/jlGui2.2spx.jar
+-outjar      ${dist}/jlGuiSpx.jar
 -renamesourcefileattribute SourceFile
 -keepattributes InnerClasses,SourceFile
 -printmapping ${log}/jlgui2.2spx-obf.map
