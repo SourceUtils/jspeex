@@ -110,7 +110,7 @@ public abstract class AudioFileWriter
     writeInt(buf, offset+22, 0);                  // 22 - 25: page checksum
     buf[offset+26] = (byte) packetCount;          //      26: page_segments
     System.arraycopy(packetSizes, 0,              // 27 -  x: segment_table
-                     buf, 27, packetCount);
+                     buf, offset+27, packetCount);
     return packetCount+27;
   }
 
@@ -152,7 +152,7 @@ public abstract class AudioFileWriter
   {
     writeString(buf, offset, "Speex   ");    //  0 -  7: speex_string
     writeString(buf, offset+8, "speex-1.0"); //  8 - 27: speex_version
-    System.arraycopy(new byte[11], 0, buf, 17, 11); // : speex_version (fill in up to 20 bytes)
+    System.arraycopy(new byte[11], 0, buf, offset+17, 11); // : speex_version (fill in up to 20 bytes)
     writeInt(buf, offset+28, 1);           // 28 - 31: speex_version_id
     writeInt(buf, offset+32, 80);          // 32 - 35: header_size
     writeInt(buf, offset+36, sampleRate);  // 36 - 39: rate

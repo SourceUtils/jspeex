@@ -539,21 +539,24 @@ public class Pcm2SpeexAudioInputStream
    */
   private void writeHeaderFrames()
   {
-    if (comment.length() > 247) {
-      comment = comment.substring(0, 247);
-    }
     int length = comment.length();
+    if (length > 247) {
+      comment = comment.substring(0, 247);
+      length = 247;
+    }
     while ((buf.length - count) < length + 144) {
       // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
-      //             (length + 8 + 28 = size of Comment Frame) 
+      //             (28 + length + 8 = size of Comment Frame) 
       int nsz = buf.length * 2;
       byte[] nbuf = new byte[nsz];
       System.arraycopy(buf, 0, nbuf, 0, count);
       buf = nbuf;
     }
     // writes the OGG header page
-    writeOggPageHeader(1, 2);
-    buf[count+27] = 80; // size of SpeexHeader
+    AudioFileWriter.writeOggPageHeader(buf, count, 2, granulepos,
+                                       streamSerialNumber, pageCount++,
+                                       1, new byte[] {80});
+    oggCount = count + 28;
     /* writes the Speex header */
     AudioFileWriter.writeSpeexHeader(buf, oggCount, encoder.getSampleRate(),
                                      mode, encoder.getChannels(),
@@ -565,8 +568,10 @@ public class Pcm2SpeexAudioInputStream
     AudioFileWriter.writeInt(buf, count+22, chksum);
     count = oggCount;
     // writes the OGG header page
-    writeOggPageHeader(1, 0);
-    buf[count+27] = (byte)(0xff & length+8); // size of CommentHeader
+    AudioFileWriter.writeOggPageHeader(buf, count, 0, granulepos,
+                                       streamSerialNumber, pageCount++,
+                                       1, new byte[] {(byte)(length+8)});
+    oggCount = count + 28;
     /* writes the OGG comment page */
     AudioFileWriter.writeSpeexComment(buf, oggCount, comment);
     oggCount += length+8;
