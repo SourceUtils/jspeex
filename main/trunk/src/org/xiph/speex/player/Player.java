@@ -129,7 +129,7 @@ public class Player
    * Command Line entrance.
    * @param args
    */
-  public static void main(String[] args)
+  public static void main(final String[] args)
   {
     String filename = null;
     if (args.length > 0) {
@@ -152,7 +152,7 @@ public class Player
    * Build a Player.
    * @param file
    */
-  public Player(String file)
+  public Player(final String file)
   {
     this.audioFilename = file;
     createGUI();
@@ -376,7 +376,7 @@ public class Player
    * Process Actions when button are pressed.
    * Implemented from ActionListener interface.
    */
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(final ActionEvent e) {
     if (e.getSource() == timer) {
       progressBar.setValue(getProgress());
     }
@@ -571,12 +571,12 @@ public class Player
    * @param listener
    * @return
    */
-  protected static JButton buildButton(String actionCommand,
-                                       String toolTip,
-                                       String pathIconDefault,
-                                       String pathIconDisabled,
-                                       String pathIconRollover,
-                                       ActionListener listener)
+  protected static JButton buildButton(final String actionCommand,
+                                       final String toolTip,
+                                       final String pathIconDefault,
+                                       final String pathIconDisabled,
+                                       final String pathIconRollover,
+                                       final ActionListener listener)
   {
     ImageIcon IconDefault = createImageIcon(pathIconDefault);
     ImageIcon IconDisabled = createImageIcon(pathIconDisabled);
@@ -600,7 +600,7 @@ public class Player
    * @param path
    * @return an ImageIcon, or null if the path was invalid.
    */
-  protected static ImageIcon createImageIcon(String path)
+  protected static ImageIcon createImageIcon(final String path)
   {
     URL imgURL = Player.class.getResource(path);
     if (imgURL != null) {

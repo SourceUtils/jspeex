@@ -103,7 +103,7 @@ public class Recorder
    * Command Line entrance.
    * @param args
    */
-  public static void main(String[] args)
+  public static void main(final String[] args)
   {
     String filename = null;
     if (args.length > 0) {
@@ -126,7 +126,7 @@ public class Recorder
    * Build a Recorder.
    * @param file
    */
-  public Recorder(String file)
+  public Recorder(final String file)
   {
     super(file);
   }
@@ -281,7 +281,7 @@ System.out.println("size="+audio.length);
    * Process Actions when button are pressed.
    * Implemented from ActionListener interface.
    */
-  public void actionPerformed(ActionEvent e) {
+  public void actionPerformed(final ActionEvent e) {
     if (e.getSource() == timer) {
       progressBar.setValue(getProgress());
     }
