@@ -1,0 +1,2 @@
+# Providers of sound file-writing services
+org.xiph.speex.spi.SpeexAudioFileWriter

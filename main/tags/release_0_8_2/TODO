@@ -1,0 +1,12 @@
+DECODER
+=======
+- DTX implemented but untested.
+- Can't force decoder to run at another rate, mode, or channel count.
+
+ENCODER
+=======
+- DTX, VAD and ABR implemented but untested.
+
+MISCELLANEOUS
+=============
+- implement all those options in the C command line encoder and decoder.
