@@ -76,7 +76,8 @@ public class SpeexAudioFileReader
   /**
    * Obtains the audio file format of the File provided.
    * The File must point to valid audio file data.
-   * @param file the File from which file format information should be extracted.
+   * @param file the File from which file format information should be
+   * extracted.
    * @return an AudioFileFormat object describing the audio file format.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
@@ -99,7 +100,8 @@ public class SpeexAudioFileReader
    * Obtains an audio input stream from the URL provided.
    * The URL must point to valid audio file data.
    * @param url the URL for which the AudioInputStream should be constructed.
-   * @return an AudioInputStream object based on the audio file data pointed to by the URL.
+   * @return an AudioInputStream object based on the audio file data pointed to
+   * by the URL.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -118,8 +120,10 @@ public class SpeexAudioFileReader
 
   /**
    * Obtains an audio input stream from the input stream provided.
-   * @param stream the input stream from which the AudioInputStream should be constructed.
-   * @return an AudioInputStream object based on the audio file data contained in the input stream.
+   * @param stream the input stream from which the AudioInputStream should be
+   * constructed.
+   * @return an AudioInputStream object based on the audio file data contained
+   * in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -132,9 +136,11 @@ public class SpeexAudioFileReader
 
   /**
    * Return the AudioFileFormat from the given InputStream.
-   * @param stream the input stream from which the AudioInputStream should be constructed.
+   * @param stream the input stream from which the AudioInputStream should be
+   * constructed.
    * @param medialength
-   * @return an AudioInputStream object based on the audio file data contained in the input stream.
+   * @return an AudioInputStream object based on the audio file data contained
+   * in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -150,7 +156,8 @@ public class SpeexAudioFileReader
    * @param bitStream
    * @param baos
    * @param mediaLength
-   * @return an AudioInputStream object based on the audio file data contained in the input stream.
+   * @return an AudioInputStream object based on the audio file data contained
+   * in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -162,16 +169,23 @@ public class SpeexAudioFileReader
     try {
       // If we can't read the format of this stream, we must restore stream to
       // beginning so other providers can attempt to read the stream.
-      if (!bitStream.markSupported()) {
-        bitStream = new BufferedInputStream(bitStream);
+      if (bitStream.markSupported()) {
+        // maximum number of bytes to determine the stream encoding:
+        // Size of 1st Ogg Packet (Speex header) = OGG_HEADERSIZE + SPEEX_HEADERSIZE + 1
+        // Size of 2nd Ogg Packet (Comment)      = OGG_HEADERSIZE + comment_size + 1
+        // Size of 3rd Ogg Header (First data)   = OGG_HEADERSIZE + number_of_frames
+        // where number_of_frames < 256 and comment_size < 256 (if within 1 frame)
+        bitStream.mark(3*OGG_HEADERSIZE + SPEEX_HEADERSIZE + 256 + 256 + 2);
       }
-      bitStream.mark(OGG_HEADERSIZE+SPEEX_HEADERSIZE+1); // maximum number of bytes to determine the stream encoding
 
-      int sampleRate = 0;
-      int channels   = 0;
-      byte[] header  = new byte[128];
-      int segments = 0;
-      int bodybytes = 0; 
+      int mode        = -1;
+      int sampleRate  = 0;
+      int channels    = 0;
+      int frameSize   = AudioSystem.NOT_SPECIFIED;
+      float frameRate = AudioSystem.NOT_SPECIFIED;
+      byte[] header   = new byte[128];
+      int segments    = 0;
+      int bodybytes   = 0; 
       DataInputStream dis = new DataInputStream(bitStream);
       if (baos == null)
         baos = new ByteArrayOutputStream(128);
@@ -211,33 +225,54 @@ public class SpeexAudioFileReader
       if (!SPEEXID.equals(new String(header, OGG_HEADERSIZE+1, 8))) {
         throw new UnsupportedAudioFileException("Corrupt Speex Header: missing Speex ID");
       }
-//      mode       = payload[HEADERSIZE+1+40] & 0xFF;
-      sampleRate = bytestoint(header, OGG_HEADERSIZE+1+36);
-      channels   = bytestoint(header, OGG_HEADERSIZE+1+48);
+      mode        = bytestoint(header, OGG_HEADERSIZE+1+40);
+      sampleRate  = bytestoint(header, OGG_HEADERSIZE+1+36);
+      channels    = bytestoint(header, OGG_HEADERSIZE+1+48);
+      int nframes = bytestoint(header, OGG_HEADERSIZE+1+64);
+      boolean vbr = bytestoint(header, OGG_HEADERSIZE+1+60) == 1;
       // Checksum
       if (chksum != origchksum)
         throw new IOException("Ogg CheckSums do not match");
-      format = new AudioFormat(SpeexEncoding.SPEEX, (float)sampleRate, AudioSystem.NOT_SPECIFIED, channels, AudioSystem.NOT_SPECIFIED, AudioSystem.NOT_SPECIFIED, false);
+      // Calculate frameSize
+      if (!vbr) {
+        // Frames size is a constant so:
+        // Read Comment Packet the Ogg Header of 1st data packet;
+        // the array table_segment repeats the frame size over and over.
+      }
+      // Calculate frameRate
+      if (mode >= 0 && mode <= 2 && nframes > 0) {
+        frameRate = ((float) sampleRate) /
+                    ((mode == 0 ? 160f : (mode == 1 ? 320f : 640f)) * ((float) nframes));
+      }
+      format = new AudioFormat(SpeexEncoding.SPEEX, (float)sampleRate,
+                               AudioSystem.NOT_SPECIFIED, channels, frameSize,
+                               frameRate, false);
     }
     catch(UnsupportedAudioFileException e) {
       // reset the stream for other providers
-      bitStream.reset();
+      if (bitStream.markSupported()) {
+        bitStream.reset();
+      }
       // just rethrow this exception
       throw e;
     }
     catch (IOException ioe) {
       // reset the stream for other providers
-      bitStream.reset();
+      if (bitStream.markSupported()) {
+        bitStream.reset();
+      }
       throw new UnsupportedAudioFileException(ioe.getMessage());
     }
-    return new AudioFileFormat(SpeexFileFormatType.SPEEX, format, AudioSystem.NOT_SPECIFIED);
+    return new AudioFileFormat(SpeexFileFormatType.SPEEX, format,
+                               AudioSystem.NOT_SPECIFIED);
   }
 
   /**
    * Obtains an audio input stream from the File provided.
    * The File must point to valid audio file data.
    * @param file the File for which the AudioInputStream should be constructed.
-   * @return an AudioInputStream object based on the audio file data pointed to by the File.
+   * @return an AudioInputStream object based on the audio file data pointed to
+   * by the File.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -263,7 +298,8 @@ public class SpeexAudioFileReader
    * Obtains an audio input stream from the URL provided.
    * The URL must point to valid audio file data.
    * @param url the URL for which the AudioInputStream should be constructed.
-   * @return an AudioInputStream object based on the audio file data pointed to by the URL.
+   * @return an AudioInputStream object based on the audio file data pointed to
+   * by the URL.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -288,8 +324,10 @@ public class SpeexAudioFileReader
   /**
    * Obtains an audio input stream from the input stream provided.
    * The stream must point to valid audio file data.
-   * @param stream the input stream from which the AudioInputStream should be constructed.
-   * @return an AudioInputStream object based on the audio file data contained in the input stream.
+   * @param stream the input stream from which the AudioInputStream should be
+   * constructed.
+   * @return an AudioInputStream object based on the audio file data contained
+   * in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
@@ -303,20 +341,28 @@ public class SpeexAudioFileReader
   /**
    * Obtains an audio input stream from the input stream provided.
    * The stream must point to valid audio file data.
-   * @param inputStream the input stream from which the AudioInputStream should be constructed.
+   * @param inputStream the input stream from which the AudioInputStream should
+   * be constructed.
    * @param medialength
-   * @return an AudioInputStream object based on the audio file data contained in the input stream.
+   * @return an AudioInputStream object based on the audio file data contained
+   * in the input stream.
    * @exception UnsupportedAudioFileException if the File does not point to
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioInputStream getAudioInputStream(InputStream inputStream, int medialength)
+  protected AudioInputStream getAudioInputStream(InputStream inputStream,
+                                                 int medialength)
     throws UnsupportedAudioFileException, IOException
   {
     ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
-    AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream, baos, medialength);
-    SequenceInputStream sequenceInputStream = new SequenceInputStream(new ByteArrayInputStream(baos.toByteArray()), inputStream);
-    return new AudioInputStream(sequenceInputStream, audioFileFormat.getFormat(), audioFileFormat.getFrameLength());
+    AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream,
+                                                         baos,
+                                                         medialength);
+    ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+    SequenceInputStream sequenceInputStream = new SequenceInputStream(bais, inputStream);
+    return new AudioInputStream(sequenceInputStream,
+                                audioFileFormat.getFormat(),
+                                audioFileFormat.getFrameLength());
   }
 
   /**
@@ -327,6 +373,9 @@ public class SpeexAudioFileReader
    */
   private static int bytestoint(byte[] a, int i)
   {
-    return ((a[i+3] & 0xFF) << 24) | ((a[i+2] & 0xFF) << 16) | ((a[i+1] & 0xFF) << 8) | (a[i] & 0xFF);
+    return ((a[i+3] & 0xFF) << 24) |
+           ((a[i+2] & 0xFF) << 16) |
+           ((a[i+1] & 0xFF) <<  8) |
+           (a[i] & 0xFF);
   }
 }

@@ -124,41 +124,28 @@ public class SpeexFormatConvertionProvider
                                         AudioFormat sourceFormat)
   {
     if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
-      if (sourceFormat.getChannels() > 2 || sourceFormat.getChannels() <= 0 ||  !sourceFormat.isBigEndian()) {
+      if (sourceFormat.getChannels() > 2 || sourceFormat.getChannels() <= 0 ||
+          !sourceFormat.isBigEndian()) {
         return NO_FORMAT;
-      }
-      else if (sourceFormat.getSampleRate() == 8000.0F) {
-        AudioFormat[] formats = {new AudioFormat(SpeexEncoding.SPEEX, 8000.0F, -1, sourceFormat.getChannels(), -1, -1, false)}; // little endian
-        return formats;
-      }
-      else if (sourceFormat.getSampleRate() == 16000.0F) {
-        AudioFormat[] formats = {new AudioFormat(SpeexEncoding.SPEEX, 16000.0F, -1, sourceFormat.getChannels(), -1, -1, false)}; // little endian
-        return formats;
-      }
-      else if (sourceFormat.getSampleRate() == 32000.0F) {
-        AudioFormat[] formats = {new AudioFormat(SpeexEncoding.SPEEX, 32000.0F, -1, sourceFormat.getChannels(), -1, -1, false)}; // little endian
-        return formats;
       }
       else {
-        return NO_FORMAT;
+        AudioFormat[] formats = {new AudioFormat(SpeexEncoding.SPEEX,
+                                                 sourceFormat.getSampleRate(),
+                                                 -1, // sample size in bits
+                                                 sourceFormat.getChannels(),
+                                                 -1, // frame size
+                                                 -1, // frame rate
+                                                 false)}; // little endian
+        return formats;
       }
     }
     else if (sourceFormat.getEncoding().equals(SpeexEncoding.SPEEX)) {
-      if (sourceFormat.getSampleRate() == 8000.0F) {
-        AudioFormat[] formats = {new AudioFormat(8000.0F, 16, sourceFormat.getChannels(), true, false)}; // little endian (for PCM wav)
-        return formats;
-      }
-      else if (sourceFormat.getSampleRate() == 16000.0F) {
-        AudioFormat[] formats = {new AudioFormat(16000.0F, 16, sourceFormat.getChannels(), true, false)}; // little endian (for PCM wav)
-        return formats;
-      }
-      else if (sourceFormat.getSampleRate() == 32000.0F) {
-        AudioFormat[] formats = {new AudioFormat(32000.0F, 16, sourceFormat.getChannels(), true, false)}; // little endian (for PCM wav)
-        return formats;
-      }
-      else {
-        return NO_FORMAT;
-      }
+      AudioFormat[] formats = {new AudioFormat(sourceFormat.getSampleRate(),
+                                               16, // sample size in bits
+                                               sourceFormat.getChannels(),
+                                               true, // signed
+                                               false)}; // little endian (for PCM wav)
+      return formats;
     }
     else {
       return NO_FORMAT;

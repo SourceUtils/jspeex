@@ -81,8 +81,8 @@ public class Pcm2SpeexAudioInputStream
   /**
    * Constructor
    * @param in     the underlying input stream.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    */
   public Pcm2SpeexAudioInputStream(InputStream in,
                                    AudioFormat format, long length)
@@ -94,8 +94,8 @@ public class Pcm2SpeexAudioInputStream
    * Constructor
    * @param samplerate   the samplerate of the audio stream.
    * @param in     the underlying input stream.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    */
   public Pcm2SpeexAudioInputStream(int samplerate, InputStream in,
                                    AudioFormat format, long length)
@@ -107,8 +107,8 @@ public class Pcm2SpeexAudioInputStream
    * Constructor
    * @param in     the underlying input stream.
    * @param size   the buffer size.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    * @exception IllegalArgumentException if size <= 0.
    */
   public Pcm2SpeexAudioInputStream(InputStream in, int size,
@@ -122,8 +122,8 @@ public class Pcm2SpeexAudioInputStream
    * @param samplerate   the samplerate of the audio stream.
    * @param in     the underlying input stream.
    * @param size   the buffer size.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    * @exception IllegalArgumentException if size <= 0.
    */
   public Pcm2SpeexAudioInputStream(int samplerate, InputStream in, int size,
@@ -150,6 +150,8 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the number of Audio Frames that are to be put in every Speex Packet.
+   * An Audio Frame contains 160 samples for narrowband, 320 samples for
+   * wideband and 640 samples for ultra-wideband.
    * @param framesPerPacket
    * @see #DEFAULT_FRAMES_PER_PACKET
    */
@@ -163,6 +165,8 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Sets the number of Speex Packets that are to be put in every Ogg Page.
+   * This value must be less than 256 as the value is encoded in 1 byte in the
+   * Ogg Header (just before the array of packet sizes)
    * @param packetsPerOggPage
    * @see #DEFAULT_PACKETS_PER_OGG_PAGE
    */
@@ -191,7 +195,7 @@ public class Pcm2SpeexAudioInputStream
   }
 
   /**
-   * Sets the Speex encoder Quality
+   * Sets the Speex encoder Quality.
    * @param quality
    */
   public void setQuality(int quality)
@@ -203,7 +207,7 @@ public class Pcm2SpeexAudioInputStream
   }
   
   /**
-   * Sets whether of not the encoder is to use VBR
+   * Sets whether of not the encoder is to use VBR.
    * @param vbr
    */
   public void setVbr(boolean vbr)
@@ -212,8 +216,8 @@ public class Pcm2SpeexAudioInputStream
   }
 
   /**
-   * Returns the Encoder
-   * @return the Encoder
+   * Returns the Encoder.
+   * @return the Encoder.
    */
   public Encoder getEncoder()
   {
@@ -433,10 +437,8 @@ public class Pcm2SpeexAudioInputStream
    * Write an OGG page header.
    * @param packets - the number of packets in the Ogg Page (must be between 1 and 255)
    * @param headertype - 2=bos: beginning of sream, 4=eos: end of sream
-   * @exception IOException
    */
   private void writeOggPageHeader(int packets, int headertype)
-    throws IOException
   {
     while ((buf.length - count) < (27 + packets)) { // grow buffer
       int nsz = buf.length * 2;
@@ -460,10 +462,8 @@ public class Pcm2SpeexAudioInputStream
 
   /**
    * Calculate and write the OGG page checksum. This now closes the Ogg page.
-   * @exception IOException
    */
   private void writeOggPageChecksum()
-    throws IOException
   {
     // write the granulpos
     granulpos += frameSize*packetCount/2;
@@ -478,10 +478,8 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Write the OGG Speex header.
-   * @exception IOException
    */
   private void writeHeaderFrame()
-    throws IOException
   {
     while ((buf.length - count) < 108) {
       // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
@@ -516,10 +514,8 @@ public class Pcm2SpeexAudioInputStream
   
   /**
    * Write the OGG Speex Comment header.
-   * @exception IOException
    */
   private void writeCommentFrame()
-    throws IOException
   {
     if (comment.length() > 247) {
       comment = comment.substring(0, 247);
@@ -544,20 +540,24 @@ public class Pcm2SpeexAudioInputStream
   }
 
   /**
-   * Writes a Little-endian short
+   * Writes a Little-endian short.
+   * @param data   the array into which the data should be written.
+   * @param offset the offset from which to start writing in the array.
+   * @param v      the value to write.
    */  
   private static void writeShort(byte[] data, int offset, short v)
-    throws IOException 
   {
     data[offset]   = (byte) (0xff & v);
     data[offset+1] = (byte) (0xff & (v >>> 8));
   }
   
   /**
-   * Writes a Little-endian int
+   * Writes a Little-endian int.
+   * @param data   the array into which the data should be written.
+   * @param offset the offset from which to start writing in the array.
+   * @param v      the value to write.
    */
   private static void writeInt(byte[] data, int offset, int v)
-    throws IOException 
   {
     data[offset]   = (byte) (0xff & v);
     data[offset+1] = (byte) (0xff & (v >>>  8));
@@ -566,10 +566,12 @@ public class Pcm2SpeexAudioInputStream
   }
 
   /**
-   * Writes a Little-endian long
+   * Writes a Little-endian long.
+   * @param data   the array into which the data should be written.
+   * @param offset the offset from which to start writing in the array.
+   * @param v      the value to write.
    */
   private static void writeLong(byte[] data, int offset, long v)
-    throws IOException 
   {
     data[offset]   = (byte) (0xff & v);
     data[offset+1] = (byte) (0xff & (v >>>  8));
@@ -582,10 +584,12 @@ public class Pcm2SpeexAudioInputStream
   }
 
   /**
-   * Writes a String
+   * Writes a String.
+   * @param data   the array into which the data should be written.
+   * @param offset the offset from which to start writing in the array.
+   * @param v      the value to write.
    */
   private static void writeString(byte[] data, int offset, String v)
-    throws IOException 
   {
     byte[] str = v.getBytes();
     System.arraycopy(str, 0, data, offset, str.length);

@@ -434,7 +434,7 @@ public class JSpeexEnc
     // Open the file writer
     AudioFileWriter writer;
     if (ogg) {
-      writer = new OggSpeexWriter(mode, sampleRate, channels, nframes);
+      writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
     }
     else {
       writer = new RawWriter();
@@ -465,7 +465,10 @@ public class JSpeexEnc
    */
   private static int readInt(byte[] data, int offset)
   {
-    return (data[offset] & 0xff) | ((data[offset+1] & 0xff) << 8) | ((data[offset+2] & 0xff) << 16) | (data[offset+3] << 24); // no 0xff on the last one to keep the sign
+    return (data[offset] & 0xff) |
+           ((data[offset+1] & 0xff) <<  8) |
+           ((data[offset+2] & 0xff) << 16) |
+           (data[offset+3] << 24); // no 0xff on the last one to keep the sign
   }
 
   /**
@@ -475,6 +478,7 @@ public class JSpeexEnc
    */
   private static int readShort(byte[] data, int offset)
   {
-    return (data[offset] & 0xff) | (data[offset+1] << 8); // no 0xff on the last one to keep the sign
+    return (data[offset] & 0xff) |
+           (data[offset+1] << 8); // no 0xff on the last one to keep the sign
   }
 }

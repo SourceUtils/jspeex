@@ -55,19 +55,20 @@ public class OggSpeexWriter
   private Random random;
   private OutputStream out;
 
-  private int    mode;
-  private int    sampleRate;
-  private int    channels;
-  private int    nframes;
-  private int    size;
-  private int    streamSerialNumber;
-  private byte[] dataBuffer;
-  private int    dataBufferPtr;
-  private byte[] headerBuffer;
-  private int    headerBufferPtr;
-  private int    pageCount;
-  private int    packetCount;
-  private long   granulepos;
+  private int     mode;
+  private int     sampleRate;
+  private int     channels;
+  private int     nframes;
+  private boolean vbr;
+  private int     size;
+  private int     streamSerialNumber;
+  private byte[]  dataBuffer;
+  private int     dataBufferPtr;
+  private byte[]  headerBuffer;
+  private int     headerBufferPtr;
+  private int     pageCount;
+  private int     packetCount;
+  private long    granulepos;
   
   /**
    * Builds an Ogg Speex Writer. 
@@ -92,10 +93,10 @@ public class OggSpeexWriter
    * @param channels
    * @param nframes
    */
-  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes)
+  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes, boolean vbr)
   {
     this();
-    setFormat(mode, sampleRate, channels, nframes);
+    setFormat(mode, sampleRate, channels, nframes, vbr);
   }
 
   /**
@@ -106,12 +107,13 @@ public class OggSpeexWriter
    * @param channels
    * @param nframes
    */
-  private void setFormat(int mode, int sampleRate, int channels, int nframes)
+  private void setFormat(int mode, int sampleRate, int channels, int nframes, boolean vbr)
   {
     this.mode       = mode;
     this.sampleRate = sampleRate;
     this.channels   = channels;
     this.nframes    = nframes;
+    this.vbr        = vbr;
   }
 
   /**
@@ -170,7 +172,7 @@ public class OggSpeexWriter
     writeInt(baos, channels);                 // 48 - 51: nb_channels
     writeInt(baos, -1);                       // 52 - 55: bitrate
     writeInt(baos, mode==0?160:mode==1?320:640); // 56 - 59: frame_size
-    writeInt(baos, 0);                        // 60 - 63: vbr
+    writeInt(baos, vbr?1:0);                  // 60 - 63: vbr
     writeInt(baos, nframes);                  // 64 - 67: frames_per_packet
     writeInt(baos, 0);                        // 68 - 71: extra_headers
     writeInt(baos, 0);                        // 72 - 75: reserved1

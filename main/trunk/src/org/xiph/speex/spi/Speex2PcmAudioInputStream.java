@@ -75,8 +75,8 @@ public class Speex2PcmAudioInputStream
   /**
    * Constructor
    * @param in     the underlying input stream.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    */
   public Speex2PcmAudioInputStream(InputStream in, AudioFormat format, long length)
   {
@@ -87,8 +87,8 @@ public class Speex2PcmAudioInputStream
    * Constructor
    * @param in     the underlying input stream.
    * @param size   the buffer size.
-   * @param format
-   * @param length
+   * @param format the format of this stream's audio data.
+   * @param length the length in sample frames of the data in this stream.
    * @exception IllegalArgumentException if size <= 0.
    */
   public Speex2PcmAudioInputStream(InputStream in, int size, AudioFormat format, long length)
@@ -269,10 +269,10 @@ public class Speex2PcmAudioInputStream
   }
 
   /**
-   * This is where the actual decoding takes place
-   * @param data
-   * @param offset
-   * @param len
+   * This is where the actual decoding takes place.
+   * @param data the array of data to decode.
+   * @param offset the offset from which to start reading the data.
+   * @param len the length of data to read from the array.
    */
   protected void decode(byte[] data, int offset, int len)
   {
@@ -368,7 +368,9 @@ public class Speex2PcmAudioInputStream
   }
   
   /**
-   * 
+   * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
    */
   private int readInt(byte[] data, int offset)
   {
