@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!--/********************************************************************** -->
+<!-- *                                                                    * -->
+<!-- * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.           * -->
+<!-- *                                                                    * -->
+<!-- * COPYRIGHT:                                                         * -->
+<!-- *      This software is the property of Wimba S.A.                   * -->
+<!-- *      It cannot be copied, used, or modified without obtaining an   * -->
+<!-- *      authorization from the authors or a mandated member of Wimba. * -->
+<!-- *      If such an authorization is provided, any modified version    * -->
+<!-- *      or copy of the software has to contain this header.           * -->
+<!-- *                                                                    * -->
+<!-- * WARRANTIES:                                                        * -->
+<!-- *      This software is made available by the authors in the hope    * -->
+<!-- *      that it will be useful, but without any warranty.             * -->
+<!-- *      Wimba S.A. is not liable for any consequence related to the   * -->
+<!-- *      use of the provided software.                                 * -->
+<!-- *                                                                    * -->
+<!-- * Class: build.xml                                                   * -->
+<!-- *                                                                    * -->
+<!-- * Author: Marc GIMPEL                                                * -->
+<!-- *                                                                    * -->
+<!-- * Date: 22nd April 2003                                              * -->
+<!-- *                                                                    * -->
+<!-- **********************************************************************/-->
+<!-- $Id$ -->
+
+<project name="jspeex" default="compile" basedir=".">
+  <description>JSpeex build file</description>
+  <taskdef name="proguard" classname="proguard.ant.ProGuardTask"
+           classpath="../proguard/proguard.jar" />
+
+  <!-- set global properties for this build -->
+  <property name="root"    location="."/>
+  <property name="src"     location="."/>
+  <property name="build"   location="../build"/>
+  <property name="temp"    location="../temp"/>
+  <property name="lib"     location="../lib"/>
+  <property name="log"     location="../log"/>
+  <property name="doc"     location="../doc"/>
+
+  <target name="init" description="initialise ant" depends="clean">
+    <tstamp/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${temp}"/>
+    <input message="Do you want to compile JSpeex for just narrowband (smaller footprint), choose "
+           validargs="y,n" addproperty="question"/>
+    <condition property="narrowband">
+      <equals arg1="y" arg2="${question}"/>
+    </condition>
+  </target>
+
+  <target name="compile-wb" depends="init" unless="narrowband"
+          description="compile JSpeex" >
+    <javac srcdir="${src}" destdir="${build}">
+      <include name="JSpeexEnc.java"/>
+      <include name="JSpeexDec.java"/>
+      <include name="org/xiph/speex/*.java"/>
+    </javac>
+  </target>
+
+  <target name="compile-nb" depends="init" if="narrowband"
+          description="compile JSpeex (narrowband only)" >
+    <copy toDir="${temp}/" overwrite="true">
+      <fileset dir="${src}/"/>
+      <filterset begintoken="//Wideba" endtoken="d">
+        <filter token="n" value="/*/Wideband"/>
+      </filterset>
+    </copy>
+    <javac srcdir="${temp}" destdir="${build}">
+      <include name="JSpeexEnc.java"/>
+      <include name="JSpeexDec.java"/>
+      <include name="org/xiph/speex/*.java"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="compile-wb,compile-nb"
+          description="compile JSpeex" >
+    <jar jarfile="${lib}/jspeex.jar" basedir="${build}">
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexEnc"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compress" depends="compile"
+          description="obfuscate code" >
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ../lib/jspeex.jar
+-outjar      ../lib/jspeex-obf.jar
+-overloadaggressively
+-defaultpackage ''
+
+-keep public class JSpeexEnc {
+    public static void main(java.lang.String[]);
+}
+-keep public class JSpeexDec {
+    public static void main(java.lang.String[]);
+}
+    </proguard>
+  </target>
+
+  <target name="compress-encoder" depends="compile"
+          description="obfuscate code" >
+    <jar jarfile="${lib}/jspeexenc.jar" basedir="${build}">
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexEnc"/>
+      </manifest>
+    </jar>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ../lib/jspeexenc.jar
+-outjar      ../lib/jspeexenc-obf.jar
+-overloadaggressively
+-defaultpackage ''
+
+-keep public class JSpeexEnc {
+    public static void main(java.lang.String[]);
+}
+    </proguard>
+  </target>
+
+  <target name="compress-decoder" depends="compile"
+          description="obfuscate code" >
+    <jar jarfile="${lib}/jspeexdec.jar" basedir="${build}">
+      <manifest>
+        <section name="build">
+          <attribute name="Build-Date" value="${DSTAMP} ${TSTAMP}"/>
+          <attribute name="Built-By" value="${user.name}"/>
+          <attribute name="Built-With" value="${os.name} ${os.version} ${os.arch}"/>
+        </section>
+        <attribute name="Main-Class" value="JSpeexDec"/>
+      </manifest>
+    </jar>
+    <proguard>
+-libraryjars ${java.home}/lib/rt.jar
+-injars      ../lib/jspeexdec.jar
+-outjar      ../lib/jspeexdec-obf.jar
+-overloadaggressively
+-defaultpackage ''
+
+-keep public class JSpeexDec {
+    public static void main(java.lang.String[]);
+}
+    </proguard>
+  </target>
+
+  <target name="javadoc"
+          description="generate javadoc documentation" >
+    <!-- Create the documentation directory -->
+    <mkdir dir="${doc}"/>
+    <javadoc sourcepath="${src}" destdir="${doc}" author="true" version="true"
+             packagenames="org.xiph.speex"
+             use="true"
+             Windowtitle="JSpeex javadoc">
+      <bottom><![CDATA[<i>Copyright &#169; 1999-2003 Wimba S.A. All Rights Reserved.</i>]]></bottom>
+    </javadoc>
+  </target>
+
+  <target name="clean"
+          description="clean up" >
+    <delete dir="${build}"/>
+    <delete dir="${temp}"/>
+  </target>
+</project>

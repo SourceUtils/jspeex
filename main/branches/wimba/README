@@ -1,0 +1,18 @@
+Building
+--------
+If you have apache ant installed, there is a build.xml file in the src directory. For those of you who are interested in getting the smallest footprint possible out of this code, there are several build targets which remove the wideband code to reduce the footprint, and obfuscate the code using another open source tool, Proguard, which also further reduces the footprint. With this I have manager to build a Jar file with just the narrowband decoder that is only 40k
+
+Running
+-------
+encoder help: java -cp lib/jspeex.jar JSpeexEnc -h
+or: java -jar lib/jspeex.jar -h
+encoding an 8kHz wav file: java -cp lib/jspeex.jar JSpeexEnc -n input.wav output.spx
+decoding any speex file: java -cp lib/jspeex.jar JSpeexDec input.spx output.wav
+
+Credits
+-------
+First of all I'd like to thank Jean-Marc Valin for giving us all this fantastic codec. This code is really just a porting of Jean-Marc's code from C to Java. I'd also like to thank James Lawrence, who wrote the original Java Speex Decoder, from which this encoder was build.
+
+Marc Gimpel <marc.gimpel@wimba.com>
+Head of Research
+Wimba
