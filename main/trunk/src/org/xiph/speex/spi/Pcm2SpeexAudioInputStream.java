@@ -535,9 +535,9 @@ public class Pcm2SpeexAudioInputStream
     writeOggPageHeader(1, 0);
     buf[count+27] = (byte)(0xff & length+8); // size of CommentHeader
     /* writes the OGG comment page */
-    writeInt(buf, oggCount, length);       // comment size
-    writeString(buf, oggCount+4, comment); // comment
-    writeInt(buf, oggCount+length-4, 0);   // ?
+    writeInt(buf, oggCount, length);       // vendor comment size
+    writeString(buf, oggCount+4, comment); // vendor comment
+    writeInt(buf, oggCount+length+4, 0);   // user comment list length
     /* Calculate Checksum */
     oggCount += length+8;
     writeOggPageChecksum();
