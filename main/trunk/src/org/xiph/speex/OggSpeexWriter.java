@@ -50,6 +50,7 @@ import java.util.Random;
  * @version $Revision$
  */
 public class OggSpeexWriter
+  extends AudioFileWriter
 {
   private Random random;
   private OutputStream out;
@@ -85,6 +86,35 @@ public class OggSpeexWriter
   }
 
   /**
+   * Builds an Ogg Speex Writer. 
+   * @param mode
+   * @param sampleRate
+   * @param channels
+   * @param nframes
+   */
+  public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes)
+  {
+    this();
+    setFormat(mode, sampleRate, channels, nframes);
+  }
+
+  /**
+   * Sets the output format.
+   * Must be called before WriteHeader().
+   * @param mode
+   * @param sampleRate
+   * @param channels
+   * @param nframes
+   */
+  private void setFormat(int mode, int sampleRate, int channels, int nframes)
+  {
+    this.mode       = mode;
+    this.sampleRate = sampleRate;
+    this.channels   = channels;
+    this.nframes    = nframes;
+  }
+
+  /**
    * Closes the output file.
    * @exception IOException
    */
@@ -109,35 +139,9 @@ public class OggSpeexWriter
   }
   
   /**
-   * Sets the output stream to the given stream.
-   * @param os - output stream.
-   */
-  public void open(OutputStream os)
-  {
-    out = os;
-    size = 0;   
-  }
-
-  /**
-   * Sets the output format.
-   * Must be called before WriteHeader().
-   * @param mode
-   * @param sampleRate
-   * @param channels
-   * @param nframes
-   */
-  public void setFormat(int mode, int sampleRate, int channels, int nframes)
-  {
-    this.mode       = mode;
-    this.sampleRate = sampleRate;
-    this.channels   = channels;
-    this.nframes    = nframes;
-  }
-  
-  /**
    * Writes the header pages that start the Ogg Speex file. 
    * Prepares file for data to be written.
-   * @param comment
+   * @param comment description to be included in the header.
    * @exception IOException
    */
   public void writeHeader(String comment)
@@ -207,8 +211,8 @@ public class OggSpeexWriter
   /**
    * Writes a packet of audio. 
    * @param data - audio data.
-   * @param offset
-   * @param len
+   * @param offset - the offset from which to start reading the data.
+   * @param len - the length of data to read.
    * @exception IOException
    */
   public void writePacket(byte[] data, int offset, int len)
@@ -232,7 +236,7 @@ public class OggSpeexWriter
    * @param eos - end of stream
    * @exception IOException
    */
-  public void flush(boolean eos)
+  private void flush(boolean eos)
     throws IOException
   {
     /* writes the OGG header page */
@@ -259,51 +263,5 @@ public class OggSpeexWriter
     dataBufferPtr   = 0;
     headerBufferPtr = 0;
     packetCount     = 0;
-  }
-  
-  /**
-   * Writes a Little-endian short.
-   * @param os - the output stream to write to.
-   * @param v - the value to write.
-   * @exception IOException
-   */
-  private static void writeShort(OutputStream os, short v)
-    throws IOException 
-  {
-    os.write((0xff & v));
-    os.write((0xff & (v >>> 8)));
-  }
-  
-  /**
-   * Writes a Little-endian int.
-   * @param os - the output stream to write to.
-   * @param v - the value to write.
-   * @exception IOException
-   */
-  private static void writeInt(OutputStream os, int v)
-    throws IOException 
-  {
-    os.write(0xff & v);
-    os.write(0xff & (v >>>  8));
-    os.write(0xff & (v >>> 16));
-    os.write(0xff & (v >>> 24));
-  }
-
-  /**
-   * Writes a Little-endian long.
-   * @param os - the output stream to write to.
-   * @param v - the value to write.
-   * @exception IOException
-   */
-  private static void writeLong(OutputStream os, long v) throws IOException 
-  {
-    os.write((int)(0xff & v));
-    os.write((int)(0xff & (v >>>  8)));
-    os.write((int)(0xff & (v >>> 16)));
-    os.write((int)(0xff & (v >>> 24)));
-    os.write((int)(0xff & (v >>> 32)));
-    os.write((int)(0xff & (v >>> 40)));
-    os.write((int)(0xff & (v >>> 48)));
-    os.write((int)(0xff & (v >>> 56)));
   }
 }
