@@ -44,8 +44,6 @@ import javax.sound.sampled.AudioFormat;
 
 import org.xiph.speex.OggCrc;
 import org.xiph.speex.Encoder;
-import org.xiph.speex.NbEncoder;
-import org.xiph.speex.SbEncoder;
 import org.xiph.speex.SpeexEncoder;
 
 /**
