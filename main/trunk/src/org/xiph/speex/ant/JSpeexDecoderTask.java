@@ -45,6 +45,7 @@ import java.util.Random;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.xiph.speex.AudioFileWriter;
@@ -57,6 +58,17 @@ import org.xiph.speex.SpeexDecoder;
 
 /**
  * Ant <code>Task</code> to Decode an audio file from Speex to PCM Wave.
+ * Here is an usage example:
+ * <pre>
+ * <taskdef name="speexdec" classname="org.xiph.speex.ant.JSpeexDecoderTask"/>
+ * <target name="decode" description="Decode" >
+ *   <speexdec enhanced="true" verbose="true" failOnError="true">
+ *     <fileset dir="audio">
+ *       <include name="*.spx"/>
+ *     </fileset>
+ *   </speexdec>
+ * </target>
+ * </pre>
  * 
  * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
  * @version $Revision$
@@ -158,14 +170,20 @@ public class JSpeexDecoderTask
       }
     }
     for (int i=0; i<srcFileset.size(); i++) {
-      File srcFileI = (File) srcFileset.get(i);
-      File destFileI = buildDestFile(srcFileI);
-      try {
-        setupTask(srcFileI, destFileI);
-        decode(srcFileI, destFileI);
-      }
-      catch (IOException e) {
-        log(e.getMessage());
+      FileSet fs = (FileSet)srcFileset.elementAt(i);
+      DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+      File dir = fs.getDir(getProject());
+      String[] srcs = ds.getIncludedFiles();
+      for (int j = 0; j < srcs.length; j++) {
+        File srcFileI = new File(dir, srcs[j]);
+        File destFileI = buildDestFile(srcFileI);
+        try {
+          setupTask(srcFileI, destFileI);
+          decode(srcFileI, destFileI);
+        }
+        catch (IOException e) {
+          log(e.getMessage());
+        }
       }
     }
     if (hadError && failOnError)
@@ -173,7 +191,7 @@ public class JSpeexDecoderTask
   }
 
   /**
-   * Builds the destination file.
+   * Builds and returns the destination file.
    * @param srcFile
    * @return
    */

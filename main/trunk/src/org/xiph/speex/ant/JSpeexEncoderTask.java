@@ -44,6 +44,7 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.xiph.speex.AudioFileWriter;
@@ -55,6 +56,19 @@ import org.xiph.speex.SpeexEncoder;
 
 /**
  * Ant <code>Task</code> to Encode an audio file from PCM Wave to Speex.
+ * Here is an usage example:
+ * <pre>
+ * <taskdef name="speexenc" classname="org.xiph.speex.ant.JSpeexEncoderTask"/>
+ * <target name="encode" description="Encode" >
+ *   <speexenc quality="8" complexity="3" nframes="1"
+ *             vbr="true" vad="false" dtx="false"
+ *             verbose="true" failOnError="true">
+ *     <fileset dir="audio">
+ *       <include name="*.wav"/>
+ *     </fileset>
+ *   </speexenc>
+ * </target>
+ * </pre>
  * 
  * @author Marc Gimpel, Wimba S.A. (marc.gimpel@wimba.com)
  * @version $Revision$
@@ -105,6 +119,8 @@ public class JSpeexEncoderTask
   /** Defines File format for output audio file (Raw or Wave). */
   protected int destFormat = FILE_FORMAT_WAVE;
 
+  /** Whether the mode is manualy set or automatically determined. */
+  protected boolean modeset = false;
   /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
   protected int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
@@ -156,14 +172,20 @@ public class JSpeexEncoderTask
       }
     }
     for (int i=0; i<srcFileset.size(); i++) {
-      File srcFileI = (File) srcFileset.get(i);
-      File destFileI = buildDestFile(srcFileI);
-      try {
-        setupTask(srcFileI, destFileI);
-        encode(srcFileI, destFileI);
-      }
-      catch (IOException e) {
-        log(e.getMessage());
+      FileSet fs = (FileSet)srcFileset.elementAt(i);
+      DirectoryScanner ds = fs.getDirectoryScanner(getProject());
+      File dir = fs.getDir(getProject());
+      String[] srcs = ds.getIncludedFiles();
+      for (int j = 0; j < srcs.length; j++) {
+        File srcFileI = new File(dir, srcs[j]);
+        File destFileI = buildDestFile(srcFileI);
+        try {
+          setupTask(srcFileI, destFileI);
+          encode(srcFileI, destFileI);
+        }
+        catch (IOException e) {
+          log(e.getMessage());
+        }
       }
     }
     if (hadError && failOnError)
@@ -171,7 +193,7 @@ public class JSpeexEncoderTask
   }
 
   /**
-   * Builds the destination file.
+   * Builds and returns the destination file.
    * @param srcFile
    * @return
    */
@@ -201,16 +223,19 @@ public class JSpeexEncoderTask
    */
   private void setupTask(File srcPath, File destPath)
   {
-    if (srcFile.toString().toLowerCase().endsWith(".wav")) {
+    if (!modeset) {
+      mode = -1;
+    }
+    if (srcPath.toString().toLowerCase().endsWith(".wav")) {
       srcFormat = FILE_FORMAT_WAVE;
     }
     else {
       srcFormat = FILE_FORMAT_RAW;
     }
-    if (destFile.toString().toLowerCase().endsWith(".spx")) {
+    if (destPath.toString().toLowerCase().endsWith(".spx")) {
       destFormat = FILE_FORMAT_OGG;
     }
-    else if (destFile.toString().toLowerCase().endsWith(".wav")) {
+    else if (destPath.toString().toLowerCase().endsWith(".wav")) {
       destFormat = FILE_FORMAT_WAVE;
     }
     else {
@@ -352,6 +377,7 @@ public class JSpeexEncoderTask
    */
   public void setMode(String mode)
   {
+    modeset = true;
     if ("ultrawideband".equalsIgnoreCase(mode) ||
         "uwb".equalsIgnoreCase(mode) ||
         "2".equals(mode))
@@ -360,8 +386,12 @@ public class JSpeexEncoderTask
              "wb".equalsIgnoreCase(mode) ||
              "1".equals(mode))
       this.mode = 1;
-    else {
+    else if ("narrowband".equalsIgnoreCase(mode) ||
+             "nb".equalsIgnoreCase(mode) ||
+             "0".equals(mode))
       this.mode = 0;
+    else {
+      this.mode = -1;
     }
   }
 
