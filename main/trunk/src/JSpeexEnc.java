@@ -81,18 +81,31 @@ public class JSpeexEnc
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
+  /** Print level for messages : Print debug information */
+  public static final int DEBUG = 0;
+  /** Print level for messages : Print basic information */
+  public static final int INFO  = 1;
+  /** Print level for messages : Print only warnings and errors */
+  public static final int WARN  = 2;
+  /** Print level for messages : Print only errors */
+  public static final int ERROR = 3;
+  /** Print level for messages */
+  private static int printlevel = INFO;
+
   /** Defines whether or not the input uses the Wav File Format or is raw. */
   private static boolean wav    = true;
+  /** Defines whether or not the output uses the Ogg File Format or is raw. */
+  private static boolean ogg    = true;
   /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
-  private static int mode       = 0;
+  private static int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
   private static int quality    = 8;
   /** Defines the encoders algorithmic complexity. */
   private static int complexity = 3;
-  /** Defines the desired bitrate for the encoded audio. */
-  private static int bitrate    = -1;
   /** Defines the number of frames per speex packet. */
   private static int nframes    = 1;
+  /** Defines the desired bitrate for the encoded audio. */
+  private static int bitrate    = -1;
   /** Defines the sampling rate of the audio input. */
   private static int sampleRate = -1;
   /** Defines the encoder VBR quality setting (float from 0 to 10). */
@@ -109,7 +122,7 @@ public class JSpeexEnc
   /**
    * Command line entrance:
    * <pre>
-   * Usage: JSpeexEnc [options] input.wav output.spx
+   * Usage: JSpeexEnc [options] input_file output_file
    * </pre>
    */
   public static void main(String[] args)
@@ -124,8 +137,22 @@ public class JSpeexEnc
       usage();
       return;
     }
+    // Determine input, output and file formats
     String infile = args[args.length-2];
     String outfile = args[args.length-1];
+    if (infile.toLowerCase().endsWith(".wav")) {
+      wav = true;
+    }
+    else {
+      wav = false;
+    }
+    if (outfile.toLowerCase().endsWith(".spx")) {
+      ogg = true;
+    }
+    else {
+      ogg = false;
+    }
+    // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
       if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
         usage();
@@ -135,16 +162,25 @@ public class JSpeexEnc
         version();
         return;
       }
-      else if (args[i].equalsIgnoreCase("--raw")) {
-        wav = false;
+      else if (args[i].equalsIgnoreCase("--verbose")) {
+        printlevel = DEBUG;
       }
-      else if (args[i].equalsIgnoreCase("-n") || args[i].equalsIgnoreCase("--narrowband")) {
+      else if (args[i].equalsIgnoreCase("--quiet")) {
+        printlevel = WARN;
+      }
+      else if (args[i].equalsIgnoreCase("-n") || 
+               args[i].equalsIgnoreCase("-nb") ||
+               args[i].equalsIgnoreCase("--narrowband")) {
         mode = 0;
       }
-      else if (args[i].equalsIgnoreCase("-w") || args[i].equalsIgnoreCase("--wideband")) {
+      else if (args[i].equalsIgnoreCase("-w") ||
+               args[i].equalsIgnoreCase("-wb") ||
+               args[i].equalsIgnoreCase("--wideband")) {
         mode = 1;
       }
-      else if (args[i].equalsIgnoreCase("-u") || args[i].equalsIgnoreCase("--ultra-wideband")) {
+      else if (args[i].equalsIgnoreCase("-u") ||
+               args[i].equalsIgnoreCase("-uwb") ||
+               args[i].equalsIgnoreCase("--ultra-wideband")) {
         mode = 2;
       }
       else if (args[i].equalsIgnoreCase("-q") || args[i].equalsIgnoreCase("--quality")) {
@@ -166,9 +202,9 @@ public class JSpeexEnc
           return;
         }
       }
-      else if (args[i].equalsIgnoreCase("--bitrate")) {
+      else if (args[i].equalsIgnoreCase("--nframes")) {
         try {
-          bitrate = Integer.parseInt(args[++i]);
+          nframes = Integer.parseInt(args[++i]);
         }
         catch (NumberFormatException e) {
           usage();
@@ -183,15 +219,6 @@ public class JSpeexEnc
       }
       else if (args[i].equalsIgnoreCase("--dtx")) {
         dtx = true;
-      }
-      else if (args[i].equalsIgnoreCase("--nframes")) {
-        try {
-          nframes = Integer.parseInt(args[++i]);
-        }
-        catch (NumberFormatException e) {
-          usage();
-          return;
-        }
       }
       else if (args[i].equalsIgnoreCase("--rate")) {
         try {
@@ -210,19 +237,6 @@ public class JSpeexEnc
         return;
       }
     }
-    if (sampleRate < 0) {
-      switch(mode){
-      case 0:
-        sampleRate = 8000;
-        break;
-      case 1:
-        sampleRate = 16000;
-        break;
-      case 2:
-        sampleRate = 32000;
-        break;
-      }
-    }
     // encode to Speex
     encode(infile, outfile);
   }
@@ -232,24 +246,34 @@ public class JSpeexEnc
    */
   public static void usage()
   {
-    System.out.println("Usage: JSpeexEnc [options] input.wav output.spx");
-    System.out.println("Where: input.wav the PCM wav file to use as input");
-    System.out.println("       output.spx the Speex file to create");
+    version();
+    System.out.println("");
+    System.out.println("Usage: JSpeexEnc [options] input_file output_file");
+    System.out.println("Where:");
+    System.out.println("  input_file can be:");
+    System.out.println("    filename.wav  a PCM wav file");
+    System.out.println("    filename.*    a raw PCM file (any extension other than .wav)");
+    System.out.println("  output_file can be:");
+    System.out.println("    filename.spx  an Ogg Speex file");
+    System.out.println("    filename.*    a raw Speex file");
     System.out.println("Options: -h, --help     This help");
     System.out.println("         -v, --version  Version information");
-    System.out.println("         -n             Narrowband (8kHz) input file");
-    System.out.println("         -w             Wideband (16kHz) input file");
-    System.out.println("         -u             Ultra-Wideband (32kHz) input file");
+    System.out.println("         --verbose      Print detailed information");
+    System.out.println("         --quiet        Print minimal information");
+    System.out.println("         -n, -nb        Consider input as Narrowband (8kHz)");
+    System.out.println("         -w, -wb        Consider input as Wideband (16kHz)");
+    System.out.println("         -u, -uwb       Consider input as Ultra-Wideband (32kHz)");
     System.out.println("         --quality n    Encoding quality (0-10) default 8");
     System.out.println("         --complexity n Encoding complexity (0-10) default 3");
     System.out.println("         --nframes n    Number of frames per Ogg packet, default 1");
     System.out.println("         --vbr          Enable varible bit-rate (VBR)");
     System.out.println("         --vad          Enable voice activity detection (VAD)");
     System.out.println("         --dtx          Enable file based discontinuous transmission (DTX)");
-    System.out.println("         --stereo       Consider input as stereo");
 		System.out.println("         if the input file is raw PCM (not a Wave file)");
-		System.out.println("         --raw          Input file is raw PCM");
     System.out.println("         --rate n       Sampling rate for raw input");
+    System.out.println("         --stereo       Consider input as stereo");
+    System.out.println("More information is available from: http://jspeex.sourceforge.net/");
+    System.out.println("This code is a Java port of the Speex codec: http://www.speex.org/");
   }
 
   /**
@@ -278,30 +302,13 @@ public class JSpeexEnc
     final String FORMAT    = "fmt ";
     final String DATA      = "data";
     final int WAVE_FORMAT_PCM = 0x0001;
-    // open the input stream
+    // Display info
+    if (printlevel <= INFO) version();
+    if (printlevel <= DEBUG) System.out.println("");
+    if (printlevel <= DEBUG) System.out.println("Input File: " + inputPath);
+    // Open the input stream
     DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
-    // construct a new decoder
-    SpeexEncoder speexEncoder = new SpeexEncoder();
-    speexEncoder.init(mode, quality, sampleRate, channels);
-    if (complexity > 0) {
-      speexEncoder.getEncoder().setComplexity(complexity);
-    }
-    if (bitrate > 0) {
-      speexEncoder.getEncoder().setBitRate(bitrate);
-    }
-    if (vbr) {
-      speexEncoder.getEncoder().setVbr(vbr);
-      if (vbr_quality > 0) {
-        speexEncoder.getEncoder().setVbrQuality(vbr_quality);
-      }
-    }
-    if (vad) {
-      speexEncoder.getEncoder().setVad(vad);
-    }
-    if (dtx) {
-      speexEncoder.getEncoder().setDtx(dtx);
-    }
-
+    // Prepare input stream
     if (wav) {
       // read the WAVE header
       dis.readFully(temp, 0, HEADERSIZE+4);
@@ -311,15 +318,11 @@ public class JSpeexEnc
         System.err.println("Not a WAVE file");
         return;
       }
-      else {
-//        System.out.println("Wave file size: " + readInt(temp, 4));
-      }
       // Read other header chunks
       dis.readFully(temp, 0, HEADERSIZE);
       String chunk = new String(temp, 0, 4);
       int size = readInt(temp, 4);
       while (!chunk.equals(DATA)) {
-        //      System.out.println(chunk + " chunk, size: " + size);
         dis.readFully(temp, 0, size);
         if (chunk.equals(FORMAT)) {
           /*
@@ -343,18 +346,101 @@ public class JSpeexEnc
             System.err.println("Not a 16 bit file " + readShort(temp, 18));
             return;
           }
+          // Display audio info
+          if (printlevel <= DEBUG) {
+            System.out.println("File Format: PCM wave");
+            System.out.println("Sample Rate: " + sampleRate);
+            System.out.println("Channels: " + channels);
+          }
         }
         dis.readFully(temp, 0, HEADERSIZE);
         chunk = new String(temp, 0, 4);
         size = readInt(temp, 4);
       }
-//      System.out.println("data size: " + size);
+      if (printlevel <= DEBUG) System.out.println("Data size: " + size);
     }
-    
-    OggSpeexWriter oggWriter = new OggSpeexWriter();
-    oggWriter.setFormat(mode, sampleRate, channels, nframes);
-    oggWriter.open(outputPath);
-    oggWriter.writeHeader("Encoded with: " + VERSION);
+    else {
+      if (sampleRate < 0) {
+        switch(mode){
+        case 0:
+          sampleRate = 8000;
+          break;
+        case 1:
+          sampleRate = 16000;
+          break;
+        case 2:
+          sampleRate = 32000;
+          break;
+        default:
+          sampleRate = 8000;
+          break;
+        }
+      }
+      // Display audio info
+      if (printlevel <= DEBUG) {
+        System.out.println("File format: Raw audio");
+        System.out.println("Sample rate: " + sampleRate);
+        System.out.println("Channels: " + channels);
+        System.out.println("Data size: " + new File(inputPath).length());
+      }
+    }
+
+    // Set the mode if it has not yet been determined
+    if (mode < 0) {
+      if (sampleRate < 100) // Sample Rate has probably been given in kHz
+        sampleRate *= 1000;
+      if (sampleRate < 12000)
+        mode = 0; // Narowband
+      else if (sampleRate < 24000)
+        mode = 1; // Wideband
+      else
+        mode = 2; // Ultra-wideband
+    }
+    // Construct a new decoder
+    SpeexEncoder speexEncoder = new SpeexEncoder();
+    speexEncoder.init(mode, quality, sampleRate, channels);
+    if (complexity > 0) {
+      speexEncoder.getEncoder().setComplexity(complexity);
+    }
+    if (bitrate > 0) {
+      speexEncoder.getEncoder().setBitRate(bitrate);
+    }
+    if (vbr) {
+      speexEncoder.getEncoder().setVbr(vbr);
+      if (vbr_quality > 0) {
+        speexEncoder.getEncoder().setVbrQuality(vbr_quality);
+      }
+    }
+    if (vad) {
+      speexEncoder.getEncoder().setVad(vad);
+    }
+    if (dtx) {
+      speexEncoder.getEncoder().setDtx(dtx);
+    }
+
+    // Display info
+    if (printlevel <= DEBUG) {
+      System.out.println("");
+      System.out.println("Output File: " + outputPath);
+      System.out.println("File format: Ogg Speex");
+      System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
+      System.out.println("Quality: " + (vbr ? vbr_quality : quality));
+      System.out.println("Complexity: " + complexity);
+      System.out.println("Frames per packet: " + nframes);
+      System.out.println("Varible bitrate: " + vbr);
+      System.out.println("Voice activity detection: " + vad);
+      System.out.println("Discontinouous Transmission: " + dtx);
+    }
+    // Open the file writer
+    AudioFileWriter writer;
+    if (ogg) {
+      writer = new OggSpeexWriter(mode, sampleRate, channels, nframes);
+    }
+    else {
+      writer = new RawWriter();
+    }
+    writer.open(outputPath);
+    writer.writeHeader("Encoded with: " + VERSION);
     int pcmPacketSize = 2 * channels * speexEncoder.getFrameSize();
     try {
       // read until we get to EOF
@@ -364,18 +450,18 @@ public class JSpeexEnc
           speexEncoder.processData(temp, i*pcmPacketSize, pcmPacketSize);
         int encsize = speexEncoder.getProcessedData(temp, 0);
         if (encsize > 0) {
-          oggWriter.writePacket(temp, 0, encsize);
+          writer.writePacket(temp, 0, encsize);
         }
       }
     }
     catch (EOFException e) {}
-    oggWriter.close(); 
+    writer.close(); 
   }
   
   /**
    * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
-   * @param data
-   * @param offset
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
    */
   private static int readInt(byte[] data, int offset)
   {
@@ -384,8 +470,8 @@ public class JSpeexEnc
 
   /**
    * Converts Little Endian (Windows) bytes to an short (Java uses Big Endian).
-   * @param data
-   * @param offset
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
    */
   private static int readShort(byte[] data, int offset)
   {

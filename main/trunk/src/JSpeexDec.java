@@ -89,27 +89,54 @@ import org.xiph.speex.*;
  */
 public class JSpeexDec
 {
+  /** Version of the Speex Encoder */
   public static final String VERSION = "Java Speex Command Line Decoder v0.8.3 ($Revision$)";
+  /** Copyright display String */
+  public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
+  /** Print level for messages : Print debug information */
+  public static final int DEBUG = 0;
+  /** Print level for messages : Print basic information */
+  public static final int INFO  = 1;
+  /** Print level for messages : Print only warnings and errors */
+  public static final int WARN  = 2;
+  /** Print level for messages : Print only errors */
+  public static final int ERROR = 3;
+  /** Print level for messages */
+  private static int printlevel = INFO;
+
+  /** Random number generator for packet loss simu;ation. */
   private static Random random = new Random();
-  private static PcmWaveWriter waveWriter;
+  /** Speex Decoder */
   private static SpeexDecoder  speexDecoder;
 
+  /** Defines whether or not the input uses the Ogg File Format or is raw. */
   private static boolean ogg       = true;
+  /** Defines whether or not the output uses the Wav File Format or is raw. */
+  private static boolean wav       = true;
+  /** Defines whether or not the perceptual enhancement is used. */
   private static boolean enhanced  = true;
+  /** If input is raw, defines the decoder mode (0=NB, 1=WB and 2-UWB). */
   private static int mode          = 0;
+  /** If input is raw, defines the quality setting used by the encoder. */
   private static int quality       = 8;
+  /** If input is raw, defines the number of frmaes per packet. */
   private static int nframes       = 1;
+  /** If input is raw, defines the sample rate of the audio. */
   private static int sampleRate    = -1;
+  /** */
   private static float vbr_quality = -1;
+  /** */
   private static boolean vbr       = false;
+  /** If input is raw, defines th number of channels (1=mono, 2=stereo). */
   private static int channels      = 1;
+  /** The percentage of packets to lose in the packet loss simulation. */
   private static int loss          = 0;
 
   /**
    * Command line entrance:
    * <pre>
-   * Usage: JSpeexDec [options] input.spx output.wav
+   * Usage: JSpeexDec [options] input_file output_file
    * </pre>
    */
   public static void main(String[] args)
@@ -124,8 +151,22 @@ public class JSpeexDec
       usage();
 		  return;
     }
+    // Determine input, output and file formats
     String infile = args[args.length-2];
     String outfile = args[args.length-1];
+    if (infile.toLowerCase().endsWith(".spx")) {
+      ogg = true;
+    }
+    else {
+      ogg = false;
+    }
+    if (outfile.toLowerCase().endsWith(".wav")) {
+      wav = true;
+    }
+    else {
+      wav = false;
+    }
+    // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
       if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help")) {
         usage();
@@ -150,16 +191,19 @@ public class JSpeexDec
           return;
         }
       }
-      else if (args[i].equalsIgnoreCase("--raw")) {
-        ogg = false;
-      }
-      else if (args[i].equalsIgnoreCase("-n") || args[i].equalsIgnoreCase("--narrowband")) {
+      else if (args[i].equalsIgnoreCase("-n") ||
+               args[i].equalsIgnoreCase("-nb") ||
+               args[i].equalsIgnoreCase("--narrowband")) {
         mode = 0;
       }
-      else if (args[i].equalsIgnoreCase("-w") || args[i].equalsIgnoreCase("--wideband")) {
+      else if (args[i].equalsIgnoreCase("-w") ||
+               args[i].equalsIgnoreCase("-wb") ||
+               args[i].equalsIgnoreCase("--wideband")) {
         mode = 1;
       }
-      else if (args[i].equalsIgnoreCase("-u") || args[i].equalsIgnoreCase("--ultra-wideband")) {
+      else if (args[i].equalsIgnoreCase("-u") ||
+               args[i].equalsIgnoreCase("-uwb") ||
+               args[i].equalsIgnoreCase("--ultra-wideband")) {
         mode = 2;
       }
       else if (args[i].equalsIgnoreCase("-q") || args[i].equalsIgnoreCase("--quality")) {
@@ -172,9 +216,6 @@ public class JSpeexDec
           return;
         }
       }
-      else if (args[i].equalsIgnoreCase("--vbr")) {
-        vbr = true;
-      }
       else if (args[i].equalsIgnoreCase("--nframes")) {
         try {
           nframes = Integer.parseInt(args[++i]);
@@ -183,6 +224,9 @@ public class JSpeexDec
           usage();
           return;
         }
+      }
+      else if (args[i].equalsIgnoreCase("--vbr")) {
+        vbr = true;
       }
       else if (args[i].equalsIgnoreCase("--stereo")) {
         channels = 2;
@@ -214,23 +258,31 @@ public class JSpeexDec
    */
   public static void usage()
   {
-    System.out.println("Usage: JSpeexDec [options] input.spx output.wav");
-    System.out.println("Where: input.spx the Speex file to use as input");
-		System.out.println("       output.wav the PCM wave file to create");
+    version();
+    System.out.println("");
+    System.out.println("Usage: JSpeexDec [options] input_file output_file");
+    System.out.println("Where:");
+    System.out.println("  input_file can be:");
+    System.out.println("    filename.spx  an Ogg Speex file");
+    System.out.println("    filename.*    a raw Speex file");
+    System.out.println("  output_file can be:");
+    System.out.println("    filename.wav  a PCM wav file");
+    System.out.println("    filename.*    a raw PCM file (any extension other than .wav)");
 		System.out.println("Options: -h, --help     This help");
 		System.out.println("         -v, --version    Version information");
 		System.out.println("         --enh            Enable perceptual enhancement (default)");
 		System.out.println("         --no-enh         Disable perceptual enhancement");
 		System.out.println("         --packet-loss n  Simulate n % random packet loss");
 		System.out.println("         if the input file is raw Speex (not Ogg Speex)");
-		System.out.println("         --raw            Input file is raw Speex");
-		System.out.println("         -n               Narrowband (8kHz)");
-		System.out.println("         -w               Wideband (16kHz)");
-		System.out.println("         -u               Ultra-Wideband (32kHz)");
+		System.out.println("         -n, -nb          Narrowband (8kHz)");
+		System.out.println("         -w, -wb          Wideband (16kHz)");
+		System.out.println("         -u, -uwb         Ultra-Wideband (32kHz)");
 		System.out.println("         --quality n      Encoding quality (0-10) default 8");
 		System.out.println("         --nframes n      Number of frames per Ogg packet, default 1");
 		System.out.println("         --vbr            Enable varible bit-rate (VBR)");
 		System.out.println("         --stereo         Consider input as stereo");
+    System.out.println("More information is available from: http://jspeex.sourceforge.net/");
+    System.out.println("This code is a Java port of the Speex codec: http://www.speex.org/");
   }
   
   /**
@@ -240,7 +292,7 @@ public class JSpeexDec
   {
 		System.out.println(VERSION);
 		System.out.println("using " + SpeexDecoder.VERSION);
-		System.out.println("Copyright (C) 2002-2004 Wimba S.A.");
+		System.out.println(COPYRIGHT);
   }
 
   /**
@@ -257,14 +309,17 @@ public class JSpeexDec
 		final String OGGID      = "OggS";
 		int segments=0, curseg=0, bodybytes=0, decsize=0; 
 		int packetNo=0;
+    // Display info
+    if (printlevel <= INFO) version();
+    if (printlevel <= DEBUG) System.out.println("");
+    if (printlevel <= DEBUG) System.out.println("Input File: " + inputPath);
     
-    // construct a wave writer
-    waveWriter   = new PcmWaveWriter();
     // construct a new decoder
     speexDecoder = new SpeexDecoder();
     // open the input stream
     DataInputStream dis =  new DataInputStream(new FileInputStream(inputPath));
 
+    AudioFileWriter writer = null;
     int origchksum;
     int chksum;
 		try {
@@ -273,7 +328,7 @@ public class JSpeexDec
         if (ogg) {
           // read the OGG header
           dis.readFully(header, 0, HEADERSIZE);
-          origchksum = bytestoint(header, 22);
+          origchksum = readInt(header, 22);
           header[22] = 0;
           header[23] = 0;
           header[24] = 0;
@@ -306,11 +361,35 @@ public class JSpeexDec
             /* if first packet, read the Speex header */
             if (packetNo == 0) {
               if (readSpeexHeader(payload, 0, bodybytes)) {
+                if (printlevel <= DEBUG) {
+                  System.out.println("File Format: Ogg Speex");
+                  System.out.println("Sample Rate: " + sampleRate);
+                  System.out.println("Channels: " + channels);
+                  System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
+                  System.out.println("Frames per packet: " + nframes);
+                }
                 /* once Speex header read, initialize the wave writer with output format */
-                waveWriter.open(outputPath);  
-                waveWriter.setFormat(speexDecoder.getChannels(),
-                                     speexDecoder.getSampleRate());
-                waveWriter.writeHeader();
+                if (wav) {
+                  writer = new PcmWaveWriter(speexDecoder.getChannels(),
+                                             speexDecoder.getSampleRate());
+                  if (printlevel <= DEBUG) {
+                    System.out.println("");
+                    System.out.println("Output File: " + outputPath);
+                    System.out.println("File Format: PCM Wave");
+                    System.out.println("Perceptual Enhancement: " + enhanced);
+                  }
+                }
+                else {
+                  writer = new RawWriter();
+                  if (printlevel <= DEBUG) {
+                    System.out.println("");
+                    System.out.println("Output File: " + outputPath);
+                    System.out.println("File Format: Raw Audio");
+                    System.out.println("Perceptual Enhancement: " + enhanced);
+                  }
+                }
+                writer.open(outputPath);  
+                writer.writeHeader(null);
                 packetNo++;
               }
               else {
@@ -335,7 +414,7 @@ public class JSpeexDec
               }
               /* get the amount of decoded data */
               if ((decsize=speexDecoder.getProcessedData(decdat, 0)) > 0) {
-                waveWriter.writeData(decdat, 0, decsize);
+                writer.writePacket(decdat, 0, decsize);
               }
               packetNo++;
             }
@@ -346,12 +425,36 @@ public class JSpeexDec
         else  { // Raw Speex
           /* if first packet, initialise everything */
           if (packetNo == 0) {
+            if (printlevel <= DEBUG) {
+              System.out.println("File Format: Raw Speex");
+              System.out.println("Sample Rate: " + sampleRate);
+              System.out.println("Channels: " + channels);
+              System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
+              System.out.println("Frames per packet: " + nframes);
+            }
             /* initialize the Speex decoder */
             speexDecoder.init(mode, sampleRate, channels, enhanced);
             /* initialize the wave writer with output format */
-            waveWriter.open(outputPath);
-            waveWriter.setFormat(channels, sampleRate);
-            waveWriter.writeHeader();
+            if (wav) {
+              writer = new PcmWaveWriter(channels, sampleRate);
+              if (printlevel <= DEBUG) {
+                System.out.println("");
+                System.out.println("Output File: " + outputPath);
+                System.out.println("File Format: PCM Wave");
+                System.out.println("Perceptual Enhancement: " + enhanced);
+              }
+            }
+            else {
+              writer = new RawWriter();
+              if (printlevel <= DEBUG) {
+                System.out.println("");
+                System.out.println("Output File: " + outputPath);
+                System.out.println("File Format: Raw Audio");
+                System.out.println("Perceptual Enhancement: " + enhanced);
+              }
+            }
+            writer.open(outputPath);
+            writer.writeHeader(null);
             if (!vbr) {
               switch (mode) {
                 case 0:
@@ -391,7 +494,7 @@ public class JSpeexDec
             }
             /* get the amount of decoded data */
             if ((decsize=speexDecoder.getProcessedData(decdat, 0)) > 0) {
-              waveWriter.writeData(decdat, 0, decsize);
+              writer.writePacket(decdat, 0, decsize);
             }
             packetNo++;
           }
@@ -400,7 +503,7 @@ public class JSpeexDec
 		}
     catch (EOFException eof) {}
 		/* close the output file */
-		waveWriter.close();
+		writer.close();
 	}
 
   /**
@@ -433,19 +536,19 @@ public class JSpeexDec
       return false;
     }
     mode       = packet[40+offset] & 0xFF;
-    sampleRate = bytestoint(packet, offset+36);
-    channels   = bytestoint(packet, offset+48);
-    nframes    = bytestoint(packet, offset+64);
+    sampleRate = readInt(packet, offset+36);
+    channels   = readInt(packet, offset+48);
+    nframes    = readInt(packet, offset+64);
     return speexDecoder.init(mode, sampleRate, channels, enhanced);
   }
 
   /**
-   * Converts the bytes from the given array to an integer
-   * @param a - the array
-   * @param i - the offset
+   * Converts Little Endian (Windows) bytes to an int (Java uses Big Endian).
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
    */
-  private static int bytestoint(byte[] a, int i)
+  private static int readInt(byte[] data, int offset)
   {
-    return ((a[i+3] & 0xFF) << 24) | ((a[i+2] & 0xFF) << 16) | ((a[i+1] & 0xFF) << 8) | (a[i] & 0xFF);
+    return (data[offset] & 0xff) | ((data[offset+1] & 0xff) << 8) | ((data[offset+2] & 0xff) << 16) | (data[offset+3] << 24); // no 0xff on the last one to keep the sign
   }
 }
