@@ -79,7 +79,7 @@ public class SpeexAudioFileWriter
    */
   public AudioFileFormat.Type[] getAudioFileTypes(AudioInputStream stream)
   {
-    if (stream.getFormat().getEncoding().equals(SpeexEncoding.SPEEX)) {
+    if (stream.getFormat().getEncoding() instanceof SpeexEncoding) {
       return SPEEX_FORMAT;
     }
     else {
