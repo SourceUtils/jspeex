@@ -4,7 +4,7 @@
 #--------------------------------------------------------------------
 
 %define name     jspeex
-%define version  0.9
+%define version  0.9.1
 %define release  1
 
 Name:           %{name}
