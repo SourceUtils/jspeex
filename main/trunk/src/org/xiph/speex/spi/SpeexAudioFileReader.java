@@ -87,7 +87,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioFileFormat getAudioFileFormat(File file)
+  public AudioFileFormat getAudioFileFormat(final File file)
     throws UnsupportedAudioFileException, IOException
   {
     InputStream inputStream = null;
@@ -110,7 +110,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioFileFormat getAudioFileFormat(URL url)
+  public AudioFileFormat getAudioFileFormat(final URL url)
     throws UnsupportedAudioFileException, IOException
   {
     InputStream inputStream = url.openStream();
@@ -132,7 +132,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioFileFormat getAudioFileFormat(InputStream stream)
+  public AudioFileFormat getAudioFileFormat(final InputStream stream)
     throws UnsupportedAudioFileException, IOException
   {
     return getAudioFileFormat(stream, AudioSystem.NOT_SPECIFIED);
@@ -149,8 +149,8 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioFileFormat getAudioFileFormat(InputStream stream,
-                                               int medialength)
+  protected AudioFileFormat getAudioFileFormat(final InputStream stream,
+                                               final int medialength)
     throws UnsupportedAudioFileException, IOException
   {
     return getAudioFileFormat(stream, null, medialength);
@@ -167,9 +167,9 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioFileFormat getAudioFileFormat(InputStream bitStream,
+  protected AudioFileFormat getAudioFileFormat(final InputStream bitStream,
                                                ByteArrayOutputStream baos,
-                                               int mediaLength)
+                                               final int mediaLength)
     throws UnsupportedAudioFileException, IOException
   {
     AudioFormat format;
@@ -284,7 +284,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioInputStream getAudioInputStream(File file)
+  public AudioInputStream getAudioInputStream(final File file)
     throws UnsupportedAudioFileException, IOException
   {
     InputStream inputStream = new FileInputStream(file);
@@ -311,7 +311,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioInputStream getAudioInputStream(URL url)
+  public AudioInputStream getAudioInputStream(final URL url)
     throws UnsupportedAudioFileException, IOException
   {
     InputStream inputStream = url.openStream();
@@ -339,7 +339,7 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  public AudioInputStream getAudioInputStream(InputStream stream)
+  public AudioInputStream getAudioInputStream(final InputStream stream)
     throws UnsupportedAudioFileException, IOException
   {
     return getAudioInputStream(stream, AudioSystem.NOT_SPECIFIED);
@@ -357,8 +357,8 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioInputStream getAudioInputStream(InputStream inputStream,
-                                                 int medialength)
+  protected AudioInputStream getAudioInputStream(final InputStream inputStream,
+                                                 final int medialength)
     throws UnsupportedAudioFileException, IOException
   {
     ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
@@ -378,7 +378,7 @@ public class SpeexAudioFileReader
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  private static int readInt(byte[] data, int offset)
+  private static int readInt(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |

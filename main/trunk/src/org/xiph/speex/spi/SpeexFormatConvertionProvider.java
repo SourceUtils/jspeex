@@ -129,7 +129,7 @@ public class SpeexFormatConvertionProvider
    * @param sourceFormat format of the incoming data.
    * @return array of supported target format encodings.
    */
-  public AudioFormat.Encoding[] getTargetEncodings(AudioFormat sourceFormat)
+  public AudioFormat.Encoding[] getTargetEncodings(final AudioFormat sourceFormat)
   {
     if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
       AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
@@ -174,8 +174,8 @@ public class SpeexFormatConvertionProvider
    * @param sourceFormat format of the incoming data.
    * @return array of supported target formats.
    */
-  public AudioFormat[] getTargetFormats(AudioFormat.Encoding targetEncoding,
-                                        AudioFormat sourceFormat)
+  public AudioFormat[] getTargetFormats(final AudioFormat.Encoding targetEncoding,
+                                        final AudioFormat sourceFormat)
   {
     if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
         targetEncoding instanceof SpeexEncoding) {
@@ -220,8 +220,8 @@ public class SpeexFormatConvertionProvider
    * @exception IllegalArgumentException - if the format combination supplied
    * is not supported.
    */
-  public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding,
-                                              AudioInputStream sourceStream)
+  public AudioInputStream getAudioInputStream(final AudioFormat.Encoding targetEncoding,
+                                              final AudioInputStream sourceStream)
   {
     if (isConversionSupported(targetEncoding, sourceStream.getFormat())) {
       AudioFormat[] formats = getTargetFormats(targetEncoding,
@@ -264,8 +264,8 @@ public class SpeexFormatConvertionProvider
    * @exception IllegalArgumentException - if the format combination supplied
    * is not supported.
    */
-  public AudioInputStream getAudioInputStream(AudioFormat targetFormat,
-                                              AudioInputStream sourceStream)
+  public AudioInputStream getAudioInputStream(final AudioFormat targetFormat,
+                                              final AudioInputStream sourceStream)
   {
     if (isConversionSupported(targetFormat, sourceStream.getFormat())) {
       AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(),

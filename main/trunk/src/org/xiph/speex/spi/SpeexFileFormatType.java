@@ -50,14 +50,14 @@ public class SpeexFileFormatType
   /**
    * Specifies an OGG Speex file.
    */
-  public static final AudioFileFormat.Type SPEEX = new SpeexFileFormatType("SPEEX", "spx");
+  public static final AudioFileFormat.Type SPEEX =new SpeexFileFormatType("SPEEX", "spx");
 
   /**
    * Constructs a file type.
    * @param name - the name of the Speex File Format.
    * @param extension - the file extension for this Speex File Format.
    */
-  public SpeexFileFormatType(String name, String extension)
+  public SpeexFileFormatType(final String name, final String extension)
   {
     super(name, extension);
   }

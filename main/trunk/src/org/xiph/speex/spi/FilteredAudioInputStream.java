@@ -179,7 +179,9 @@ public abstract class FilteredAudioInputStream
    * @param length  the length in sample frames of the data in this stream.
    * @exception IllegalArgumentException if size <= 0 or presize <= 0.
    */
-  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length)
+  public FilteredAudioInputStream(final InputStream in,
+                                  final AudioFormat format,
+                                  final long length)
   {
     this(in, format, length, DEFAULT_BUFFER_SIZE);
   }
@@ -196,7 +198,10 @@ public abstract class FilteredAudioInputStream
    * @param size    the buffer sizes.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length, int size)
+  public FilteredAudioInputStream(final InputStream in,
+                                  final AudioFormat format,
+                                  final long length,
+                                  final int size)
   {
     this(in, format, length, size, size);
   }
@@ -214,7 +219,11 @@ public abstract class FilteredAudioInputStream
    * @param presize the prebuffer size.
    * @exception IllegalArgumentException if size <= 0 or presize <= 0.
    */
-  public FilteredAudioInputStream(InputStream in, AudioFormat format, long length, int size, int presize)
+  public FilteredAudioInputStream(final InputStream in,
+                                  final AudioFormat format,
+                                  final long length,
+                                  final int size,
+                                  final int presize)
   {
     super(in, format, length);
     this.in = in;
@@ -342,7 +351,9 @@ public abstract class FilteredAudioInputStream
    *             the stream has been reached.
    * @exception  IOException  if an I/O error occurs.
    */
-  public synchronized int read(byte[] b, int off, int len)
+  public synchronized int read(final byte[] b,
+                               final int off,
+                               final int len)
     throws IOException
   {
     checkIfStillOpen();
@@ -373,7 +384,7 @@ public abstract class FilteredAudioInputStream
    * @return     the actual number of bytes skipped.
    * @exception  IOException  if an I/O error occurs.
    */
-  public synchronized long skip(long n)
+  public synchronized long skip(final long n)
     throws IOException
   {
     checkIfStillOpen();
@@ -438,7 +449,7 @@ public abstract class FilteredAudioInputStream
    *                      the mark position becomes invalid.
    * @see     #reset()
    */
-  public synchronized void mark(int readlimit)
+  public synchronized void mark(final int readlimit)
   {
     if (readlimit > buf.length - pos) { // not enough room
       byte[] newbuf;

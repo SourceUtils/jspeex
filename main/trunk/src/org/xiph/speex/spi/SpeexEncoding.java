@@ -132,7 +132,9 @@ public class SpeexEncoding
    * @param quality - Quality setting for the Speex encoding.
    * @param vbr - Defines whether or not the encoding is Variable Bit Rate.
    */
-  public SpeexEncoding(String name, int quality, boolean vbr)
+  public SpeexEncoding(final String name,
+                       final int quality,
+                       final boolean vbr)
   {
     super(name);
     this.quality = quality;
@@ -143,7 +145,7 @@ public class SpeexEncoding
    * Constructs a new encoding.
    * @param name - Name of the Speex encoding.
    */
-  public SpeexEncoding(String name)
+  public SpeexEncoding(final String name)
   {
     this(name, DEFAULT_QUALITY, DEFAULT_VBR);
   }

@@ -77,7 +77,7 @@ public class SpeexAudioFileWriter
    * @return array of file types. If no file types are supported, an array of
    * length 0 is returned.
    */
-  public AudioFileFormat.Type[] getAudioFileTypes(AudioInputStream stream)
+  public AudioFileFormat.Type[] getAudioFileTypes(final AudioInputStream stream)
   {
     if (stream.getFormat().getEncoding() instanceof SpeexEncoding) {
       return SPEEX_FORMAT;
@@ -104,8 +104,9 @@ public class SpeexAudioFileWriter
    * @see #isFileTypeSupported(AudioFileFormat.Type, AudioInputStream)
    * @see #getAudioFileTypes()
    */
-  public int write(AudioInputStream stream, AudioFileFormat.Type fileType,
-                   OutputStream out)
+  public int write(final AudioInputStream stream,
+                   final AudioFileFormat.Type fileType,
+                   final OutputStream out)
     throws IOException
   {
     AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
@@ -130,8 +131,9 @@ public class SpeexAudioFileWriter
    * @see #isFileTypeSupported(javax.sound.sampled.AudioFileFormat.Type)
    * @see #getAudioFileTypes()
    */
-  public int write(AudioInputStream stream, AudioFileFormat.Type fileType,
-                   File out)
+  public int write(final AudioInputStream stream,
+                   final AudioFileFormat.Type fileType,
+                   final File out)
     throws IOException
   {
     AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
@@ -153,7 +155,8 @@ public class SpeexAudioFileWriter
    * @return the number of bytes written to the output stream.
    * @exception IOException - if an I/O exception occurs.
    */
-  private int write(AudioInputStream stream, OutputStream out)
+  private int write(final AudioInputStream stream,
+                    final OutputStream out)
     throws IOException
   {
     byte[] data = new byte[2048];

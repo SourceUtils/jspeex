@@ -95,8 +95,9 @@ public class Speex2PcmAudioInputStream
    * @param format the target format of this stream's audio data.
    * @param length the length in sample frames of the data in this stream.
    */
-  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format,
-                                   long length)
+  public Speex2PcmAudioInputStream(final InputStream in,
+                                   final AudioFormat format,
+                                   final long length)
   {
     this(in, format, length, DEFAULT_BUFFER_SIZE);
   }
@@ -109,8 +110,10 @@ public class Speex2PcmAudioInputStream
    * @param size   the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format,
-                                   long length, int size)
+  public Speex2PcmAudioInputStream(final InputStream in,
+                                   final AudioFormat format,
+                                   final long length,
+                                   final int size)
   {
     super(in, format, length, size);
     bits = new Bits();
@@ -156,7 +159,7 @@ public class Speex2PcmAudioInputStream
    *                 successfully completed or not.
    * @exception IOException
    */
-  protected void initialise(boolean blocking)
+  protected void initialise(final boolean blocking)
     throws IOException
   {
     while (!initialised) {
@@ -313,7 +316,9 @@ public class Speex2PcmAudioInputStream
    * @throws StreamCorruptedException If the input stream not valid Ogg Speex
    * data.
    */
-  protected void decode(byte[] data, int offset, int len)
+  protected void decode(final byte[] data,
+                        final int offset,
+                        final int len)
     throws StreamCorruptedException
   {
     int i;
@@ -514,7 +519,7 @@ public class Speex2PcmAudioInputStream
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  private static int readInt(byte[] data, int offset)
+  private static int readInt(final byte[] data, final int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |

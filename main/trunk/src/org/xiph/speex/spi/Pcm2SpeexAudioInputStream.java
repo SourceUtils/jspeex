@@ -109,8 +109,9 @@ public class Pcm2SpeexAudioInputStream
    * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    */
-  public Pcm2SpeexAudioInputStream(InputStream in,
-                                   AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(final InputStream in,
+                                   final AudioFormat format,
+                                   final long length)
   {
     this(UNKNOWN, UNKNOWN, in, format, length, DEFAULT_BUFFER_SIZE);
   }
@@ -123,8 +124,11 @@ public class Pcm2SpeexAudioInputStream
    * @param format  the target format of this stream's audio data.
    * @param length  the length in sample frames of the data in this stream.
    */
-  public Pcm2SpeexAudioInputStream(int mode, int quality, InputStream in,
-                                   AudioFormat format, long length)
+  public Pcm2SpeexAudioInputStream(final int mode,
+                                   final int quality,
+                                   final InputStream in,
+                                   final AudioFormat format,
+                                   final long length)
   {
     this(mode, quality, in, format, length, DEFAULT_BUFFER_SIZE);
   }
@@ -137,8 +141,10 @@ public class Pcm2SpeexAudioInputStream
    * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(InputStream in, AudioFormat format,
-                                   long length, int size)
+  public Pcm2SpeexAudioInputStream(final InputStream in,
+                                   final AudioFormat format,
+                                   final long length,
+                                   final int size)
   {
     this(UNKNOWN, UNKNOWN, in, format, length, size);
   }
@@ -153,8 +159,12 @@ public class Pcm2SpeexAudioInputStream
    * @param size    the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Pcm2SpeexAudioInputStream(int mode, int quality, InputStream in,
-                                   AudioFormat format, long length, int size)
+  public Pcm2SpeexAudioInputStream(int mode,
+                                   int quality,
+                                   final InputStream in,
+                                   final AudioFormat format,
+                                   final long length,
+                                   final int size)
   {
     super(in, format, length, size);
     // Ogg initialisation
@@ -204,7 +214,7 @@ public class Pcm2SpeexAudioInputStream
    * Must not be changed mid stream.
    * @param serialNumber
    */
-  public void setSerialNumber(int serialNumber)
+  public void setSerialNumber(final int serialNumber)
   {
     if (first) {
       this.streamSerialNumber = serialNumber;
@@ -249,11 +259,12 @@ public class Pcm2SpeexAudioInputStream
    * @param comment
    * @param appendVersion
    */
-  public void setComment(String comment, boolean appendVersion)
+  public void setComment(final String comment,
+                         final boolean appendVersion)
   {
     this.comment = comment;
     if (appendVersion) {
-      comment += SpeexEncoder.VERSION;
+      this.comment += SpeexEncoder.VERSION;
     }
   }
 
@@ -261,7 +272,7 @@ public class Pcm2SpeexAudioInputStream
    * Sets the Speex encoder Quality.
    * @param quality
    */
-  public void setQuality(int quality)
+  public void setQuality(final int quality)
   {
     encoder.getEncoder().setQuality(quality);
     if (encoder.getEncoder().getVbr()) {
@@ -273,7 +284,7 @@ public class Pcm2SpeexAudioInputStream
    * Sets whether of not the encoder is to use VBR.
    * @param vbr
    */
-  public void setVbr(boolean vbr)
+  public void setVbr(final boolean vbr)
   {
     encoder.getEncoder().setVbr(vbr);
   }
@@ -504,7 +515,8 @@ public class Pcm2SpeexAudioInputStream
    * @param packets - the number of packets in the Ogg Page (must be between 1 and 255)
    * @param headertype - 2=bos: beginning of sream, 4=eos: end of sream
    */
-  private void writeOggPageHeader(int packets, int headertype)
+  private void writeOggPageHeader(final int packets,
+                                  final int headertype)
   {
     while ((buf.length - count) < (27 + packets)) { // grow buffer
       int nsz = buf.length * 2;
