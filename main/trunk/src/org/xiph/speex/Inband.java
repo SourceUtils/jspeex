@@ -52,7 +52,7 @@ public class Inband
    * Constructor.
    * @param stereo
    */
-  public Inband (Stereo stereo)
+  public Inband (final Stereo stereo)
   {
     this.stereo = stereo;
   }
@@ -62,7 +62,7 @@ public class Inband
    * @param bits - Speex bits buffer.
    * @throws StreamCorruptedException If stream seems corrupted.
    */
-  public void speexInbandRequest(Bits bits)
+  public void speexInbandRequest(final Bits bits)
     throws StreamCorruptedException
   {
     int code = bits.unpack(4);
@@ -97,6 +97,7 @@ public class Inband
       case 9: // intensity stereo information
         // setup the stereo decoder; to skip: tmp = bits.unpack(8); break;
         stereo.init(bits); // read 8 bits
+        break;
       case 10: // announce maximum bit-rate acceptable (N in byets/second)
         bits.advance(16);
         break;
@@ -124,7 +125,7 @@ public class Inband
    * @param bits - Speex bits buffer.
    * @throws StreamCorruptedException If stream seems corrupted.
    */
-  public void userInbandRequest(Bits bits)
+  public void userInbandRequest(final Bits bits)
     throws StreamCorruptedException
   {
     int req_size = bits.unpack(4);
