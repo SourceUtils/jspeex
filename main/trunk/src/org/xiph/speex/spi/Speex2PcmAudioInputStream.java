@@ -378,11 +378,15 @@ public class Speex2PcmAudioInputStream
         if (packetCount < packetsPerOggPage) { // read the next packet
           int skipped = 0;
           if ((precount-prepos) < packetSizes[packetCount]) { // we don't have enough data
-            int read = in.read(prebuf, precount, prebuf.length - precount);
-            if (read < 0) { // inputstream has ended
-              throw new IOException("End of stream but there are still supposed to be packets to decode");
+            int avail = in.available();
+            if (avail > 0) {
+              int size = Math.min(prebuf.length - precount, avail);
+              int read = in.read(prebuf, precount, size);
+              if (read < 0) { // inputstream has ended
+                throw new IOException("End of stream but there are still supposed to be packets to decode");
+              }
+              precount += read;
             }
-            precount += read;
           }
           while (((precount-prepos) >= packetSizes[packetCount]) &&
                  (packetCount < packetsPerOggPage) &&
@@ -465,6 +469,17 @@ public class Speex2PcmAudioInputStream
     throws IOException
   {
     int packets = 1;
+    if (precount-prepos<28) {
+      int avail = in.available();
+      if (avail > 0) {
+        int size = Math.min(prebuf.length - precount, avail);
+        int read = in.read(prebuf, precount, size);
+        if (read < 0) { // inputstream has ended
+          throw new IOException("End of stream but available was positive");
+        }
+        precount += read;
+      }
+    }
     if (precount-prepos>=28) { // can read beginning of Page header
       if (!(new String(prebuf, prepos, 4).equals("OggS"))) {
         throw new StreamCorruptedException("Lost Ogg Sync");
@@ -473,6 +488,17 @@ public class Speex2PcmAudioInputStream
         throw new StreamCorruptedException("Ogg Stream Serial Number mismatch");
       }
       packets = 0xff & prebuf[prepos+26];
+    }
+    if (precount-prepos<27+packets) {
+      int avail = in.available();
+      if (avail > 0) {
+        int size = Math.min(prebuf.length - precount, avail);
+        int read = in.read(prebuf, precount, size);
+        if (read < 0) { // inputstream has ended
+          throw new IOException("End of stream but available was positive");
+        }
+        precount += read;
+      }
     }
     if (precount-prepos>=27+packets) { // can read entire Page header
       System.arraycopy(prebuf, prepos+27, packetSizes, 0, packets);
