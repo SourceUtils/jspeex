@@ -87,7 +87,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexEnc
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.9.3 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Encoder v0.9.4 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
@@ -100,7 +100,7 @@ public class JSpeexEnc
   /** Print level for messages : Print only errors */
   public static final int ERROR = 3;
   /** Print level for messages */
-  protected static int printlevel = INFO;
+  protected int printlevel = INFO;
 
   /** File format for input or output audio file: Raw */
   public static final int FILE_FORMAT_RAW  = 0;
@@ -109,37 +109,44 @@ public class JSpeexEnc
   /** File format for input or output audio file: Wave */
   public static final int FILE_FORMAT_WAVE = 2;
   /** Defines File format for input audio file (Raw, Ogg or Wave). */
-  protected static int inputFormat  = FILE_FORMAT_OGG;
+  protected int srcFormat  = FILE_FORMAT_OGG;
   /** Defines File format for output audio file (Raw or Wave). */
-  protected static int outputFormat = FILE_FORMAT_WAVE;
+  protected int destFormat = FILE_FORMAT_WAVE;
 
   /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
-  protected static int mode       = -1;
+  protected int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
-  protected static int quality    = 8;
+  protected int quality    = 8;
   /** Defines the encoders algorithmic complexity. */
-  protected static int complexity = 3;
+  protected int complexity = 3;
   /** Defines the number of frames per speex packet. */
-  protected static int nframes    = 1;
+  protected int nframes    = 1;
   /** Defines the desired bitrate for the encoded audio. */
-  protected static int bitrate    = -1;
+  protected int bitrate    = -1;
   /** Defines the sampling rate of the audio input. */
-  protected static int sampleRate = -1;
+  protected int sampleRate = -1;
   /** Defines the number of channels of the audio input (1=mono, 2=stereo). */
-  protected static int channels   = 1;
+  protected int channels   = 1;
   /** Defines the encoder VBR quality setting (float from 0 to 10). */
-  protected static float vbr_quality = -1;
+  protected float vbr_quality = -1;
   /** Defines whether or not to use VBR (Variable Bit Rate). */
-  protected static boolean vbr    = false;
+  protected boolean vbr    = false;
   /** Defines whether or not to use VAD (Voice Activity Detection). */
-  protected static boolean vad    = false;
+  protected boolean vad    = false;
   /** Defines whether or not to use DTX (Discontinuous Transmission). */
-  protected static boolean dtx    = false;
+  protected boolean dtx    = false;
 
   /** The audio input file */
-  protected static String infile;
+  protected String srcFile;
   /** The audio output file */
-  protected static String outfile;
+  protected String destFile;
+
+  /**
+   * Builds a plain JSpeex Encoder with default values.
+   */
+  public JSpeexEnc()
+  {
+  }
 
   /**
    * Command line entrance:
@@ -152,8 +159,9 @@ public class JSpeexEnc
   public static void main(String[] args)
     throws IOException
   {
-    if (parseArgs(args)) {
-      encode(infile, outfile);
+    JSpeexEnc encoder = new JSpeexEnc();
+    if (encoder.parseArgs(args)) {
+        encoder.encode();
     }
   }
 
@@ -162,7 +170,7 @@ public class JSpeexEnc
    * @param args Command line parameters.
    * @return true if the parsed arguments are sufficient to run the encoder.
    */
-  public static boolean parseArgs(String[] args)
+  public boolean parseArgs(String[] args)
   {
     // make sure we have command args
     if (args.length < 2) {
@@ -174,22 +182,22 @@ public class JSpeexEnc
       return false;
     }
     // Determine input, output and file formats
-    infile = args[args.length-2];
-    outfile = args[args.length-1];
-    if (infile.toLowerCase().endsWith(".wav")) {
-      inputFormat = FILE_FORMAT_WAVE;
+    srcFile = args[args.length-2];
+    destFile = args[args.length-1];
+    if (srcFile.toLowerCase().endsWith(".wav")) {
+      srcFormat = FILE_FORMAT_WAVE;
     }
     else {
-      inputFormat = FILE_FORMAT_RAW;
+      srcFormat = FILE_FORMAT_RAW;
     }
-    if (outfile.toLowerCase().endsWith(".spx")) {
-      outputFormat = FILE_FORMAT_OGG;
+    if (destFile.toLowerCase().endsWith(".spx")) {
+      destFormat = FILE_FORMAT_OGG;
     }
-    else if (outfile.toLowerCase().endsWith(".wav")) {
-      outputFormat = FILE_FORMAT_WAVE;
+    else if (destFile.toLowerCase().endsWith(".wav")) {
+      destFormat = FILE_FORMAT_WAVE;
     }
     else {
-      outputFormat = FILE_FORMAT_RAW;
+      destFormat = FILE_FORMAT_RAW;
     }
     // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
@@ -327,11 +335,21 @@ public class JSpeexEnc
   
   /**
    * Encodes a wave file to speex. 
-   * @param inputPath
-   * @param outputPath
    * @exception IOException
    */
-  public static void encode(String inputPath, String outputPath)
+  public void encode()
+    throws IOException
+  {
+    encode(new File(srcFile), new File(destFile));
+  }
+
+  /**
+   * Encodes a wave file to speex. 
+   * @param srcPath
+   * @param destPath
+   * @exception IOException
+   */
+  public void encode(File srcPath, File destPath)
     throws IOException
   {
     byte[] temp    = new byte[2560]; // stereo UWB requires one to read 2560b
@@ -344,11 +362,11 @@ public class JSpeexEnc
     // Display info
     if (printlevel <= INFO) version();
     if (printlevel <= DEBUG) System.out.println("");
-    if (printlevel <= DEBUG) System.out.println("Input File: " + inputPath);
+    if (printlevel <= DEBUG) System.out.println("Input File: " + srcPath);
     // Open the input stream
-    DataInputStream dis = new DataInputStream(new FileInputStream(inputPath));
+    DataInputStream dis = new DataInputStream(new FileInputStream(srcPath));
     // Prepare input stream
-    if (inputFormat == FILE_FORMAT_WAVE) {
+    if (srcFormat == FILE_FORMAT_WAVE) {
       // read the WAVE header
       dis.readFully(temp, 0, HEADERSIZE+4);
       // make sure its a WAVE header
@@ -420,7 +438,7 @@ public class JSpeexEnc
         System.out.println("File format: Raw audio");
         System.out.println("Sample rate: " + sampleRate);
         System.out.println("Channels: " + channels);
-        System.out.println("Data size: " + new File(inputPath).length());
+        System.out.println("Data size: " + srcPath.length());
       }
     }
 
@@ -460,7 +478,7 @@ public class JSpeexEnc
     // Display info
     if (printlevel <= DEBUG) {
       System.out.println("");
-      System.out.println("Output File: " + outputPath);
+      System.out.println("Output File: " + destPath);
       System.out.println("File format: Ogg Speex");
       System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
       System.out.println("Quality: " + (vbr ? vbr_quality : quality));
@@ -472,17 +490,17 @@ public class JSpeexEnc
     }
     // Open the file writer
     AudioFileWriter writer;
-    if (outputFormat == FILE_FORMAT_OGG) {
+    if (destFormat == FILE_FORMAT_OGG) {
       writer = new OggSpeexWriter(mode, sampleRate, channels, nframes, vbr);
     }
-    else if (outputFormat == FILE_FORMAT_WAVE) {
+    else if (destFormat == FILE_FORMAT_WAVE) {
       nframes = PcmWaveWriter.WAVE_FRAME_SIZES[mode-1][channels-1][quality];
       writer = new PcmWaveWriter(mode, quality, sampleRate, channels, nframes, vbr);
     }
     else {
       writer = new RawWriter();
     }
-    writer.open(outputPath);
+    writer.open(destPath);
     writer.writeHeader("Encoded with: " + VERSION);
     int pcmPacketSize = 2 * channels * speexEncoder.getFrameSize();
     try {

@@ -66,6 +66,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import java.io.File;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.DataInputStream;
@@ -99,7 +100,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexDec
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Decoder v0.9.3 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Decoder v0.9.4 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
 
@@ -112,7 +113,7 @@ public class JSpeexDec
   /** Print level for messages : Print only errors */
   public static final int ERROR = 3;
   /** Print level for messages */
-  protected static int printlevel = INFO;
+  protected int printlevel = INFO;
 
   /** File format for input or output audio file: Raw */
   public static final int FILE_FORMAT_RAW  = 0;
@@ -121,39 +122,46 @@ public class JSpeexDec
   /** File format for input or output audio file: Wave */
   public static final int FILE_FORMAT_WAVE = 2;
   /** Defines File format for input audio file (Raw, Ogg or Wave). */
-  protected static int inputFormat  = FILE_FORMAT_OGG;
+  protected int srcFormat  = FILE_FORMAT_OGG;
   /** Defines File format for output audio file (Raw or Wave). */
-  protected static int outputFormat = FILE_FORMAT_WAVE;
+  protected int destFormat = FILE_FORMAT_WAVE;
 
   /** Random number generator for packet loss simulation. */
   protected static Random random = new Random();
   /** Speex Decoder */
-  protected static SpeexDecoder  speexDecoder;
+  protected SpeexDecoder speexDecoder;
 
   /** Defines whether or not the perceptual enhancement is used. */
-  protected static boolean enhanced  = true;
+  protected boolean enhanced  = true;
   /** If input is raw, defines the decoder mode (0=NB, 1=WB and 2-UWB). */
-  private static int mode          = 0;
+  private int mode          = 0;
   /** If input is raw, defines the quality setting used by the encoder. */
-  private static int quality       = 8;
+  private int quality       = 8;
   /** If input is raw, defines the number of frmaes per packet. */
-  private static int nframes       = 1;
+  private int nframes       = 1;
   /** If input is raw, defines the sample rate of the audio. */
-  private static int sampleRate    = -1;
+  private int sampleRate    = -1;
   /** */
-  private static float vbr_quality = -1;
+  private float vbr_quality = -1;
   /** */
-  private static boolean vbr       = false;
+  private boolean vbr       = false;
   /** If input is raw, defines th number of channels (1=mono, 2=stereo). */
-  private static int channels      = 1;
+  private int channels      = 1;
   /** The percentage of packets to lose in the packet loss simulation. */
-  private static int loss          = 0;
+  private int loss          = 0;
 
   /** The audio input file */
-  protected static String infile;
+  protected String srcFile;
   /** The audio output file */
-  protected static String outfile;
+  protected String destFile;
 
+  /**
+   * Builds a plain JSpeex Decoder with default values.
+   */
+  public JSpeexDec()
+  {
+  }
+  
   /**
    * Command line entrance:
    * <pre>
@@ -165,8 +173,9 @@ public class JSpeexDec
   public static void main(String[] args)
     throws IOException
   {
-    if (parseArgs(args)) {
-      decode(infile, outfile);
+    JSpeexDec decoder = new JSpeexDec();
+    if (decoder.parseArgs(args)) {
+      decoder.decode();
     }
   }
 
@@ -175,7 +184,7 @@ public class JSpeexDec
    * @param args Command line parameters.
    * @return true if the parsed arguments are sufficient to run the decoder.
    */
-  public static boolean parseArgs(String[] args)
+  public boolean parseArgs(String[] args)
   {
     // make sure we have command args
     if (args.length < 2) {
@@ -187,22 +196,22 @@ public class JSpeexDec
       return false;
     }
     // Determine input, output and file formats
-    infile = args[args.length-2];
-    outfile = args[args.length-1];
-    if (infile.toLowerCase().endsWith(".spx")) {
-      inputFormat = FILE_FORMAT_OGG;
+    srcFile = args[args.length-2];
+    destFile = args[args.length-1];
+    if (srcFile.toLowerCase().endsWith(".spx")) {
+      srcFormat = FILE_FORMAT_OGG;
     }
-    else if (infile.toLowerCase().endsWith(".wav")) {
-      inputFormat = FILE_FORMAT_WAVE;
-    }
-    else {
-      inputFormat = FILE_FORMAT_RAW;
-    }
-    if (outfile.toLowerCase().endsWith(".wav")) {
-      outputFormat = FILE_FORMAT_WAVE;
+    else if (srcFile.toLowerCase().endsWith(".wav")) {
+      srcFormat = FILE_FORMAT_WAVE;
     }
     else {
-      outputFormat = FILE_FORMAT_RAW;
+      srcFormat = FILE_FORMAT_RAW;
+    }
+    if (destFile.toLowerCase().endsWith(".wav")) {
+      destFormat = FILE_FORMAT_WAVE;
+    }
+    else {
+      destFormat = FILE_FORMAT_RAW;
     }
     // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
@@ -299,12 +308,11 @@ public class JSpeexDec
   }
   
   /**
-   * Prints the usage guidelines
+   * Prints the usage guidelines.
    */
   public static void usage()
   {
     version();
-    System.out.println("");
     System.out.println("Usage: JSpeexDec [options] input_file output_file");
     System.out.println("Where:");
     System.out.println("  input_file can be:");
@@ -334,7 +342,7 @@ public class JSpeexDec
   }
   
   /**
-   * Prints the version
+   * Prints the version.
    */
   public static void version()
   {
@@ -345,11 +353,21 @@ public class JSpeexDec
 
   /**
    * Decodes a spx file to wave.
-   * @param inputPath
-   * @param outputPath
    * @exception IOException
    */
-  public static void decode(String inputPath, String outputPath)
+  public void decode()
+    throws IOException
+  {
+    decode(new File(srcFile), new File(destFile));
+  }
+
+  /**
+   * Decodes a spx file to wave.
+   * @param srcPath
+   * @param destPath
+   * @exception IOException
+   */
+  public void decode(File srcPath, File destPath)
     throws IOException
   {
     byte[] header    = new byte[2048];
@@ -372,11 +390,11 @@ public class JSpeexDec
     // Display info
     if (printlevel <= INFO) version();
     if (printlevel <= DEBUG) System.out.println("");
-    if (printlevel <= DEBUG) System.out.println("Input File: " + inputPath);
+    if (printlevel <= DEBUG) System.out.println("Input File: " + srcPath);
     // construct a new decoder
     speexDecoder = new SpeexDecoder();
     // open the input stream
-    DataInputStream dis =  new DataInputStream(new FileInputStream(inputPath));
+    DataInputStream dis =  new DataInputStream(new FileInputStream(srcPath));
 
     AudioFileWriter writer = null;
     int origchksum;
@@ -384,7 +402,7 @@ public class JSpeexDec
     try {
       // read until we get to EOF
       while (true) {
-        if (inputFormat == FILE_FORMAT_OGG) {
+        if (srcFormat == FILE_FORMAT_OGG) {
           // read the OGG header
           dis.readFully(header, 0, OGG_HEADERSIZE);
           origchksum = readInt(header, 22);
@@ -428,12 +446,12 @@ public class JSpeexDec
                   System.out.println("Frames per packet: " + nframes);
                 }
                 /* once Speex header read, initialize the wave writer with output format */
-                if (outputFormat == FILE_FORMAT_WAVE) {
+                if (destFormat == FILE_FORMAT_WAVE) {
                   writer = new PcmWaveWriter(speexDecoder.getSampleRate(),
                                              speexDecoder.getChannels());
                   if (printlevel <= DEBUG) {
                     System.out.println("");
-                    System.out.println("Output File: " + outputPath);
+                    System.out.println("Output File: " + destPath);
                     System.out.println("File Format: PCM Wave");
                     System.out.println("Perceptual Enhancement: " + enhanced);
                   }
@@ -442,12 +460,12 @@ public class JSpeexDec
                   writer = new RawWriter();
                   if (printlevel <= DEBUG) {
                     System.out.println("");
-                    System.out.println("Output File: " + outputPath);
+                    System.out.println("Output File: " + destPath);
                     System.out.println("File Format: Raw Audio");
                     System.out.println("Perceptual Enhancement: " + enhanced);
                   }
                 }
-                writer.open(outputPath);  
+                writer.open(destPath);  
                 writer.writeHeader(null);
                 packetNo++;
               }
@@ -484,7 +502,7 @@ public class JSpeexDec
         else  { // Wave or Raw Speex
           /* if first packet, initialise everything */
           if (packetNo == 0) {
-            if (inputFormat == FILE_FORMAT_WAVE) {
+            if (srcFormat == FILE_FORMAT_WAVE) {
               // read the WAVE header
               dis.readFully(header, 0, WAV_HEADERSIZE+4);
               // make sure its a WAVE header
@@ -579,11 +597,11 @@ public class JSpeexDec
               }
             }
             /* initialize the wave writer with output format */
-            if (outputFormat == FILE_FORMAT_WAVE) {
+            if (destFormat == FILE_FORMAT_WAVE) {
               writer = new PcmWaveWriter(sampleRate, channels);
               if (printlevel <= DEBUG) {
                 System.out.println("");
-                System.out.println("Output File: " + outputPath);
+                System.out.println("Output File: " + destPath);
                 System.out.println("File Format: PCM Wave");
                 System.out.println("Perceptual Enhancement: " + enhanced);
               }
@@ -592,12 +610,12 @@ public class JSpeexDec
               writer = new RawWriter();
               if (printlevel <= DEBUG) {
                 System.out.println("");
-                System.out.println("Output File: " + outputPath);
+                System.out.println("Output File: " + destPath);
                 System.out.println("File Format: Raw Audio");
                 System.out.println("Perceptual Enhancement: " + enhanced);
               }
             }
-            writer.open(outputPath);
+            writer.open(destPath);
             writer.writeHeader(null);
             packetNo++;
           }
@@ -631,7 +649,6 @@ public class JSpeexDec
 
   /**
    * Reads the header packet.
-   * 
    * <pre>
    *  0 -  7: speex_string: "Speex   "
    *  8 - 27: speex_version: "speex-1.0"
@@ -649,8 +666,12 @@ public class JSpeexDec
    * 72 - 75: reserved1
    * 76 - 79: reserved2
    * </pre>
+   * @param packet
+   * @param offset
+   * @param bytes
+   * @return
    */
-  private static boolean readSpeexHeader(byte[] packet, int offset, int bytes)
+  private boolean readSpeexHeader(byte[] packet, int offset, int bytes)
   {
     if (bytes!=80) {
       System.out.println("Oooops");
