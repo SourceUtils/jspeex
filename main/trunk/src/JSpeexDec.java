@@ -114,15 +114,22 @@ public class JSpeexDec
   /** Print level for messages */
   protected static int printlevel = INFO;
 
+  /** File format for input or output audio file: Raw */
+  public static final int FILE_FORMAT_RAW  = 0;
+  /** File format for input or output audio file: Ogg */
+  public static final int FILE_FORMAT_OGG  = 1;
+  /** File format for input or output audio file: Wave */
+  public static final int FILE_FORMAT_WAVE = 2;
+  /** Defines File format for input audio file (Raw, Ogg or Wave). */
+  protected static int inputFormat  = FILE_FORMAT_OGG;
+  /** Defines File format for output audio file (Raw or Wave). */
+  protected static int outputFormat = FILE_FORMAT_WAVE;
+
   /** Random number generator for packet loss simulation. */
   protected static Random random = new Random();
   /** Speex Decoder */
   protected static SpeexDecoder  speexDecoder;
 
-  /** Defines whether or not the input uses the Ogg File Format or is raw. */
-  protected static boolean ogg       = true;
-  /** Defines whether or not the output uses the Wav File Format or is raw. */
-  protected static boolean wav       = true;
   /** Defines whether or not the perceptual enhancement is used. */
   protected static boolean enhanced  = true;
   /** If input is raw, defines the decoder mode (0=NB, 1=WB and 2-UWB). */
@@ -183,16 +190,19 @@ public class JSpeexDec
     infile = args[args.length-2];
     outfile = args[args.length-1];
     if (infile.toLowerCase().endsWith(".spx")) {
-      ogg = true;
+      inputFormat = FILE_FORMAT_OGG;
+    }
+    else if (infile.toLowerCase().endsWith(".wav")) {
+      inputFormat = FILE_FORMAT_WAVE;
     }
     else {
-      ogg = false;
+      inputFormat = FILE_FORMAT_RAW;
     }
     if (outfile.toLowerCase().endsWith(".wav")) {
-      wav = true;
+      outputFormat = FILE_FORMAT_WAVE;
     }
     else {
-      wav = false;
+      outputFormat = FILE_FORMAT_RAW;
     }
     // Determine encoder options
     for (int i=0; i<args.length-2; i++) {
@@ -203,6 +213,12 @@ public class JSpeexDec
       else if (args[i].equalsIgnoreCase("-v") || args[i].equalsIgnoreCase("--version")) {
         version();
         return false;
+      }
+      else if (args[i].equalsIgnoreCase("--verbose")) {
+        printlevel = DEBUG;
+      }
+      else if (args[i].equalsIgnoreCase("--quiet")) {
+        printlevel = WARN;
       }
       else if (args[i].equalsIgnoreCase("--enh")) {
         enhanced = true;
@@ -293,12 +309,15 @@ public class JSpeexDec
     System.out.println("Where:");
     System.out.println("  input_file can be:");
     System.out.println("    filename.spx  an Ogg Speex file");
+    System.out.println("    filename.wav  a Wave Speex file");
     System.out.println("    filename.*    a raw Speex file");
     System.out.println("  output_file can be:");
     System.out.println("    filename.wav  a PCM wav file");
     System.out.println("    filename.*    a raw PCM file (any extension other than .wav)");
     System.out.println("Options: -h, --help     This help");
     System.out.println("         -v, --version    Version information");
+    System.out.println("         --verbose        Print detailed information");
+    System.out.println("         --quiet          Print minimal information");
     System.out.println("         --enh            Enable perceptual enhancement (default)");
     System.out.println("         --no-enh         Disable perceptual enhancement");
     System.out.println("         --packet-loss n  Simulate n % random packet loss");
@@ -336,9 +355,15 @@ public class JSpeexDec
     byte[] header    = new byte[2048];
     byte[] payload   = new byte[65536];
     byte[] decdat    = new byte[44100*2*2];
-    final int    HEADERSIZE = 27;
-    final int    SEGOFFSET  = 26;
-    final String OGGID      = "OggS";
+    final int    WAV_HEADERSIZE    = 8;
+    final short  WAVE_FORMAT_SPEEX = (short) 0xa109;
+    final String RIFF           = "RIFF";
+    final String WAVE           = "WAVE";
+    final String FORMAT         = "fmt ";
+    final String DATA           = "data";
+    final int    OGG_HEADERSIZE = 27;
+    final int    OGG_SEGOFFSET  = 26;
+    final String OGGID          = "OggS";
     int segments=0;
     int curseg=0;
     int bodybytes=0;
@@ -359,31 +384,31 @@ public class JSpeexDec
     try {
       // read until we get to EOF
       while (true) {
-        if (ogg) {
+        if (inputFormat == FILE_FORMAT_OGG) {
           // read the OGG header
-          dis.readFully(header, 0, HEADERSIZE);
+          dis.readFully(header, 0, OGG_HEADERSIZE);
           origchksum = readInt(header, 22);
           header[22] = 0;
           header[23] = 0;
           header[24] = 0;
           header[25] = 0;
-          chksum=OggCrc.checksum(0, header, 0, HEADERSIZE);
+          chksum=OggCrc.checksum(0, header, 0, OGG_HEADERSIZE);
 
           // make sure its a OGG header
           if (!OGGID.equals(new String(header, 0, 4))) {
             System.err.println("missing ogg id!");
             return;
           }
-          
+
           /* how many segments are there? */
-          segments = header[SEGOFFSET] & 0xFF;
-          dis.readFully(header, HEADERSIZE, segments);
-          chksum=OggCrc.checksum(chksum, header, HEADERSIZE, segments);
-          
+          segments = header[OGG_SEGOFFSET] & 0xFF;
+          dis.readFully(header, OGG_HEADERSIZE, segments);
+          chksum=OggCrc.checksum(chksum, header, OGG_HEADERSIZE, segments);
+
           /* decode each segment, writing output to wav */
           for (curseg=0; curseg < segments; curseg++) {
             /* get the number of bytes in the segment */
-            bodybytes = header[HEADERSIZE+curseg] & 0xFF;
+            bodybytes = header[OGG_HEADERSIZE+curseg] & 0xFF;
             if (bodybytes==255) {
               System.err.println("sorry, don't handle 255 sizes!"); 
               return;
@@ -403,7 +428,7 @@ public class JSpeexDec
                   System.out.println("Frames per packet: " + nframes);
                 }
                 /* once Speex header read, initialize the wave writer with output format */
-                if (wav) {
+                if (outputFormat == FILE_FORMAT_WAVE) {
                   writer = new PcmWaveWriter(speexDecoder.getChannels(),
                                              speexDecoder.getSampleRate());
                   if (printlevel <= DEBUG) {
@@ -456,20 +481,105 @@ public class JSpeexDec
           if (chksum != origchksum)
             throw new IOException("Ogg CheckSums do not match");
         }
-        else  { // Raw Speex
+        else  { // Wave or Raw Speex
           /* if first packet, initialise everything */
           if (packetNo == 0) {
-            if (printlevel <= DEBUG) {
-              System.out.println("File Format: Raw Speex");
-              System.out.println("Sample Rate: " + sampleRate);
-              System.out.println("Channels: " + channels);
-              System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
-              System.out.println("Frames per packet: " + nframes);
+            if (inputFormat == FILE_FORMAT_WAVE) {
+              // read the WAVE header
+              dis.readFully(header, 0, WAV_HEADERSIZE+4);
+              // make sure its a WAVE header
+              if (!RIFF.equals(new String(header, 0, 4)) &&
+                  !WAVE.equals(new String(header, 8, 4))) {
+                System.err.println("Not a WAVE file");
+                return;
+              }
+              // Read other header chunks
+              dis.readFully(header, 0, WAV_HEADERSIZE);
+              String chunk = new String(header, 0, 4);
+              int size = readInt(header, 4);
+              while (!chunk.equals(DATA)) {
+                dis.readFully(header, 0, size);
+                if (chunk.equals(FORMAT)) {
+                  /*
+                  typedef struct waveformat_extended_tag {
+                  WORD wFormatTag; // format type
+                  WORD nChannels; // number of channels (i.e. mono, stereo...)
+                  DWORD nSamplesPerSec; // sample rate
+                  DWORD nAvgBytesPerSec; // for buffer estimation
+                  WORD nBlockAlign; // block size of data
+                  WORD wBitsPerSample; // Number of bits per sample of mono data
+                  WORD cbSize; // The count in bytes of the extra size 
+                  } WAVEFORMATEX;
+                  */
+                  if (readShort(header, 0) != WAVE_FORMAT_SPEEX) {
+                    System.err.println("Not a Wave Speex file");
+                    return;
+                  }
+                  channels = readShort(header, 2);
+                  sampleRate = readInt(header, 4);
+                  bodybytes = readShort(header, 12);
+                  /*
+                  The extra data in the wave format are
+                  18 : ACM major version number
+                  19 : ACM minor version number
+                  20-100 : Speex header
+                  100-... : Comment ?
+                  */
+                  if (readShort(header, 16) < 82) {
+                    System.err.println("Possibly corrupt Speex Wave file.");
+                    return;
+                  }
+                  readSpeexHeader(header, 20, 80);
+                  // Display audio info
+                  if (printlevel <= DEBUG) {
+                    System.out.println("File Format: Wave Speex");
+                    System.out.println("Sample Rate: " + sampleRate);
+                    System.out.println("Channels: " + channels);
+                    System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
+                    System.out.println("Frames per packet: " + nframes);
+                  }
+                }
+                dis.readFully(header, 0, WAV_HEADERSIZE);
+                chunk = new String(header, 0, 4);
+                size = readInt(header, 4);
+              }
+              if (printlevel <= DEBUG) System.out.println("Data size: " + size);
             }
-            /* initialize the Speex decoder */
-            speexDecoder.init(mode, sampleRate, channels, enhanced);
+            else {
+              if (printlevel <= DEBUG) {
+                System.out.println("File Format: Raw Speex");
+                System.out.println("Sample Rate: " + sampleRate);
+                System.out.println("Channels: " + channels);
+                System.out.println("Encoder mode: " + (mode==0 ? "Narrowband" : (mode==1 ? "Wideband" : "UltraWideband")));
+                System.out.println("Frames per packet: " + nframes);
+              }
+              /* initialize the Speex decoder */
+              speexDecoder.init(mode, sampleRate, channels, enhanced);
+              if (!vbr) {
+                switch (mode) {
+                  case 0:
+                    bodybytes = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[quality]];
+                    break;
+                  case 1:
+                    bodybytes = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[quality]];
+                    bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
+                    break;
+                  case 2:
+                    bodybytes = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[quality]];
+                    bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
+                    bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[quality]];
+                    break;
+                  default:
+                }
+                bodybytes = (bodybytes + 7) >> 3;
+              }
+              else {
+                // We have read the stream to find out more
+                bodybytes = 0;
+              }
+            }
             /* initialize the wave writer with output format */
-            if (wav) {
+            if (outputFormat == FILE_FORMAT_WAVE) {
               writer = new PcmWaveWriter(channels, sampleRate);
               if (printlevel <= DEBUG) {
                 System.out.println("");
@@ -489,28 +599,6 @@ public class JSpeexDec
             }
             writer.open(outputPath);
             writer.writeHeader(null);
-            if (!vbr) {
-              switch (mode) {
-                case 0:
-                  bodybytes = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[quality]];
-                  break;
-                case 1:
-                  bodybytes = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[quality]];
-                  bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
-                  break;
-                case 2:
-                  bodybytes = SbEncoder.NB_FRAME_SIZE[SbEncoder.NB_QUALITY_MAP[quality]];
-                  bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.WB_QUALITY_MAP[quality]];
-                  bodybytes += SbEncoder.SB_FRAME_SIZE[SbEncoder.UWB_QUALITY_MAP[quality]];
-                  break;
-                default:
-              }
-              bodybytes = (bodybytes + 7) >> 3;
-            }
-            else {
-              // We have read the stream to find out more
-              bodybytes = 0;
-            }
             packetNo++;
           }
           else {
@@ -565,9 +653,10 @@ public class JSpeexDec
   private static boolean readSpeexHeader(byte[] packet, int offset, int bytes)
   {
     if (bytes!=80) {
+      System.out.println("Oooops");
       return false;
     }
-    if (!"Speex   ".equals(new String(packet, 0, 8))) {
+    if (!"Speex   ".equals(new String(packet, offset, 8))) {
       return false;
     }
     mode       = packet[40+offset] & 0xFF;
@@ -589,5 +678,17 @@ public class JSpeexDec
            ((data[offset+1] & 0xff) <<  8) |
            ((data[offset+2] & 0xff) << 16) |
            (data[offset+3] << 24); // no 0xff on the last one to keep the sign
+  }
+
+  /**
+   * Converts Little Endian (Windows) bytes to an short (Java uses Big Endian).
+   * @param data the data to read.
+   * @param offset the offset from which to start reading.
+   * @return the integer value of the reassembled bytes.
+   */
+  protected static int readShort(byte[] data, int offset)
+  {
+    return (data[offset] & 0xff) |
+           (data[offset+1] << 8); // no 0xff on the last one to keep the sign
   }
 }
