@@ -90,7 +90,7 @@ public class TestJSpeex
   public final static byte[] ENCODED_SILENCE_NB_Q07_STEREO = {116, -64, 23, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -64, 0, 95, -1, -1, -1, -1, -1, -32, 0, 47, -1, -1, -1, -1, -1, -16, 0, 23, -1, -1, -1, -1, -1, -8};
   public final static byte[] ENCODED_SILENCE_NB_Q08_STEREO = ENCODED_SILENCE_NB_Q07_STEREO;
   public final static byte[] ENCODED_SILENCE_NB_Q09_STEREO = {116, -64, 27, 78, -115, -51, 16, 0, 0, -76, 116, 116, 116, 116, 116, 116, 116, 64, 0, 90, 58, 58, 58, 58, 58, 58, 58, 32, 0, 45, 29, 29, 29, 29, 29, 29, 29, 16, 0, 22, -114, -114, -114, -114, -114, -114, -114, -120};
-  public final static byte[] ENCODED_SILENCE_NB_Q10_STEREO = {};
+  public final static byte[] ENCODED_SILENCE_NB_Q10_STEREO = {116, -64, 31, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -19, -74, -37, 109, -74, -37, 64, 0, 95, -1, -1, -1, -1, -1, -10, -37, 109, -74, -37, 109, -96, 0, 47, -1, -1, -1, -1, -1, -5, 109, -74, -37, 109, -74, -48, 0, 23, -1, -1, -1, -1, -1, -3, -74, -37, 109, -74, -37, 104};
   public final static byte[] ENCODED_SILENCE_WB_Q01_STEREO = {116, -64, 35, 78, -77, 0, 0, -50, 115, -100, -25, 57, -109, -74, 0, 0, 0};
   public final static byte[] ENCODED_SILENCE_WB_Q02_STEREO = {116, -64, 11, 78, -77, 0, 0, 119, 119, 3, -69, -72, 29, -35, -64, -18, -18, -109, -74, 0, 0, 0};
   public final static byte[] ENCODED_SILENCE_WB_Q03_STEREO = {116, -64, 15, 78, -77, 0, 0, 51, -100, -28, 8, 25, -50, 114, 4, 12, -25, 57, 2, 6, 115, -100, -55, -37, 0, 0, 0};
@@ -100,7 +100,7 @@ public class TestJSpeex
   public final static byte[] ENCODED_SILENCE_WB_Q07_STEREO = {116, -64, 27, 78, -115, -51, 16, 0, 0, -76, 116, 116, 116, 116, 116, 116, 116, 64, 0, 90, 58, 58, 58, 58, 58, 58, 58, 32, 0, 45, 29, 29, 29, 29, 29, 29, 29, 16, 0, 22, -114, -114, -114, -114, -114, -114, -114, -115, 29, -80, 90, -42, -80, 90, -42, -80, 90, -42, -80, 90, -42, -80};
   public final static byte[] ENCODED_SILENCE_WB_Q08_STEREO = {116, -64, 27, 78, -115, -51, 16, 0, 0, -76, 116, 116, 116, 116, 116, 116, 116, 64, 0, 90, 58, 58, 58, 58, 58, 58, 58, 32, 0, 45, 29, 29, 29, 29, 29, 29, 29, 16, 0, 22, -114, -114, -114, -114, -114, -114, -114, -115, -99, -80, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88};
   public final static byte[] ENCODED_SILENCE_WB_Q09_STEREO = {116, -64, 31, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -19, -74, -37, 109, -74, -37, 64, 0, 95, -1, -1, -1, -1, -1, -10, -37, 109, -74, -37, 109, -96, 0, 47, -1, -1, -1, -1, -1, -5, 109, -74, -37, 109, -74, -48, 0, 23, -1, -1, -1, -1, -1, -3, -74, -37, 109, -74, -37, 109, -99, -80, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88};
-  public final static byte[] ENCODED_SILENCE_WB_Q10_STEREO = {};
+  public final static byte[] ENCODED_SILENCE_WB_Q10_STEREO = {116, -64, 31, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -19, -74, -37, 109, -74, -37, 64, 0, 95, -1, -1, -1, -1, -1, -10, -37, 109, -74, -37, 109, -96, 0, 47, -1, -1, -1, -1, -1, -5, 109, -74, -37, 109, -74, -48, 0, 23, -1, -1, -1, -1, -1, -3, -74, -37, 109, -74, -37, 110, 29, -80, 21, -107, -107, -107, -107, -107, -107, -107, -107, -107, -127, 89, 89, 89, 89, 89, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -107, -107, -107, -107, -107, -127, 89, 89, 89, 89, 89, 89, 89, 89, 89, 88};
   public final static byte[] ENCODED_SILENCE_UWB_Q01_STEREO = {116, -64, 35, 78, -77, 0, 0, -50, 115, -100, -25, 57, -109, -74, 0, 0, 9, 59, 96, 0, 0};
   public final static byte[] ENCODED_SILENCE_UWB_Q02_STEREO = {116, -64, 11, 78, -77, 0, 0, 119, 119, 3, -69, -72, 29, -35, -64, -18, -18, -109, -74, 0, 0, 9, 59, 96, 0, 0};
   public final static byte[] ENCODED_SILENCE_UWB_Q03_STEREO = {116, -64, 15, 78, -77, 0, 0, 51, -100, -28, 8, 25, -50, 114, 4, 12, -25, 57, 2, 6, 115, -100, -55, -37, 0, 0, 4, -99, -80, 0, 0, 0};
@@ -110,7 +110,7 @@ public class TestJSpeex
   public final static byte[] ENCODED_SILENCE_UWB_Q07_STEREO = {116, -64, 27, 78, -115, -51, 16, 0, 0, -76, 116, 116, 116, 116, 116, 116, 116, 64, 0, 90, 58, 58, 58, 58, 58, 58, 58, 32, 0, 45, 29, 29, 29, 29, 29, 29, 29, 16, 0, 22, -114, -114, -114, -114, -114, -114, -114, -115, 29, -80, 90, -42, -80, 90, -42, -80, 90, -42, -80, 90, -42, -76, -99, -80, 0, 0, 0};
   public final static byte[] ENCODED_SILENCE_UWB_Q08_STEREO = {116, -64, 27, 78, -115, -51, 16, 0, 0, -76, 116, 116, 116, 116, 116, 116, 116, 64, 0, 90, 58, 58, 58, 58, 58, 58, 58, 32, 0, 45, 29, 29, 29, 29, 29, 29, 29, 16, 0, 22, -114, -114, -114, -114, -114, -114, -114, -115, -99, -80, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 92, -99, -80, 0, 0, 0};
   public final static byte[] ENCODED_SILENCE_UWB_Q09_STEREO = {116, -64, 31, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -19, -74, -37, 109, -74, -37, 64, 0, 95, -1, -1, -1, -1, -1, -10, -37, 109, -74, -37, 109, -96, 0, 47, -1, -1, -1, -1, -1, -5, 109, -74, -37, 109, -74, -48, 0, 23, -1, -1, -1, -1, -1, -3, -74, -37, 109, -74, -37, 109, -99, -80, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -127, 89, 89, 89, 89, 92, -99, -80, 0, 0, 0};
-  public final static byte[] ENCODED_SILENCE_UWB_Q10_STEREO = {};
+  public final static byte[] ENCODED_SILENCE_UWB_Q10_STEREO = {116, -64, 31, 78, -115, -51, 16, 0, 0, -65, -1, -1, -1, -1, -1, -19, -74, -37, 109, -74, -37, 64, 0, 95, -1, -1, -1, -1, -1, -10, -37, 109, -74, -37, 109, -96, 0, 47, -1, -1, -1, -1, -1, -5, 109, -74, -37, 109, -74, -48, 0, 23, -1, -1, -1, -1, -1, -3, -74, -37, 109, -74, -37, 110, 29, -80, 21, -107, -107, -107, -107, -107, -107, -107, -107, -107, -127, 89, 89, 89, 89, 89, 89, 89, 89, 89, 88, 21, -107, -107, -107, -107, -107, -107, -107, -107, -107, -127, 89, 89, 89, 89, 89, 89, 89, 89, 89, 92, -99, -80, 0, 0, 0};
 
   /**
    * Constructor
@@ -170,13 +170,237 @@ public class TestJSpeex
   /**
    * Test
    */
-  public void test1()
+  public void testSuccess()
   {
     assertTrue("It failed", true);
   }
 
   /**
    * 
+   * @param source
+   * @param bitoffset
+   * @param size
+   * @return
+   */
+  protected byte[] shiftArray(byte[] source, int bitoffset, int size)
+  {
+    int byteoffset = bitoffset / 8;
+    int bitshift = bitoffset % 8;
+    byte[] dest = new byte[size];
+    for (int i=0; i<=size-1; i++) {
+      dest[i] = (byte) ((source[byteoffset++]&0xFF) << bitshift);
+      if (byteoffset < source.length) {
+        dest[i] |= (byte) ((source[byteoffset]&0xFF) >>> (8-bitshift));
+      }
+    }
+    return dest;
+  }
+
+  /**
+   * 
+   * @param source
+   * @param offset
+   * @param size
+   * @return
+   */
+  protected byte[] subArray(byte[] source, int offset, int size)
+  {
+    byte[] dest = new byte[size];
+    System.arraycopy(source, offset, dest, 0, size);
+    return dest;
+  }
+
+  /**
+   * Stereo Encoding encodes the balance on the first 17 bits, then encodes
+   * normally the average signal. In the case of identical signals on each
+   * channel, this is the same thing. Lets test for Silence.
+   */
+  public void testSilenceStereoConstants()
+  {
+    assertTrue("NB Q=1 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q01_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q01_MONO.length),
+                             ENCODED_SILENCE_NB_Q01_MONO));
+    assertTrue("NB Q=2 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q02_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q02_MONO.length),
+                             ENCODED_SILENCE_NB_Q02_MONO));
+    assertTrue("NB Q=3 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q03_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q03_MONO.length),
+                             ENCODED_SILENCE_NB_Q03_MONO));
+    assertTrue("NB Q=4 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q04_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q04_MONO.length),
+                             ENCODED_SILENCE_NB_Q04_MONO));
+    assertTrue("NB Q=5 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q05_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q05_MONO.length),
+                             ENCODED_SILENCE_NB_Q05_MONO));
+    assertTrue("NB Q=6 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q06_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q06_MONO.length),
+                             ENCODED_SILENCE_NB_Q06_MONO));
+    assertTrue("NB Q=7 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q07_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q07_MONO.length),
+                             ENCODED_SILENCE_NB_Q07_MONO));
+    assertTrue("NB Q=8 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q08_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q08_MONO.length),
+                             ENCODED_SILENCE_NB_Q08_MONO));
+    assertTrue("NB Q=9 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q09_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q09_MONO.length),
+                             ENCODED_SILENCE_NB_Q09_MONO));
+    assertTrue("NB Q=10 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_NB_Q10_STEREO, 17,
+                                        ENCODED_SILENCE_NB_Q10_MONO.length),
+                             ENCODED_SILENCE_NB_Q10_MONO));
+    assertTrue("WB Q=1 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q01_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q01_MONO.length),
+                             ENCODED_SILENCE_WB_Q01_MONO));
+    assertTrue("WB Q=2 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q02_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q02_MONO.length),
+                             ENCODED_SILENCE_WB_Q02_MONO));
+    assertTrue("WB Q=3 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q03_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q03_MONO.length),
+                             ENCODED_SILENCE_WB_Q03_MONO));
+    assertTrue("WB Q=4 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q04_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q04_MONO.length),
+                             ENCODED_SILENCE_WB_Q04_MONO));
+    assertTrue("WB Q=5 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q05_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q05_MONO.length),
+                             ENCODED_SILENCE_WB_Q05_MONO));
+    assertTrue("WB Q=6 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q06_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q06_MONO.length),
+                             ENCODED_SILENCE_WB_Q06_MONO));
+    assertTrue("WB Q=7 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q07_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q07_MONO.length),
+                             ENCODED_SILENCE_WB_Q07_MONO));
+    assertTrue("WB Q=8 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q08_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q08_MONO.length),
+                             ENCODED_SILENCE_WB_Q08_MONO));
+    assertTrue("WB Q=9 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q09_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q09_MONO.length),
+                             ENCODED_SILENCE_WB_Q09_MONO));
+    assertTrue("WB Q=10 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_WB_Q10_STEREO, 17,
+                                        ENCODED_SILENCE_WB_Q10_MONO.length),
+                             ENCODED_SILENCE_WB_Q10_MONO));
+    assertTrue("UWB Q=1 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q01_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q01_MONO.length),
+                             ENCODED_SILENCE_UWB_Q01_MONO));
+    assertTrue("UWB Q=2 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q02_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q02_MONO.length),
+                             ENCODED_SILENCE_UWB_Q02_MONO));
+    assertTrue("UWB Q=3 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q03_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q03_MONO.length),
+                             ENCODED_SILENCE_UWB_Q03_MONO));
+    assertTrue("UWB Q=4 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q04_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q04_MONO.length),
+                             ENCODED_SILENCE_UWB_Q04_MONO));
+    assertTrue("UWB Q=5 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q05_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q05_MONO.length),
+                             ENCODED_SILENCE_UWB_Q05_MONO));
+    assertTrue("UWB Q=6 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q06_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q06_MONO.length),
+                             ENCODED_SILENCE_UWB_Q06_MONO));
+    assertTrue("UWB Q=7 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q07_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q07_MONO.length),
+                             ENCODED_SILENCE_UWB_Q07_MONO));
+    assertTrue("UWB Q=8 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q08_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q08_MONO.length),
+                             ENCODED_SILENCE_UWB_Q08_MONO));
+    assertTrue("UWB Q=9 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q09_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q09_MONO.length),
+                             ENCODED_SILENCE_UWB_Q09_MONO));
+    assertTrue("UWB Q=10 Stereo file is wrong",
+               Arrays.equals(shiftArray(ENCODED_SILENCE_UWB_Q10_STEREO, 17,
+                                        ENCODED_SILENCE_UWB_Q10_MONO.length),
+                             ENCODED_SILENCE_UWB_Q10_MONO));
+  }
+  
+  /**
+   * Speex encodes UWB audio by spliting the signal into 2, and encoding the
+   * lower frequencies as WB, then adding some data for the higher frequencies.
+   * As such, in the case of silence WB and UWB should have the same beginning. 
+   */
+  public void testSilenceModesConstants()
+  {
+    assertTrue("UWB mode inconsistent with WB mode for Q=1",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q01_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q01_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q01_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q01_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=2",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q02_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q02_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q02_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q02_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=3",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q03_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q03_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q03_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q03_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=4",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q04_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q04_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q04_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q04_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=5",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q05_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q05_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q05_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q05_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=6",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q06_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q06_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q06_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q06_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=7",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q07_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q07_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q07_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q07_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=8",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q08_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q08_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q08_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q08_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=9",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q09_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q09_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q09_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q09_MONO.length-1)));
+    assertTrue("UWB mode inconsistent with WB mode for Q=10",
+               Arrays.equals(subArray(ENCODED_SILENCE_UWB_Q10_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q10_MONO.length-1),
+                             subArray(ENCODED_SILENCE_WB_Q10_MONO, 0,
+                                      ENCODED_SILENCE_WB_Q10_MONO.length-1)));
+  }
+
+  /**
+   * Encodes the given Source with the given settings and compares the result
+   * to the expected result.
    * @param mode
    * @param quality
    * @param sampleRate
@@ -211,10 +435,11 @@ public class TestJSpeex
   }
 
   /**
-   * 
+   * Calculates the expected size of the returned encoded Speex packet.
    * @param mode
    * @param quality
    * @param channels
+   * @param speexEncoder
    * @return
    */
   protected int checkSize(int mode,
@@ -250,458 +475,116 @@ public class TestJSpeex
   }
   
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet NB = 160 samples = 20 ms
    */
-  public void testEncodeSilenceNBQ01mono()
+  public void testEncodeSilenceNBmono()
   {
-    testEncode(0, 1, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q01_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ02mono()
-  {
-    testEncode(0, 2, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q02_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ03mono()
-  {
-    testEncode(0, 3, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q03_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ04mono()
-  {
-    testEncode(0, 4, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q04_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ05mono()
-  {
-    testEncode(0, 5, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q05_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ06mono()
-  {
-    testEncode(0, 6, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q06_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ07mono()
-  {
-    testEncode(0, 7, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q07_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ08mono()
-  {
-    testEncode(0, 8, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q08_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ09mono()
-  {
-    testEncode(0, 9, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q09_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ10mono()
-  {
+    testEncode(0,  1, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q01_MONO);
+    testEncode(0,  2, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q02_MONO);
+    testEncode(0,  3, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q03_MONO);
+    testEncode(0,  4, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q04_MONO);
+    testEncode(0,  5, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q05_MONO);
+    testEncode(0,  6, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q06_MONO);
+    testEncode(0,  7, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q07_MONO);
+    testEncode(0,  8, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q08_MONO);
+    testEncode(0,  9, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q09_MONO);
     testEncode(0, 10, 8000, 1, new float[160], ENCODED_SILENCE_NB_Q10_MONO);
   }
 
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet WB = 320 samples = 20 ms
    */
-  public void testEncodeSilenceWBQ01mono()
+  public void testEncodeSilenceWBmono()
   {
-    testEncode(1, 1, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q01_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ02mono()
-  {
-    testEncode(1, 2, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q02_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ03mono()
-  {
-    testEncode(1, 3, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q03_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ04mono()
-  {
-    testEncode(1, 4, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q04_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ05mono()
-  {
-    testEncode(1, 5, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q05_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ06mono()
-  {
-    testEncode(1, 6, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q06_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ07mono()
-  {
-    testEncode(1, 7, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q07_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ08mono()
-  {
-    testEncode(1, 8, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q08_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ09mono()
-  {
-    testEncode(1, 9, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q09_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ10mono()
-  {
+    testEncode(1,  1, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q01_MONO);
+    testEncode(1,  2, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q02_MONO);
+    testEncode(1,  3, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q03_MONO);
+    testEncode(1,  4, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q04_MONO);
+    testEncode(1,  5, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q05_MONO);
+    testEncode(1,  6, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q06_MONO);
+    testEncode(1,  7, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q07_MONO);
+    testEncode(1,  8, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q08_MONO);
+    testEncode(1,  9, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q09_MONO);
     testEncode(1, 10, 16000, 1, new float[320], ENCODED_SILENCE_WB_Q10_MONO);
   }
 
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet UWB = 640 samples = 20 ms
    */
-  public void testEncodeSilenceUWBQ01mono()
+  public void testEncodeSilenceUWBmono()
   {
-    testEncode(2, 1, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q01_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ02mono()
-  {
-    testEncode(2, 2, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q02_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ03mono()
-  {
-    testEncode(2, 3, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q03_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ04mono()
-  {
-    testEncode(2, 4, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q04_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ05mono()
-  {
-    testEncode(2, 5, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q05_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ06mono()
-  {
-    testEncode(2, 6, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q06_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ07mono()
-  {
-    testEncode(2, 7, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q07_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ08mono()
-  {
-    testEncode(2, 8, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q08_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ09mono()
-  {
-    testEncode(2, 9, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q09_MONO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ10mono()
-  {
+    testEncode(2,  1, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q01_MONO);
+    testEncode(2,  2, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q02_MONO);
+    testEncode(2,  3, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q03_MONO);
+    testEncode(2,  4, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q04_MONO);
+    testEncode(2,  5, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q05_MONO);
+    testEncode(2,  6, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q06_MONO);
+    testEncode(2,  7, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q07_MONO);
+    testEncode(2,  8, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q08_MONO);
+    testEncode(2,  9, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q09_MONO);
     testEncode(2, 10, 32000, 1, new float[640], ENCODED_SILENCE_UWB_Q10_MONO);
   }
 
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet NB = 160 samples = 20 ms
    */
-  public void testEncodeSilenceNBQ1stereo()
+  public void testEncodeSilenceNBstereo()
   {
-    testEncode(0, 1, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q01_STEREO);
+    testEncode(0,  1, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q01_STEREO);
+    testEncode(0,  2, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q02_STEREO);
+    testEncode(0,  3, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q03_STEREO);
+    testEncode(0,  4, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q04_STEREO);
+    testEncode(0,  5, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q05_STEREO);
+    testEncode(0,  6, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q06_STEREO);
+    testEncode(0,  7, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q07_STEREO);
+    testEncode(0,  8, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q08_STEREO);
+    testEncode(0,  9, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q09_STEREO);
+    testEncode(0, 10, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q10_STEREO);
   }
 
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet WB = 320 samples = 20 ms
    */
-  public void testEncodeSilenceNBQ2stereo()
+  public void testEncodeSilenceWBstereo()
   {
-    testEncode(0, 2, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q02_STEREO);
+    testEncode(1,  1, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q01_STEREO);
+    testEncode(1,  2, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q02_STEREO);
+    testEncode(1,  3, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q03_STEREO);
+    testEncode(1,  4, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q04_STEREO);
+    testEncode(1,  5, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q05_STEREO);
+    testEncode(1,  6, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q06_STEREO);
+    testEncode(1,  7, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q07_STEREO);
+    testEncode(1,  8, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q08_STEREO);
+    testEncode(1,  9, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q09_STEREO);
+    testEncode(1, 10, 16000, 2, new float[640], ENCODED_SILENCE_WB_Q10_STEREO);
   }
 
   /**
+   * Tests encoding one packet of silence at different quality settings.
    * 
+   * 1 packet UWB = 640 samples = 20 ms
    */
-  public void testEncodeSilenceNBQ3stereo()
+  public void testEncodeSilenceUWBstereo()
   {
-    testEncode(0, 3, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q03_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ4stereo()
-  {
-    testEncode(0, 4, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q04_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ5stereo()
-  {
-    testEncode(0, 5, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q05_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ6stereo()
-  {
-    testEncode(0, 6, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q06_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ7stereo()
-  {
-    testEncode(0, 7, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q07_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ8stereo()
-  {
-    testEncode(0, 8, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q08_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceNBQ9stereo()
-  {
-    testEncode(0, 9, 8000, 2, new float[320], ENCODED_SILENCE_NB_Q09_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ1stereo()
-  {
-    testEncode(1, 1, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q01_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ2stereo()
-  {
-    testEncode(1, 2, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q02_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ3stereo()
-  {
-    testEncode(1, 3, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q03_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ4stereo()
-  {
-    testEncode(1, 4, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q04_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ5stereo()
-  {
-    testEncode(1, 5, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q05_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ6stereo()
-  {
-    testEncode(1, 6, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q06_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ7stereo()
-  {
-    testEncode(1, 7, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q07_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ8stereo()
-  {
-    testEncode(1, 8, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q08_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceWBQ9stereo()
-  {
-    testEncode(1, 9, 8000, 2, new float[640], ENCODED_SILENCE_WB_Q09_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ1stereo()
-  {
-    testEncode(2, 1, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q01_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ2stereo()
-  {
-    testEncode(2, 2, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q02_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ3stereo()
-  {
-    testEncode(2, 3, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q03_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ4stereo()
-  {
-    testEncode(2, 4, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q04_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ5stereo()
-  {
-    testEncode(2, 5, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q05_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ6stereo()
-  {
-    testEncode(2, 6, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q06_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ7stereo()
-  {
-    testEncode(2, 7, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q07_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ8stereo()
-  {
-    testEncode(2, 8, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q08_STEREO);
-  }
-
-  /**
-   * 
-   */
-  public void testEncodeSilenceUWBQ9stereo()
-  {
-    testEncode(2, 9, 8000, 2, new float[1280], ENCODED_SILENCE_UWB_Q09_STEREO);
+    testEncode(2,  1, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q01_STEREO);
+    testEncode(2,  2, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q02_STEREO);
+    testEncode(2,  3, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q03_STEREO);
+    testEncode(2,  4, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q04_STEREO);
+    testEncode(2,  5, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q05_STEREO);
+    testEncode(2,  6, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q06_STEREO);
+    testEncode(2,  7, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q07_STEREO);
+    testEncode(2,  8, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q08_STEREO);
+    testEncode(2,  9, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q09_STEREO);
+    testEncode(2, 10, 32000, 2, new float[1280], ENCODED_SILENCE_UWB_Q10_STEREO);
   }
 }
