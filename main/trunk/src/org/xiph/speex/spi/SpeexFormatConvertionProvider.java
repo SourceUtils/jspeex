@@ -158,17 +158,21 @@ public class SpeexFormatConvertionProvider
   }
   
   /**
-   * Obtains an audio input stream with the specified encoding from the given audio input stream.
-   * @param targetEncoding - desired encoding of the stream after processing
-   * @param sourceStream - stream from which data to be processed should be read
-   * @return stream from which processed data with the specified target encoding may be read
-   * @exception IllegalArgumentException - if the format combination supplied is not supported.
+   * Obtains an audio input stream with the specified encoding from the given
+   * audio input stream.
+   * @param targetEncoding - desired encoding of the stream after processing.
+   * @param sourceStream - stream from which data to be processed should be read.
+   * @return stream from which processed data with the specified target
+   * encoding may be read.
+   * @exception IllegalArgumentException - if the format combination supplied
+   * is not supported.
    */
   public AudioInputStream getAudioInputStream(AudioFormat.Encoding targetEncoding,
                                               AudioInputStream sourceStream)
   {
     if (isConversionSupported(targetEncoding, sourceStream.getFormat())) {
-      AudioFormat[] formats = getTargetFormats(targetEncoding, sourceStream.getFormat());
+      AudioFormat[] formats = getTargetFormats(targetEncoding,
+                                               sourceStream.getFormat());
       if (formats != null && formats.length > 0) {
         AudioFormat sourceFormat = sourceStream.getFormat();
         AudioFormat targetFormat = formats[0];
@@ -184,7 +188,8 @@ public class SpeexFormatConvertionProvider
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {
-          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() +
+                                             " to " + targetFormat.toString());
         }
       }
       else {
@@ -197,17 +202,21 @@ public class SpeexFormatConvertionProvider
   }
   
   /**
-   * Obtains an audio input stream with the specified format from the given audio input stream.
-   * @param targetFormat - desired data format of the stream after processing
-   * @param sourceStream - stream from which data to be processed should be read
-   * @return stream from which processed data with the specified format may be read
-   * @exception IllegalArgumentException - if the format combination supplied is not supported.
+   * Obtains an audio input stream with the specified format from the given
+   * audio input stream.
+   * @param targetFormat - desired data format of the stream after processing.
+   * @param sourceStream - stream from which data to be processed should be read.
+   * @return stream from which processed data with the specified format may be
+   * read.
+   * @exception IllegalArgumentException - if the format combination supplied
+   * is not supported.
    */
   public AudioInputStream getAudioInputStream(AudioFormat targetFormat,
                                               AudioInputStream sourceStream)
   {
     if (isConversionSupported(targetFormat, sourceStream.getFormat())) {
-      AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(), sourceStream.getFormat());
+      AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(),
+                                               sourceStream.getFormat());
       if (formats != null && formats.length > 0) {
         AudioFormat sourceFormat = sourceStream.getFormat();
         if (sourceFormat.equals(targetFormat)) {
@@ -222,7 +231,8 @@ public class SpeexFormatConvertionProvider
           return new Pcm2SpeexAudioInputStream(sourceStream, targetFormat, -1);
         }
         else {
-          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() + " to " + targetFormat.toString());
+          throw new IllegalArgumentException("unable to convert " + sourceFormat.toString() +
+                                             " to " + targetFormat.toString());
         }
       }
       else {

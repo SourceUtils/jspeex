@@ -79,8 +79,11 @@ package org.xiph.speex;
  */
 public class Vbr
 {
+  /** */
   public static final int   VBR_MEMORY_SIZE = 5;
+  /** */
   public static final int   MIN_ENERGY = 6000;
+  /** */
   public static final float NOISE_POW  = 0.3f;
 
   /**
@@ -173,6 +176,7 @@ public class Vbr
    * @param len - signal length.
    * @param pitch - signal pitch.
    * @param pitch_coef - pitch coefficient.
+   * @return
    */
   public float analysis(float[] sig, int len, int pitch, float pitch_coef)
   {

@@ -90,9 +90,13 @@ public class NbDecoder
   private int     pitch_gain_buf_idx; /** Tail of the buffer */
   private float   last_ol_gain;       /** Open-loop gain for previous frame */
 
+  /** */
   protected Random random = new Random();
+  /** */
   protected Stereo  stereo;
+  /** */
   protected Inband  inband;
+  /** */
   protected boolean enhanced;
 
   /**
@@ -526,7 +530,7 @@ public class NbDecoder
     System.arraycopy(frmBuf, frameSize, frmBuf, 0, bufSize-frameSize);
     System.arraycopy(excBuf, frameSize, excBuf, 0, bufSize-frameSize);
 
-    for (int sub=0;sub<nbSubframes;sub++)
+    for (int sub=0; sub<nbSubframes; sub++)
     {
       int offset;
       int spIdx, extIdx;
@@ -560,10 +564,10 @@ public class NbDecoder
         pitch_gain=.95;*/
       {
         float innov_gain=0;
-        for (i=0;i<frameSize;i++)
+        for (i=0; i<frameSize; i++)
           innov_gain += innov[i]*innov[i];
         innov_gain = (float) Math.sqrt(innov_gain/frameSize);
-        for (i=0;i<subframeSize;i++)
+        for (i=0; i<subframeSize; i++)
         {
 //#if 0
 //          excBuf[extIdx+i] = pitch_gain*excBuf[extIdx+i-last_pitch] + fact*((float)Math.sqrt(1-pitch_gain))*innov[i+offset];

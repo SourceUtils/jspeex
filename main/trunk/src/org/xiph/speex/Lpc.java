@@ -103,11 +103,12 @@ package org.xiph.speex;
 public class Lpc
 {
   /**
-   * Returns minimum mean square error
+   * Returns minimum mean square error.
    * @param lpc - float[0...p-1] LPC coefficients
    * @param ac -  in: float[0...p] autocorrelation values
    * @param ref - out: float[0...p-1] reflection coef's
    * @param p
+   * @return minimum mean square error.
    */
   public static float wld(float[] lpc, float[] ac, float[] ref, int p)
   {

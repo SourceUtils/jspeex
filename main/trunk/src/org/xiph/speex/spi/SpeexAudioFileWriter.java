@@ -72,8 +72,10 @@ public class SpeexAudioFileWriter
   /**
    * Obtains the file types that this audio file writer can write from the
    * audio input stream specified.
-   * @param stream - the audio input stream for which audio file type support is queried
-   * @return array of file types. If no file types are supported, an array of length 0 is returned.
+   * @param stream - the audio input stream for which audio file type support
+   * is queried.
+   * @return array of file types. If no file types are supported, an array of
+   * length 0 is returned.
    */
   public AudioFileFormat.Type[] getAudioFileTypes(AudioInputStream stream)
   {
@@ -92,16 +94,18 @@ public class SpeexAudioFileWriter
    * to finish unless the length is known in advance.
    * An attempt to write such a file type will fail with an IOException if the
    * length in the audio file format is AudioSystem.NOT_SPECIFIED.
-   * @param stream - the audio input stream containing audio data to be written to the output stream
-   * @param fileType - file type to be written to the output stream
-   * @param out - stream to which the file data should be written
-   * @return the number of bytes written to the output stream
-   * @exception IOException - if an I/O exception occurs
-   * @exception IllegalArgumentException - if the file type is not supported by the system
+   * @param stream - the audio input stream containing audio data to be written
+   * to the output stream.
+   * @param fileType - file type to be written to the output stream.
+   * @param out - stream to which the file data should be written.
+   * @return the number of bytes written to the output stream.
+   * @exception IOException - if an I/O exception occurs.
+   * @exception IllegalArgumentException - if the file type is not supported by the system.
    * @see #isFileTypeSupported(AudioFileFormat.Type, AudioInputStream)
    * @see #getAudioFileTypes()
    */
-  public int write(AudioInputStream stream, AudioFileFormat.Type fileType, OutputStream out)
+  public int write(AudioInputStream stream, AudioFileFormat.Type fileType,
+                   OutputStream out)
     throws IOException
   {
     AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
@@ -116,16 +120,18 @@ public class SpeexAudioFileWriter
   /**
    * Writes a stream of bytes representing an audio file of the file format
    * indicated to the external file provided.
-   * @param stream - the audio input stream containing audio data to be written to the file
-   * @param fileType - file type to be written to the file
-   * @param out - external file to which the file data should be written
-   * @return the number of bytes written to the file
-   * @exception IOException - if an I/O exception occurs
+   * @param stream - the audio input stream containing audio data to be written
+   * to the file.
+   * @param fileType - file type to be written to the file.
+   * @param out - external file to which the file data should be written.
+   * @return the number of bytes written to the file.
+   * @exception IOException - if an I/O exception occurs.
    * @exception IllegalArgumentException - if the file format is not supported by the system
    * @see #isFileTypeSupported(javax.sound.sampled.AudioFileFormat.Type)
    * @see #getAudioFileTypes()
    */
-  public int write(AudioInputStream stream, AudioFileFormat.Type fileType, File out)
+  public int write(AudioInputStream stream, AudioFileFormat.Type fileType,
+                   File out)
     throws IOException
   {
     AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
@@ -141,10 +147,11 @@ public class SpeexAudioFileWriter
   /**
    * Writes a stream of bytes representing an audio file of the file type
    * indicated to the output stream provided.
-   * @param stream - the audio input stream containing audio data to be written to the output stream
-   * @param out - stream to which the file data should be written
-   * @return the number of bytes written to the output stream
-   * @exception IOException - if an I/O exception occurs
+   * @param stream - the audio input stream containing audio data to be written
+   * to the output stream.
+   * @param out - stream to which the file data should be written.
+   * @return the number of bytes written to the output stream.
+   * @exception IOException - if an I/O exception occurs.
    */
   private int write(AudioInputStream stream, OutputStream out)
     throws IOException

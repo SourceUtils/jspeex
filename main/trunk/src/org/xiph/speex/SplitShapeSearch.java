@@ -78,6 +78,7 @@ package org.xiph.speex;
 public class SplitShapeSearch
   extends CbSearch
 {
+  /** */
   public static final int MAX_COMPLEXITY = 10;
   
   private int   subframesize;
@@ -96,6 +97,12 @@ public class SplitShapeSearch
    
   /**
    * Constructor
+   * @param subframesize
+   * @param subvect_size
+   * @param nb_subvect
+   * @param shape_cb
+   * @param shape_bits
+   * @param have_sign
    */
   public SplitShapeSearch(int   subframesize,
                           int   subvect_size,

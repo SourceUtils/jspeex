@@ -78,14 +78,22 @@ package org.xiph.speex;
 public class Ltp3Tap
   extends Ltp
 {
+  /** */
   private float[]   gain;
+  /** */
   private int[]     gain_cdbk;
+  /** */
   private int       gain_bits;
+  /** */
   private int       pitch_bits;
+  /** */
   private float[][] e;
   
   /**
    * Constructor
+   * @param gain_cdbk
+   * @param gain_bits
+   * @param pitch_bits
    */
   public Ltp3Tap(int[] gain_cdbk, int gain_bits, int pitch_bits)
   {
@@ -98,6 +106,7 @@ public class Ltp3Tap
     
   /**
    * Long Term Prediction Quantification (3Tap).
+   * @return
    */
   public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                          float[] exc, int es, int start, int end, float pitch_coef, int p, 

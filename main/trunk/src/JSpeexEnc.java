@@ -65,11 +65,20 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-import java.io.*;
-import org.xiph.speex.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.EOFException;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import org.xiph.speex.SpeexEncoder;
+import org.xiph.speex.AudioFileWriter;
+import org.xiph.speex.OggSpeexWriter;
+import org.xiph.speex.RawWriter;
 
 /**
  * Java Speex Command Line Encoder.
+ * 
+ * Currently this code has been updated to be compatible with release 1.0.3.
  * 
  * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
  * @version $Revision$
@@ -90,40 +99,42 @@ public class JSpeexEnc
   /** Print level for messages : Print only errors */
   public static final int ERROR = 3;
   /** Print level for messages */
-  private static int printlevel = INFO;
+  protected static int printlevel = INFO;
 
   /** Defines whether or not the input uses the Wav File Format or is raw. */
-  private static boolean wav    = true;
+  protected static boolean wav    = true;
   /** Defines whether or not the output uses the Ogg File Format or is raw. */
-  private static boolean ogg    = true;
+  protected static boolean ogg    = true;
   /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
-  private static int mode       = -1;
+  protected static int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
-  private static int quality    = 8;
+  protected static int quality    = 8;
   /** Defines the encoders algorithmic complexity. */
-  private static int complexity = 3;
+  protected static int complexity = 3;
   /** Defines the number of frames per speex packet. */
-  private static int nframes    = 1;
+  protected static int nframes    = 1;
   /** Defines the desired bitrate for the encoded audio. */
-  private static int bitrate    = -1;
+  protected static int bitrate    = -1;
   /** Defines the sampling rate of the audio input. */
-  private static int sampleRate = -1;
-  /** Defines the encoder VBR quality setting (float from 0 to 10). */
-  private static float vbr_quality = -1;
-  /** Defines whether or not to use VBR (Variable Bit Rate). */
-  private static boolean vbr    = false;
-  /** Defines whether or not to use VAD (Voice Activity Detection). */
-  private static boolean vad    = false;
-  /** Defines whether or not to use DTX (Discontinuous Transmission). */
-  private static boolean dtx    = false;
+  protected static int sampleRate = -1;
   /** Defines the number of channels of the audio input (1=mono, 2=stereo). */
-  private static int channels   = 1;
+  protected static int channels   = 1;
+  /** Defines the encoder VBR quality setting (float from 0 to 10). */
+  protected static float vbr_quality = -1;
+  /** Defines whether or not to use VBR (Variable Bit Rate). */
+  protected static boolean vbr    = false;
+  /** Defines whether or not to use VAD (Voice Activity Detection). */
+  protected static boolean vad    = false;
+  /** Defines whether or not to use DTX (Discontinuous Transmission). */
+  protected static boolean dtx    = false;
   
   /**
    * Command line entrance:
    * <pre>
    * Usage: JSpeexEnc [options] input_file output_file
    * </pre>
+   * @param args Command line parameters.
+   * @exception IOException
    */
   public static void main(String[] args)
     throws IOException
@@ -240,7 +251,7 @@ public class JSpeexEnc
     // encode to Speex
     encode(infile, outfile);
   }
-  
+
   /**
    * Prints the usage guidelines.
    */
@@ -269,7 +280,7 @@ public class JSpeexEnc
     System.out.println("         --vbr          Enable varible bit-rate (VBR)");
     System.out.println("         --vad          Enable voice activity detection (VAD)");
     System.out.println("         --dtx          Enable file based discontinuous transmission (DTX)");
-		System.out.println("         if the input file is raw PCM (not a Wave file)");
+    System.out.println("         if the input file is raw PCM (not a Wave file)");
     System.out.println("         --rate n       Sampling rate for raw input");
     System.out.println("         --stereo       Consider input as stereo");
     System.out.println("More information is available from: http://jspeex.sourceforge.net/");
@@ -361,7 +372,7 @@ public class JSpeexEnc
     }
     else {
       if (sampleRate < 0) {
-        switch(mode){
+        switch (mode) {
         case 0:
           sampleRate = 8000;
           break;
@@ -396,7 +407,7 @@ public class JSpeexEnc
       else
         mode = 2; // Ultra-wideband
     }
-    // Construct a new decoder
+    // Construct a new encoder
     SpeexEncoder speexEncoder = new SpeexEncoder();
     speexEncoder.init(mode, quality, sampleRate, channels);
     if (complexity > 0) {
@@ -464,7 +475,7 @@ public class JSpeexEnc
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  private static int readInt(byte[] data, int offset)
+  protected static int readInt(byte[] data, int offset)
   {
     return (data[offset] & 0xff) |
            ((data[offset+1] & 0xff) <<  8) |
@@ -478,7 +489,7 @@ public class JSpeexEnc
    * @param offset the offset from which to start reading.
    * @return the integer value of the reassembled bytes.
    */
-  private static int readShort(byte[] data, int offset)
+  protected static int readShort(byte[] data, int offset)
   {
     return (data[offset] & 0xff) |
            (data[offset+1] << 8); // no 0xff on the last one to keep the sign

@@ -40,6 +40,7 @@ package org.xiph.speex;
  * Speex in-band and User in-band controls.
  * 
  * @author Marc Gimpel, Wimba S.A. (marc@wimba.com)
+ * @version $Revision$
  */
 public class Inband
 {
@@ -47,6 +48,7 @@ public class Inband
 
   /**
    * Constructor.
+   * @param stereo
    */
   public Inband (Stereo stereo)
   {

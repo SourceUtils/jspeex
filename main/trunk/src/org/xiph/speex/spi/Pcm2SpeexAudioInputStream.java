@@ -336,7 +336,9 @@ public class Pcm2SpeexAudioInputStream
           // we have less than the normal number of packets in this page.
           buf[count+5] = (byte)(0xff & 4); // set page header type to end of stream
           buf[count+26] = (byte)(0xff & packetCount);
-          System.arraycopy(buf, count+27+packetsPerOggPage, buf, count+27+packetCount, oggCount-(count+27+packetsPerOggPage));
+          System.arraycopy(buf, count+27+packetsPerOggPage,
+                           buf, count+27+packetCount,
+                           oggCount-(count+27+packetsPerOggPage));
           oggCount -= packetsPerOggPage-packetCount;
           writeOggPageChecksum();
         }
@@ -424,7 +426,7 @@ public class Pcm2SpeexAudioInputStream
     int avail = super.available();
     int unencoded = precount - prepos + in.available();
     if (encoder.getEncoder().getVbr()) {
-      switch(mode) {
+      switch (mode) {
         case 0: // Narrowband
           // ogg header size = 27 + packetsPerOggPage
           // count 1 byte (min 5 bits) for each block available
@@ -446,7 +448,7 @@ public class Pcm2SpeexAudioInputStream
     }
     else {
       int packetsize;
-      switch(mode) {
+      switch (mode) {
         case 0: // Narrowband
           packetsize = NbEncoder.NB_FRAME_SIZE[NbEncoder.NB_QUALITY_MAP[encoder.getEncoder().getMode()]];
           packetsize = (packetsize + 7) >> 3; // convert packetsize to bytes
@@ -587,18 +589,6 @@ public class Pcm2SpeexAudioInputStream
     writeOggPageChecksum();
   }
 
-  /**
-   * Writes a Little-endian short.
-   * @param data   the array into which the data should be written.
-   * @param offset the offset from which to start writing in the array.
-   * @param v      the value to write.
-   */  
-  private static void writeShort(byte[] data, int offset, short v)
-  {
-    data[offset]   = (byte) (0xff & v);
-    data[offset+1] = (byte) (0xff & (v >>> 8));
-  }
-  
   /**
    * Writes a Little-endian int.
    * @param data   the array into which the data should be written.

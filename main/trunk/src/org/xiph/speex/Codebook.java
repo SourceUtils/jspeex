@@ -1125,10 +1125,15 @@ public interface Codebook
     -45,4,-4,1,5,22,11,23 
   };
 
+  /** */
   public static final int NB_CDBK_SIZE       = 64;
+  /** */
   public static final int NB_CDBK_SIZE_LOW1  = 64;
+  /** */
   public static final int NB_CDBK_SIZE_LOW2  = 64;
+  /** */
   public static final int NB_CDBK_SIZE_HIGH1 = 64;
+  /** */
   public static final int NB_CDBK_SIZE_HIGH2 = 64;
 
   /**

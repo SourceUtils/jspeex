@@ -267,7 +267,8 @@ public class SpeexDecoder
     /* convert to short and save to buffer */
     for (i=0; i<frameSize*channels; i++, outputSize++) {
       outputData[outputSize] = (decodedData[i]>0) ?
-                               (short) (decodedData[i]+.5) : (short)(decodedData[i]-.5);
+                               (short) (decodedData[i]+.5) :
+                               (short) (decodedData[i]-.5);
     } 
     return true;
   }

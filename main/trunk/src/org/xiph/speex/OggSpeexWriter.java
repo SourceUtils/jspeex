@@ -52,7 +52,6 @@ import java.util.Random;
 public class OggSpeexWriter
   extends AudioFileWriter
 {
-  private Random random;
   private OutputStream out;
 
   private int     mode;
@@ -92,6 +91,7 @@ public class OggSpeexWriter
    * @param sampleRate
    * @param channels
    * @param nframes
+   * @param vbr
    */
   public OggSpeexWriter(int mode, int sampleRate, int channels, int nframes, boolean vbr)
   {
@@ -106,6 +106,7 @@ public class OggSpeexWriter
    * @param sampleRate
    * @param channels
    * @param nframes
+   * @param vbr
    */
   private void setFormat(int mode, int sampleRate, int channels, int nframes, boolean vbr)
   {

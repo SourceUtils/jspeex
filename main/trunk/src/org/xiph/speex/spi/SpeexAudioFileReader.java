@@ -42,7 +42,6 @@ import  java.io.IOException;
 import  java.io.DataInputStream;
 import  java.io.FileInputStream;
 import  java.io.SequenceInputStream;
-import  java.io.BufferedInputStream;
 import  java.io.ByteArrayInputStream;
 import  java.io.ByteArrayOutputStream;
 import  java.net.URL;
@@ -150,7 +149,8 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioFileFormat getAudioFileFormat(InputStream stream, int medialength)
+  protected AudioFileFormat getAudioFileFormat(InputStream stream,
+                                               int medialength)
     throws UnsupportedAudioFileException, IOException
   {
     return getAudioFileFormat(stream, null, medialength);
@@ -167,7 +167,9 @@ public class SpeexAudioFileReader
    * a valid audio file data recognized by the system.
    * @exception IOException if an I/O exception occurs.
    */
-  protected AudioFileFormat getAudioFileFormat(InputStream bitStream, ByteArrayOutputStream baos, int mediaLength)
+  protected AudioFileFormat getAudioFileFormat(InputStream bitStream,
+                                               ByteArrayOutputStream baos,
+                                               int mediaLength)
     throws UnsupportedAudioFileException, IOException
   {
     AudioFormat format;

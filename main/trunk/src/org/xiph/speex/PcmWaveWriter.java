@@ -39,7 +39,6 @@ package org.xiph.speex;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.DataOutput;
 import java.io.RandomAccessFile;
 
 /**

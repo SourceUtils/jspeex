@@ -84,6 +84,7 @@ public class SbEncoder
   /** The Ultra-wideband Quality map indicates which sideband submode to use for the given ultra-wideband quality setting */
   public static final int[] UWB_QUALITY_MAP = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
+  /** The encoder for the lower half of the Spectrum. */
   protected Encoder lowenc;
   
   private float[] x1d;
@@ -108,6 +109,7 @@ public class SbEncoder
   private float[] mem_sp2;
   private float[] mem_sw;       /** Filter memory for perceptually-weighted signal */
 
+  /** */
   protected int nb_modes;
 
   private boolean uwb;

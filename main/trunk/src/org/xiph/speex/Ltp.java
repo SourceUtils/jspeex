@@ -80,6 +80,7 @@ public abstract class Ltp
 {
   /**
    * Long Term Prediction Quantification.
+   * @return
    */
   public abstract int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                             float[] exc, int es, int start, int end, float pitch_coef, int p, 

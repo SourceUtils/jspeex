@@ -88,7 +88,7 @@ public abstract class AudioFileWriter
    * @param v value to write.
    * @exception IOException
    */  
-  protected static void writeShort(DataOutput out, short v)
+  public static void writeShort(DataOutput out, short v)
     throws IOException 
   {
     out.writeByte((0xff & v));
@@ -101,7 +101,7 @@ public abstract class AudioFileWriter
    * @param v value to write.
    * @exception IOException
    */
-  protected static void writeInt(DataOutput out, int v)
+  public static void writeInt(DataOutput out, int v)
     throws IOException 
   {
     out.writeByte(0xff & v);
@@ -116,7 +116,7 @@ public abstract class AudioFileWriter
    * @param v - the value to write.
    * @exception IOException
    */
-  protected static void writeShort(OutputStream os, short v)
+  public static void writeShort(OutputStream os, short v)
     throws IOException 
   {
     os.write((0xff & v));
@@ -129,7 +129,7 @@ public abstract class AudioFileWriter
    * @param v - the value to write.
    * @exception IOException
    */
-  protected static void writeInt(OutputStream os, int v)
+  public static void writeInt(OutputStream os, int v)
     throws IOException 
   {
     os.write(0xff & v);
@@ -144,7 +144,7 @@ public abstract class AudioFileWriter
    * @param v - the value to write.
    * @exception IOException
    */
-  protected static void writeLong(OutputStream os, long v) throws IOException 
+  public static void writeLong(OutputStream os, long v) throws IOException 
   {
     os.write((int)(0xff & v));
     os.write((int)(0xff & (v >>>  8)));

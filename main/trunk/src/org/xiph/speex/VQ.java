@@ -82,6 +82,7 @@ public class VQ
    * @param in - the value to compare.
    * @param codebook - the list of values to search through for the best match.
    * @param entries - the size of the codebook.
+   * @return the index of the entry in a codebook that best matches the input.
    */
   public static final int index(float in, float[] codebook, int entries)
   {
@@ -102,11 +103,12 @@ public class VQ
   }
 
   /**
-   * Finds the index of the entry in a codebook that best matches the input
+   * Finds the index of the entry in a codebook that best matches the input.
    * @param in - the vector to compare.
    * @param codebook - the list of values to search through for the best match.
    * @param len - the size of the vector.
    * @param entries - the size of the codebook.
+   * @return the index of the entry in a codebook that best matches the input.
    */
   public static final int index(float[] in, float[] codebook, int len, int entries)
   {

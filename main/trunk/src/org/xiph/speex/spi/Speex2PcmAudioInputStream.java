@@ -93,7 +93,8 @@ public class Speex2PcmAudioInputStream
    * @param format the format of this stream's audio data.
    * @param length the length in sample frames of the data in this stream.
    */
-  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format, long length)
+  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format,
+                                   long length)
   {
     this(in, format, length, DEFAULT_BUFFER_SIZE);
   }
@@ -106,7 +107,8 @@ public class Speex2PcmAudioInputStream
    * @param size   the buffer size.
    * @exception IllegalArgumentException if size <= 0.
    */
-  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format, long length, int size)
+  public Speex2PcmAudioInputStream(InputStream in, AudioFormat format,
+                                   long length, int size)
   {
     super(in, format, length, size);
     bits = new Bits();
@@ -311,7 +313,8 @@ public class Speex2PcmAudioInputStream
       }
       /* convert to short and save to buffer */
       for (i=0; i<frameSize*channelCount; i++) {
-        val = (decodedData[i]>0) ? (short)(decodedData[i]+.5) : (short)(decodedData[i]-.5);
+        val = (decodedData[i]>0) ? (short)(decodedData[i]+.5) :
+                                   (short)(decodedData[i]-.5);
         outputData[outputSize++] = (byte) (val & 0xff);
         outputData[outputSize++] = (byte) ((val >> 8) &  0xff );
       }

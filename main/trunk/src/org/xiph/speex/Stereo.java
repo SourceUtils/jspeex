@@ -76,7 +76,9 @@ package org.xiph.speex;
  */
 public class Stereo
 {
+  /** Inband code number for Stereo */
   public static final int SPEEX_INBAND_STEREO = 9;
+  /** */
   public static final float[] e_ratio_quant = {.25f, .315f, .397f, .5f};
 
   private float balance      = 1f;   /** Left/right balance info */
@@ -159,6 +161,7 @@ public class Stereo
   /**
    * Callback handler for intensity stereo info
    * @param bits - Speex bits buffer.
+   * @return
    */
   public int init(Bits bits)
   {

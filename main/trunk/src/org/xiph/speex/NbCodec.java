@@ -52,14 +52,16 @@ public class NbCodec
   // Constants
   //---------------------------------------------------------------------------
   /** Very small initial value for some of the buffers. */
-  public static float VERY_SMALL = (float) 0e-30;
+  public static final float VERY_SMALL = (float) 0e-30;
   /** The Narrowband Frame Size gives the size in bits of a Narrowband frame for a given narrowband submode. */
   public static final int[] NB_FRAME_SIZE = {5, 43, 119, 160, 220, 300, 364, 492, 79, 1, 1, 1, 1, 1, 1, 1};
   /** The Narrowband Submodes gives the number of submodes possible for the Narrowband codec. */
   public static final int NB_SUBMODES     = 16;
   /** The Narrowband Submodes Bits gives the number bits used to encode the Narrowband Submode*/
   public static final int NB_SUBMODE_BITS = 4;
+  /** */
   public static final float[] exc_gain_quant_scal1 = {-0.35f, 0.05f};
+  /** */
   public static final float[] exc_gain_quant_scal3 = {-2.794750f, -1.810660f,
                                                       -1.169850f, -0.848119f, 
                                                       -0.587190f, -0.329818f,
@@ -68,7 +70,9 @@ public class NbCodec
   //---------------------------------------------------------------------------
   // Tools
   //---------------------------------------------------------------------------
+  /** */
   protected Lsp      m_lsp;
+  /** */
   protected Filters  filters;
 
   //---------------------------------------------------------------------------

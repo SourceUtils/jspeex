@@ -79,6 +79,7 @@ package org.xiph.speex;
 public abstract class LspQuant
   implements Codebook
 {
+  /** */
   public static final int MAX_LSP_SIZE       = 20;
 
   /**

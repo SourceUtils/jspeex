@@ -57,21 +57,27 @@ public class SbCodec
   public static final int SB_SUBMODES     = 8;
   /** The Sideband Submodes Bits gives the number bits used to encode the Sideband Submode*/
   public static final int SB_SUBMODE_BITS = 3;
-
+  /** Quadratic Mirror Filter Order */
   public static final int QMF_ORDER = 64;
 
   //---------------------------------------------------------------------------
   // Parameters
   //---------------------------------------------------------------------------
+  /** */
   protected int   fullFrameSize;
+  /** */
   protected float foldingGain;
 
   //---------------------------------------------------------------------------
   // Variables
   //---------------------------------------------------------------------------
+  /** */
   protected float[] high;
+  /** */
   protected float[] y0, y1;
+  /** */
   protected float[] x0d;
+  /** */
   protected float[] g0_mem, g1_mem;
 
   /**

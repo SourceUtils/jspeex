@@ -79,14 +79,17 @@ public class SbDecoder
   extends SbCodec
   implements Decoder
 {
+  /** */
   protected Decoder lowdec;
+  /** */
+  protected Stereo  stereo;
+  /** */
+  protected Inband  inband;
+  /** */
+  protected boolean enhanced;
   
   private float[] innov2;
 
-  protected Stereo  stereo;
-  protected Inband  inband;
-  protected boolean enhanced;
-  
   /**
    * Constructor
    */
@@ -133,7 +136,8 @@ public class SbDecoder
    * @param bufSize
    * @param foldingGain
    */
-  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize, float foldingGain)
+  public void init(int frameSize, int subframeSize, int lpcSize, int bufSize,
+                   float foldingGain)
   {
     super.init(frameSize, subframeSize, lpcSize, bufSize, foldingGain);
     excIdx      = 0;
@@ -187,7 +191,8 @@ public class SbDecoder
 
       first=1;
       /* Final signal synthesis from excitation */
-      filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp);
+      filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, frameSize,
+                       lpcSize, mem_sp);
       filters.fir_mem_up(x0d, h0, y0, fullFrameSize, QMF_ORDER, g0_mem);
       filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
 
@@ -292,14 +297,17 @@ public class SbDecoder
 
       if (enhanced) {
         /* Use enhanced LPC filter */
-        filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize, lpcSize, mem_sp, lpcSize);
-        filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize, lpcSize, mem_sp, 0);
+        filters.filter_mem2(high, subIdx, awk2, awk1, subframeSize,
+                            lpcSize, mem_sp, lpcSize);
+        filters.filter_mem2(high, subIdx, awk3, interp_qlpc, subframeSize,
+                            lpcSize, mem_sp, 0);
       }
       else {
          /* Use regular filter */
          for (i=0;i<lpcSize;i++)
             mem_sp[lpcSize+i] = 0;
-         filters.iir_mem2(high, subIdx, interp_qlpc, high, subIdx, subframeSize, lpcSize, mem_sp);
+         filters.iir_mem2(high, subIdx, interp_qlpc, high, subIdx,
+                          subframeSize, lpcSize, mem_sp);
       }
     }
 
@@ -365,13 +373,16 @@ public class SbDecoder
 
     if (enhanced) {
       /* Use enhanced LPC filter */
-      filters.filter_mem2(high, 0, awk2, awk1, high, 0, frameSize, lpcSize, mem_sp, lpcSize);
-      filters.filter_mem2(high, 0, awk3, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp, 0);
+      filters.filter_mem2(high, 0, awk2, awk1, high, 0, frameSize,
+                          lpcSize, mem_sp, lpcSize);
+      filters.filter_mem2(high, 0, awk3, interp_qlpc, high, 0, frameSize,
+                          lpcSize, mem_sp, 0);
     }
     else { /* Use regular filter */
       for (i=0;i<lpcSize;i++)
         mem_sp[lpcSize+i] = 0;
-      Filters.iir_mem2(high, 0, interp_qlpc, high, 0, frameSize, lpcSize, mem_sp);
+      Filters.iir_mem2(high, 0, interp_qlpc, high, 0, frameSize, lpcSize,
+                       mem_sp);
     }
     /*iir_mem2(st->exc, st->interp_qlpc, st->high, st->frame_size, st->lpcSize, st->mem_sp);*/
     
