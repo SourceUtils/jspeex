@@ -243,8 +243,8 @@ public class Player
       thread = null;
       // Close the line
       if (line != null) {
-      	line.stop();
-      	line.close();
+        line.stop();
+        line.close();
         line = null;
       }
       // Close the audio InputStream

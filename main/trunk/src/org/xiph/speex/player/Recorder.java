@@ -149,7 +149,7 @@ public class Recorder
     throws IOException
   {
     if (audio == null) {
-    	return new BufferedInputStream(audioFile.openStream());
+      return new BufferedInputStream(audioFile.openStream());
     }
     else {
       return new ByteArrayInputStream(audio);
@@ -267,7 +267,7 @@ System.out.println("size="+audio.length);
           e.printStackTrace();
         }
         if (read > 0) {
-        	out.write(buffer, 0, read);
+          out.write(buffer, 0, read);
         }
       }
     }
