@@ -113,7 +113,7 @@ public class JSpeexEnc
   /** Defines File format for output audio file (Raw or Wave). */
   protected int destFormat = FILE_FORMAT_WAVE;
 
-  /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
+  /** Defines the encoder mode (0=NB, 1=WB and 2=UWB). */
   protected int mode       = -1;
   /** Defines the encoder quality setting (integer from 0 to 10). */
   protected int quality    = 8;
@@ -161,7 +161,7 @@ public class JSpeexEnc
   {
     JSpeexEnc encoder = new JSpeexEnc();
     if (encoder.parseArgs(args)) {
-        encoder.encode();
+      encoder.encode();
     }
   }
 
@@ -517,6 +517,7 @@ public class JSpeexEnc
     }
     catch (EOFException e) {}
     writer.close(); 
+    dis.close();
   }
   
   /**
