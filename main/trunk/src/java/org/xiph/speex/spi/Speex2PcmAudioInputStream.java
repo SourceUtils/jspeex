@@ -174,7 +174,8 @@ public class Speex2PcmAudioInputStream
         throw new StreamCorruptedException("Incomplete Ogg Headers");
       }
       if (n == 0) {
-        // This should never happen. We could enter an infinate loop.
+        // This should never happen.
+        //assert false : "Read 0 bytes from stream - possible infinate loop";
       }
       precount += n;
       if (decoder==null && precount>=108) { // we can process the speex header
@@ -252,21 +253,23 @@ public class Speex2PcmAudioInputStream
           if (packetCount >= packetsPerOggPage) { // read new Ogg Page header
             readOggPageHeader();
           }
-          int n = packetSizes[packetCount++];
-          if ((precount-prepos) < n) { // we don't have enough data for a complete speex frame
-            throw new StreamCorruptedException("Incompleted last Speex packet");
+          if (packetCount < packetsPerOggPage) { // Ogg Page might be empty (0 packets)
+            int n = packetSizes[packetCount++];
+            if ((precount-prepos) < n) { // we don't have enough data for a complete speex frame
+              throw new StreamCorruptedException("Incompleted last Speex packet");
+            }
+            // do last stuff here
+            decode(prebuf, prepos, n);
+            prepos += n;
+            while ((buf.length - count) < outputData.length) { // grow buffer
+              int nsz = buf.length * 2;
+              byte[] nbuf = new byte[nsz];
+              System.arraycopy(buf, 0, nbuf, 0, count);
+              buf = nbuf;
+            }
+            System.arraycopy(outputData, 0, buf, count, outputData.length);
+            count += outputData.length;
           }
-          // do last stuff here
-          decode(prebuf, prepos, n);
-          prepos += n;
-          while ((buf.length - count) < outputData.length) { // grow buffer
-            int nsz = buf.length * 2;
-            byte[] nbuf = new byte[nsz];
-            System.arraycopy(buf, 0, nbuf, 0, count);
-            buf = nbuf;
-          }
-          System.arraycopy(outputData, 0, buf, count, outputData.length);
-          count += outputData.length;
         }
         return;
       }
