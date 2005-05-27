@@ -477,8 +477,8 @@ public class Speex2PcmAudioInputStream
   private void readOggPageHeader()
     throws IOException
   {
-    int packets = 1;
-    if (precount-prepos<28) {
+    int packets = 0;
+    if (precount-prepos<27) {
       int avail = in.available();
       if (avail > 0) {
         int size = Math.min(prebuf.length - precount, avail);
@@ -489,7 +489,7 @@ public class Speex2PcmAudioInputStream
         precount += read;
       }
     }
-    if (precount-prepos>=28) { // can read beginning of Page header
+    if (precount-prepos>=27) { // can read beginning of Page header
       if (!(new String(prebuf, prepos, 4).equals("OggS"))) {
         throw new StreamCorruptedException("Lost Ogg Sync");
       }
