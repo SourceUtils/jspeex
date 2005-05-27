@@ -302,7 +302,7 @@ public class NbDecoder
         interp_qlsp[i] = (1-tmp)*old_qlsp[i] + tmp*qlsp[i];
 
       /* Make sure the LSP's are stable */
-      m_lsp.enforce_margin(interp_qlsp, lpcSize, .002f);
+      Lsp.enforce_margin(interp_qlsp, lpcSize, .002f);
 
       /* Compute interpolated LPCs (unquantized) */
       for (i=0;i<lpcSize;i++)
