@@ -87,7 +87,7 @@ import org.xiph.speex.RawWriter;
 public class JSpeexEnc
 {
   /** Version of the Speex Encoder */
-  public static final String VERSION = "Java Speex Command Line Encoder v0.9.6 ($Revision$)";
+  public static final String VERSION = "Java Speex Command Line Encoder v0.9.7 ($Revision$)";
   /** Copyright display String */
   public static final String COPYRIGHT = "Copyright (C) 2002-2004 Wimba S.A.";
   
