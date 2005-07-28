@@ -1,0 +1,113 @@
+<project>
+  <pomVersion>3</pomVersion>
+  <id>jspeex</id>
+  <groupId>jspeex</groupId>
+  <artifactId>jspeex</artifactId>
+  <name>JSpeex</name>
+  <currentVersion>0.9.8</currentVersion>
+  <shortDescription>A Java Implementation of the Speex codec</shortDescription>
+  <description>
+JSpeex is a Java port of the Speex speech codec
+(Open Source/Free Software patent-free audio compression format designed for speech).
+It provides both the decoder and the encoder in pure Java, as well as a JavaSound SPI.
+
+The current version of the JSpeex library is based on the code from Speex 1.0.3.
+
+As well as the JSpeex library, there is also JavaSound player that uses the library
+to play any Speex encoded audio file. The player is a modified version of the jlGui
+player by JavaZOOM.</description>
+  <url>http://jspeex.horizonwimba.com/</url>
+  <inceptionYear>2003</inceptionYear>
+  <!-- site info shouold go there -->
+
+  <mailingLists></mailingLists>
+  <developers>
+    <developer>
+      <id>mgimpel</id>
+      <name>Marc Gimpel</name>
+      <email>mgimpel@horizonwimba.com</email>
+      <organization>Horizon Wimba</organization>
+      <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
+      <roles/>
+      <timezone>-1</timezone>
+    </developer>
+    <developer>
+      <id>hpisapia</id>
+      <name>Hugues Pisapia</name>
+      <email>hpisapia@horizonwimba.com</email>
+      <organization>Horizon Wimba</organization>
+      <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
+      <roles/>
+      <timezone>-1</timezone>
+    </developer>
+  </developers>
+  
+  <contributors>
+    <contributor>
+      <name>
+        Dan Rollo         
+      </name>
+      <email>drollo at ets.org</email>
+    </contributor>
+    <contributor>
+      <name>William Shubert
+      </name>
+      <email>wms at igoweb.org</email>
+    </contributor>
+    <contributor>
+      <name>
+George Arnhold
+      </name>
+      <email>
+  armhold at cs.rutgers.edu
+      </email>
+    </contributor>
+    <contributor>
+      <name>
+Mark Brown
+      </name>
+      <email>
+markbrown at iseinc.biz
+      </email>
+    </contributor>
+  </contributors>
+
+  <versions/>
+  <branches/>
+
+  <repository>
+    <connection>scm:cvs:ext:${user.name}@cvs.sourceforge.net:/cvsroot:jspeex</connection>
+  </repository>
+
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <integrationUnitTestSourceDirectory/>
+
+    <resources>
+      <resource>
+        <directory>includes</directory>
+      </resource>
+    </resources>
+
+    <unitTest>
+      <includes>
+        <includes>**/*Test*.java</includes>
+      </includes>
+    </unitTest>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.6.5</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+    </dependency>
+  </dependencies>
+
+</project>

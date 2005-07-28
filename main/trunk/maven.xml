@@ -1,0 +1,43 @@
+<project xmlns:ant="jelly:ant">
+
+  <postGoal name="jar:jar">
+    <!-- launch the proguard task after the jar:jar goal is attained -->
+    <ant:property name="lib"      location="lib"/>
+    <ant:property name="dist"     location="target"/>
+    <ant:property name="version"  value="${pom.currentVersion}"/>
+
+    <ant:property name="classpath.deps" refid="maven.dependency.classpath"/>
+
+    <ant:condition property="classpath.rt" value="${java.home}/lib/rt.jar">
+      <ant:os family="windows"/>
+    </ant:condition>
+    <ant:condition property="classpath.rt" value="${java.home}/../Classes/classes.jar">
+      <ant:and>
+        <ant:os family="unix"/>
+        <ant:os family="mac"/>
+      </ant:and>
+    </ant:condition>
+    <ant:condition property="classpath.rt" value="${java.home}/lib/core.jar">
+      <ant:os family="unix"/>
+    </ant:condition>
+
+    <ant:echo>${classpath.deps}</ant:echo>
+    <ant:taskdef  name="proguard" classname="proguard.ant.ProGuardTask"
+      classpath="${lib}/proguard3.2.jar" />
+    <ant:proguard>
+-libraryjars ${classpath.rt}
+-libraryjars ${classpath.deps}
+-injars      ${dist}/jspeex-${version}.jar
+-outjar      ${dist}/jspeex-${version}-obf.jar
+-renamesourcefileattribute SourceFile
+-keepattributes InnerClasses,SourceFile
+-printmapping ${log}/jspeex-obf.map
+-overloadaggressively
+
+-keep public class * {
+    public protected *;
+}
+    </ant:proguard>
+
+  </postGoal>
+</project>
