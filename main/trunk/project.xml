@@ -4,7 +4,7 @@
   <groupId>jspeex</groupId>
   <artifactId>jspeex</artifactId>
   <name>JSpeex</name>
-  <currentVersion>0.9.8</currentVersion>
+  <currentVersion>0.9.9-dev</currentVersion>
   <shortDescription>A Java Implementation of the Speex codec</shortDescription>
   <description>
 JSpeex is a Java port of the Speex speech codec
@@ -16,9 +16,9 @@ The current version of the JSpeex library is based on the code from Speex 1.0.3.
 As well as the JSpeex library, there is also JavaSound player that uses the library
 to play any Speex encoded audio file. The player is a modified version of the jlGui
 player by JavaZOOM.</description>
-  <url>http://jspeex.horizonwimba.com/</url>
+  <url>http://jspeex.sourceforge.org/</url>
   <inceptionYear>2003</inceptionYear>
-  <!-- site info shouold go there -->
+  <!-- site info should go there -->
 
   <mailingLists></mailingLists>
   <developers>
@@ -29,7 +29,7 @@ player by JavaZOOM.</description>
       <organization>Horizon Wimba</organization>
       <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
       <roles/>
-      <timezone>-1</timezone>
+      <timezone>+1</timezone>
     </developer>
     <developer>
       <id>hpisapia</id>
@@ -38,7 +38,7 @@ player by JavaZOOM.</description>
       <organization>Horizon Wimba</organization>
       <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
       <roles/>
-      <timezone>-1</timezone>
+      <timezone>+1</timezone>
     </developer>
   </developers>
   
@@ -92,7 +92,7 @@ markbrown at iseinc.biz
 
     <unitTest>
       <includes>
-        <includes>**/*Test*.java</includes>
+        <include>**/*Test*.java</include>
       </includes>
     </unitTest>
   </build>
