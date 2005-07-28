@@ -84,6 +84,8 @@ markbrown at iseinc.biz
     <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
     <integrationUnitTestSourceDirectory/>
 
+    <defaultGoal>jar:jar</defaultGoal>
+
     <resources>
       <resource>
         <directory>includes</directory>

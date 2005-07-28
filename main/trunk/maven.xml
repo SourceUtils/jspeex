@@ -21,7 +21,6 @@
       <ant:os family="unix"/>
     </ant:condition>
 
-    <ant:echo>${classpath.deps}</ant:echo>
     <ant:taskdef  name="proguard" classname="proguard.ant.ProGuardTask"
       classpath="${lib}/proguard3.2.jar" />
     <ant:proguard>
@@ -38,6 +37,14 @@
     public protected *;
 }
     </ant:proguard>
-
   </postGoal>
+
+
+  <goal name="help">
+    <ant:echo>
+Target jar:jar to build the jar file.
+    </ant:echo>
+  </goal>
+
+
 </project>
