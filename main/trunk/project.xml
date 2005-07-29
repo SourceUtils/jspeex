@@ -4,7 +4,7 @@
   <groupId>jspeex</groupId>
   <artifactId>jspeex</artifactId>
   <name>JSpeex</name>
-  <currentVersion>0.9.9-dev</currentVersion>
+  <currentVersion>0.9.8</currentVersion>
   <shortDescription>A Java Implementation of the Speex codec</shortDescription>
   <description>
 JSpeex is a Java port of the Speex speech codec
@@ -28,7 +28,10 @@ player by JavaZOOM.</description>
       <email>mgimpel@horizonwimba.com</email>
       <organization>Horizon Wimba</organization>
       <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
-      <roles/>
+      <roles>
+        <role>Project Manager</role>
+        <role>Java Developer</role>
+      </roles>
       <timezone>+1</timezone>
     </developer>
     <developer>
@@ -37,7 +40,9 @@ player by JavaZOOM.</description>
       <email>hpisapia@horizonwimba.com</email>
       <organization>Horizon Wimba</organization>
       <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
-      <roles/>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
       <timezone>+1</timezone>
     </developer>
   </developers>
@@ -76,13 +81,14 @@ markbrown at iseinc.biz
   <branches/>
 
   <repository>
-    <connection>scm:cvs:ext:${user.name}@cvs.sourceforge.net:/cvsroot:jspeex</connection>
+    <connection>scm:cvs:pserver:anonymous@cvs.sourceforge.net:/cvsroot:jspeex</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@cvs.sourceforge.net:/cvsroot:jspeex</developerConnection>
   </repository>
 
   <build>
     <sourceDirectory>src/java</sourceDirectory>
     <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-    <integrationUnitTestSourceDirectory/>
+    <integrationUnitTestSourceDirectory>src/testiu/java</integrationUnitTestSourceDirectory>
 
     <defaultGoal>jar:jar</defaultGoal>
 

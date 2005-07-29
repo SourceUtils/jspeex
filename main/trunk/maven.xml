@@ -1,4 +1,4 @@
-<project xmlns:ant="jelly:ant">
+<project default="jar:jar" xmlns:ant="jelly:ant">
 
   <postGoal name="jar:jar">
     <!-- launch the proguard task after the jar:jar goal is attained -->
