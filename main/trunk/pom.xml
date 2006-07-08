@@ -1,0 +1,200 @@
+<?xml version="1.0" ?>
+<!--
+/******************************************************************************
+*                                                                             * 
+* Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.                    *
+*                                                                             *
+* COPYRIGHT:                                                                  *
+*      This software is the property of Wimba S.A.                            *
+*      This software is redistributed under the Xiph.org variant of           *
+*      the BSD license.                                                       *
+*      Redistribution and use in source and binary forms, with or             *
+*      without modification, are permitted provided that the                  *
+*      following conditions are met:                                          *
+*      - Redistributions of source code must retain the above                 *
+*      copyright notice, this list of conditions and the following            *
+*      disclaimer.                                                            *
+*      - Redistributions in binary form must reproduce the above              *
+*      copyright notice, this list of conditions and the following            *
+*      disclaimer in the documentation and/or other materials                 *
+*      provided with the distribution.                                        *
+*      - Neither the name of Wimba, the Xiph.org Foundation nor the           *
+*      names of its contributors may be used to endorse or promote            *
+*      products derived from this software without specific prior             *
+*      written permission.                                                    *
+*                                                                             *
+* WARRANTIES:                                                                 *
+*      This software is made available by the authors in the hope             *
+*      that it will be useful, but without any warranty.                      *
+*      Wimba S.A. is not liable for any consequence related to the            *
+*      use of the provided software.                                          *
+*                                                                             *
+* Class: pom.xml                                                              *
+*                                                                             *
+* Author: Marc GIMPEL                                                         *
+*                                                                             *
+* Date: 8th July 2006                                                         *
+*                                                                             *
+*******************************************************************************
+
+/* $Id$ */
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.xiph.speex</groupId>
+  <artifactId>jspeex</artifactId>
+  <packaging>pom</packaging>
+  <version>0.9.8-SNAPSHOT</version>
+  <name>JSpeex</name>
+  <description>
+JSpeex is a Java port of the Speex speech codec
+(Open Source/Free Software patent-free audio compression format designed for speech).
+It provides both the decoder and the encoder in pure Java, as well as a JavaSound SPI.
+
+The current version of the JSpeex library is based on the code from Speex 1.0.5.
+  </description>
+  <url>http://jspeex.sourceforge.net/</url>
+  <scm>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/jspeex/main</connection>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/jspeex/main/</url>
+  </scm>
+  <issueManagement>
+    <system>Sourceforge</system>    <url>http://sourceforge.net/tracker/?group_id=84548</url>  </issueManagement>
+  <inceptionYear>2003</inceptionYear>
+  <mailingLists/>
+
+  <organization>
+    <name>Horizon Wimba</name>
+    <url>http://www.horizonwimba.com/</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>mgimpel</id>
+      <name>Marc Gimpel</name>
+      <email>mgimpel@horizonwimba.com</email>
+      <organization>Horizon Wimba</organization>
+      <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
+      <roles>
+        <role>Project Manager</role>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>hpisapia</id>
+      <name>Hugues Pisapia</name>
+      <email>hpisapia@horizonwimba.com</email>
+      <organization>Horizon Wimba</organization>
+      <organizationUrl>http://www.horizonwimba.com/</organizationUrl>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+  
+  <contributors>
+    <contributor>
+      <name>Dan Rollo</name>
+      <email>drollo at ets.org</email>
+    </contributor>
+    <contributor>
+      <name>William Shubert</name>
+      <email>wms at igoweb.org</email>
+    </contributor>
+    <contributor>
+      <name>George Arnhold</name>
+      <email>armhold at cs.rutgers.edu</email>
+    </contributor>
+    <contributor>
+      <name>Mark Brown</name>
+      <email>markbrown at iseinc.biz</email>
+    </contributor>
+  </contributors>
+  <licenses>
+    <license>
+      <name>Xiph.org variant of the BSD license</name>
+      <url>/LICENSE.txt</url>
+      <distribution>manual</distribution>
+    </license>
+  </licenses>
+  <distributionManagement>
+    <site>
+      <id>website</id>
+      <url>scp://shell.sourceforge.net/home/groups/j/js/jspeex/htdocs</url>
+    </site>
+  </distributionManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <locales>en,fr</locales>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Maven Repository Switchboard</name>
+      <layout>default</layout>
+      <url>http://repo1.maven.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <overview>${project.build.sourceDirectory}/overview.html</overview>
+          <links>
+            <link>http://java.sun.com/j2ee/1.4/docs/api</link>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://www.junit.org/junit/javadoc/</link>
+            <link>http://logging.apache.org/log4j/docs/api/</link>
+          </links>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jxr-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>changelog-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <modules>
+    <module>codec</module>
+    <module>ant</module>
+  </modules>
+</project>
