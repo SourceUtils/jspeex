@@ -43,10 +43,10 @@
   <!-- set global properties for this build -->
   <property name="root"       location="."/>
   <property name="src"        location="src"/>
-  <property name="src.java"   location="${src}/java"/>
-  <property name="src.test"   location="${src}/test"/>
+  <property name="src.main"   location="${src}/main/java"/>
+  <property name="src.test"   location="${src}/test/java"/>
   <property name="build"      location="build"/>
-  <property name="build.java" location="${build}/java"/>
+  <property name="build.main" location="${build}/main"/>
   <property name="build.test" location="${build}/test"/>
   <property name="include"    location="include"/>
   <property name="dist"       location="dist"/>
@@ -68,7 +68,7 @@
     <mkdir dir="${temp}"/>
     <mkdir dir="${dist}"/>
     <mkdir dir="${build}"/>
-    <mkdir dir="${build.java}"/>
+    <mkdir dir="${build.main}"/>
     <mkdir dir="${build.test}"/>
   </target>
 
@@ -78,13 +78,13 @@
 
   <target name="compile" depends="init"
           description="Compile JSpeex" >
-    <javac srcdir="${src.java}" destdir="${build.java}">
+    <javac srcdir="${src.main}" destdir="${build.main}">
       <include name="*.java"/>
       <include name="org/xiph/speex/**/*.java"/>
     </javac>
     <javac srcdir="${src.test}" destdir="${build.test}">
       <classpath>
-        <pathelement location="${build.java}"/>
+        <pathelement location="${build.main}"/>
         <fileset dir="${lib}">
           <include name="**/*.jar"/>
         </fileset>
@@ -97,12 +97,12 @@
   <target name="compile-nb" depends="init"
           description="Compile JSpeex (narrowband only)" >
     <copy toDir="${temp}/" overwrite="true">
-      <fileset dir="${src.java}/"/>
+      <fileset dir="${src.main}/"/>
       <filterset begintoken="//Wideba" endtoken="d">
         <filter token="n" value="/*/Wideband"/>
       </filterset>
     </copy>
-    <javac srcdir="${temp}" destdir="${build.java}">
+    <javac srcdir="${temp}" destdir="${build.main}">
       <include name="JSpeexEnc.java"/>
       <include name="JSpeexDec.java"/>
       <include name="org/xiph/speex/*.java"/>
@@ -112,7 +112,7 @@
   <target name="package" depends="compile"
           description="Package JSpeex library" >
     <jar jarfile="${dist}/jspeex.jar">
-      <fileset dir="${build.java}">
+      <fileset dir="${build.main}">
         <include name="**/*.class"/>
         <exclude name="**/Test*"/>
         <exclude name="**/ant/**"/>
@@ -156,7 +156,7 @@
   <target name="compress-dec-nb" depends="compile-nb"
           description="Package obfuscated JSpeex decoder (without SPI) (narrowband only)" >
     <jar jarfile="${dist}/jspeex-dec-nb.jar">
-      <fileset dir="${build.java}" excludes="${build.java}/org/xiph/speex/spi/*.class"/>
+      <fileset dir="${build.main}" excludes="${build.main}/org/xiph/speex/spi/*.class"/>
       <manifest>
         <attribute name="Main-Class" value="JSpeexDec"/>
       </manifest>
@@ -184,10 +184,10 @@
     <!-- Create the documentation directory -->
     <mkdir dir="${doc}"/>
     <mkdir dir="${doc}/javadoc"/>
-    <javadoc sourcepath="${src.java}" destdir="${doc}/javadoc" access="private"
+    <javadoc sourcepath="${src.main}" destdir="${doc}/javadoc" access="private"
              packagenames="org.xiph.speex.*"
              Author="true" Version="true" Use="true"
-             Overview="${src.java}/Overview.html"
+             Overview="${src.main}/overview.html"
              Windowtitle="JSpeex API Specification"
              DocTitle="JSpeex API Specification">
       <bottom><![CDATA[<i>Copyright &#169; 1999-2004 Wimba S.A. All Rights Reserved.</i>]]></bottom>
