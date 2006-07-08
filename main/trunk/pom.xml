@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <!--
 /******************************************************************************
-*                                                                             * 
+*                                                                             *
 * Copyright (c) 1999-2003 Wimba S.A., All Rights Reserved.                    *
 *                                                                             *
 * COPYRIGHT:                                                                  *
@@ -61,7 +61,9 @@ The current version of the JSpeex library is based on the code from Speex 1.0.5.
     <url>http://svn.sourceforge.net/viewcvs.cgi/jspeex/main/</url>
   </scm>
   <issueManagement>
-    <system>Sourceforge</system>    <url>http://sourceforge.net/tracker/?group_id=84548</url>  </issueManagement>
+    <system>Sourceforge</system>
+    <url>http://sourceforge.net/tracker/?group_id=84548</url>
+  </issueManagement>
   <inceptionYear>2003</inceptionYear>
   <mailingLists/>
 
@@ -69,7 +71,8 @@ The current version of the JSpeex library is based on the code from Speex 1.0.5.
     <name>Horizon Wimba</name>
     <url>http://www.horizonwimba.com/</url>
   </organization>
-  <developers>
+
+  <developers>
     <developer>
       <id>mgimpel</id>
       <name>Marc Gimpel</name>
@@ -113,13 +116,15 @@ The current version of the JSpeex library is based on the code from Speex 1.0.5.
       <email>markbrown at iseinc.biz</email>
     </contributor>
   </contributors>
-  <licenses>
+
+  <licenses>
     <license>
       <name>Xiph.org variant of the BSD license</name>
       <url>/LICENSE.txt</url>
       <distribution>manual</distribution>
     </license>
-  </licenses>
+  </licenses>
+
   <distributionManagement>
     <site>
       <id>website</id>
@@ -168,9 +173,7 @@ The current version of the JSpeex library is based on the code from Speex 1.0.5.
           <links>
             <link>http://java.sun.com/j2ee/1.4/docs/api</link>
             <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
             <link>http://www.junit.org/junit/javadoc/</link>
-            <link>http://logging.apache.org/log4j/docs/api/</link>
           </links>
         </configuration>
       </plugin>
@@ -196,5 +199,6 @@ The current version of the JSpeex library is based on the code from Speex 1.0.5.
   <modules>
     <module>codec</module>
     <module>ant</module>
+    <module>player</module>
   </modules>
 </project>
