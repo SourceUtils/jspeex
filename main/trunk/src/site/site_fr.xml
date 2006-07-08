@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="CG Wiki">
+  <bannerLeft>
+    <name>Horizon Wimba</name>
+    <src>/images/hw_logo.gif</src>
+    <href>http://www.horizonwimba.com/</href>
+  </bannerLeft>
+  <bannerRight>
+    <name>CG Wiki</name>
+  </bannerRight>
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-default-skin</artifactId>
+    <version>1.0</version>
+  </skin>
+
+  <publishDate format="dd MMM yyyy"/>
+
+  <body>
+    <links>
+      <item name="Apache" href="http://www.apache.org/" />
+      <item name="Maven 2" href="http://maven.apache.org/"/>
+      <item name="CG Wiki" href="http://mgimpel.horizonwimba.com/cgwiki/"/>
+    </links>
+
+    <menu name="Documentation">
+      <item name="APT Format" href="format.html"/>
+      <item name="FAQ" href="faq.html"/>
+      <item name="Xdoc Example" href="xdoc.html"/>      
+    </menu>
+
+    <menu name="Modules">
+      <item name="API" href="/cgwiki-api/"/>
+      <item name="Core" href="/cgwiki-core/"/>
+      <item name="UI" href="/cgwiki-ui/"/>      
+      <item name="Webapp" href="/cgwiki-webapp/"/>      
+    </menu>
+
+    ${reports}
+  </body>
+</project>
