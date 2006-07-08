@@ -48,7 +48,7 @@
   <property name="build"      location="build"/>
   <property name="build.main" location="${build}/main"/>
   <property name="build.test" location="${build}/test"/>
-  <property name="include"    location="include"/>
+  <property name="include"    location="${src}/main/resources"/>
   <property name="dist"       location="dist"/>
   <property name="temp"       location="temp"/>
   <property name="lib"        location="lib"/>
@@ -118,7 +118,7 @@
         <exclude name="**/ant/**"/>
         <exclude name="**/player/**"/>
       </fileset>
-      <metainf dir="${include}/metainf/"/>
+      <metainf dir="${include}/META-INF/"/>
       <manifest>
         <section name="build">
           <attribute name="Build-Date" value="${NOW}"/>
