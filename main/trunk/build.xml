@@ -42,7 +42,7 @@
 
   <!-- set global properties for this build -->
   <property name="root"       location="."/>
-  <property name="src"        location="src"/>
+  <property name="src"        location="codec/src"/>
   <property name="src.main"   location="${src}/main/java"/>
   <property name="src.test"   location="${src}/test/java"/>
   <property name="build"      location="build"/>
