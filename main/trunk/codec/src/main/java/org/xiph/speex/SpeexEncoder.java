@@ -215,7 +215,7 @@ public class SpeexEncoder
     // converty raw bytes into float samples
     mapPcm16bitLittleEndian2Float(data, offset, rawData, 0, len/2);
     // encode the bitstream
-    return processData(rawData, len/2);
+    return processData(rawData, len / 2);
   }
 
   /**
@@ -234,7 +234,7 @@ public class SpeexEncoder
       throw new IllegalArgumentException("SpeexEncoder requires " + numSamplesRequired + " samples to process a Frame, not " + numShorts);
     }
     // convert shorts into float samples,
-    for (int i=0; i<numShorts; i++) {
+    for (int i = 0; i < numShorts; i++) {
       rawData[i] = (float) data[offset + i ];
     }
     // encode the bitstream
@@ -254,7 +254,7 @@ public class SpeexEncoder
       throw new IllegalArgumentException("SpeexEncoder requires " + numSamplesRequired + " samples to process a Frame, not " + numSamples );
     }
     // encode the bitstream
-    if (channels==2) {
+    if (channels == 2) {
       Stereo.encode(bits, data, frameSize);
     }
     encoder.encode(bits, data);

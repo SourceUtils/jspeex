@@ -98,21 +98,21 @@ public interface Encoder
    * Returns the size of a frame.
    * @return the size of a frame.
    */
-  public int  getFrameSize();
+  public int getFrameSize();
 
   /**
    * Sets the Quality (between 0 and 10).
    * @param quality - the desired Quality (between 0 and 10).
    */
-  public void    setQuality(int quality);
+  public void setQuality(int quality);
 
   /**
    * Get the current Bit Rate.
    * @return the current Bit Rate.
    */
-  public int     getBitRate();
+  public int getBitRate();
 
-//  public void    resetState();
+//  public void resetState();
 
   /**
    * Returns the Pitch Gain array.

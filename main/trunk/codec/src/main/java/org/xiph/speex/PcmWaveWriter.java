@@ -63,7 +63,7 @@ public class PcmWaveWriter
   extends AudioFileWriter
 {
   /** Wave type code of PCM */
-  public static final short WAVE_FORMAT_PCM = (short) 0x01;
+  public static final short WAVE_FORMAT_PCM   = (short) 0x01;
   /** Wave type code of Speex */
   public static final short WAVE_FORMAT_SPEEX = (short) 0xa109;
 

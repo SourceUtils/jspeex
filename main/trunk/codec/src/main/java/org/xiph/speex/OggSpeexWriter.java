@@ -67,8 +67,6 @@ public class OggSpeexWriter
   private int     nframes;
   /** Defines whether or not to use VBR (Variable Bit Rate). */
   private boolean vbr;
-  /** */
-  private int     size;
   /** Ogg Stream Serial Number */
   private int     streamSerialNumber;
   /** Data buffer */
@@ -176,7 +174,6 @@ public class OggSpeexWriter
   {
     file.delete(); 
     out = new FileOutputStream(file);
-    size = 0;   
   }
 
   /**

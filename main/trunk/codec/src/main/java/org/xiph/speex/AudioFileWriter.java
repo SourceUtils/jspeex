@@ -93,6 +93,20 @@ public abstract class AudioFileWriter
 
   /**
    * Writes an Ogg Page Header to the given byte array.
+   * 
+   * Ogg Page Header structure:
+   * <pre>
+   *  0 -  3: capture_pattern
+   *       4: stream_structure_version
+   *       5: header_type_flag
+   *  6 - 13: absolute granule position
+   * 14 - 17: stream serial number
+   * 18 - 21: page sequence no
+   * 22 - 25: page checksum
+   *      26: page_segments
+   * 27 -  x: segment_table
+   * </pre>
+   * 
    * @param buf     the buffer to write to.
    * @param offset  the from which to start writing.
    * @param headerType the header type flag
@@ -145,6 +159,26 @@ public abstract class AudioFileWriter
 
   /**
    * Writes a Speex Header to the given byte array.
+   * 
+   * Speex Header structure:
+   * <pre>
+   *  0 -  7: speex_string
+   *  8 - 27: speex_version
+   * 28 - 31: speex_version_id
+   * 32 - 35: header_size
+   * 36 - 39: rate
+   * 40 - 43: mode (0=NB, 1=WB, 2=UWB)
+   * 44 - 47: mode_bitstream_version
+   * 48 - 51: nb_channels
+   * 52 - 55: bitrate
+   * 56 - 59: frame_size (NB=160, WB=320, UWB=640)
+   * 60 - 63: vbr
+   * 64 - 67: frames_per_packet
+   * 68 - 71: extra_headers
+   * 72 - 75: reserved1
+   * 76 - 79: reserved2
+   * </pre>
+   *
    * @param buf     the buffer to write to.
    * @param offset  the from which to start writing.
    * @param sampleRate

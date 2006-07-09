@@ -80,10 +80,10 @@ public abstract class LspQuant
   implements Codebook
 {
   /** */
-  public static final int MAX_LSP_SIZE       = 20;
+  public static final int MAX_LSP_SIZE = 20;
 
   /**
-   * Constructor
+   * Constructor.
    */
   protected LspQuant()
   {
@@ -126,9 +126,9 @@ public abstract class LspQuant
                             final int ti,
                             final int li)
   {
-    int id=bits.unpack(6);
-    for (int i=0;i<ti;i++)
-      lsp[i+li] += k * (float)tab[id*ti+i];
+    int id = bits.unpack(6);
+    for (int i = 0; i < ti; i++)
+      lsp[i + li] += k * (float) tab[id * ti + i];
   }
   
   /**
@@ -150,23 +150,23 @@ public abstract class LspQuant
   {
     int i, j;
     float dist, tmp;
-    float best_dist=0;
-    int best_id=0;
-    int ptr=0;
-    for (i=0; i<nbVec; i++) {
-      dist=0;
-      for (j=0; j<nbDim; j++) {
-        tmp=(x[xs+j]-cdbk[ptr++]);
-        dist+=tmp*tmp;
+    float best_dist = 0;
+    int best_id = 0;
+    int ptr = 0;
+    for (i = 0; i < nbVec; i++) {
+      dist = 0;
+      for (j = 0; j < nbDim; j++) {
+        tmp = (x[xs + j] - cdbk[ptr++]);
+        dist += tmp * tmp;
       }
-      if (dist<best_dist || i==0) {
-        best_dist=dist;
-        best_id=i;
+      if (dist < best_dist || i == 0) {
+        best_dist = dist;
+        best_id = i;
       }
     }
 
-    for (j=0; j<nbDim; j++)
-      x[xs+j] -= cdbk[best_id*nbDim+j];
+    for (j = 0; j < nbDim; j++)
+      x[xs + j] -= cdbk[best_id * nbDim + j];
     
     return best_id;
   }
@@ -192,24 +192,24 @@ public abstract class LspQuant
                                         final int nbVec,
                                         final int nbDim)
   {
-    int i,j;
+    int i, j;
     float dist, tmp;
-    float best_dist=0;
-    int best_id=0;
-    int ptr=0;
-    for (i=0; i<nbVec; i++) {
-      dist=0;
-      for (j=0; j<nbDim; j++) {
-        tmp=(x[xs+j]-cdbk[ptr++]);
-        dist+=weight[ws+j]*tmp*tmp;
+    float best_dist = 0;
+    int best_id = 0;
+    int ptr = 0;
+    for (i = 0; i < nbVec; i++) {
+      dist = 0;
+      for (j = 0; j < nbDim; j++) {
+        tmp = (x[xs + j] - cdbk[ptr++]);
+        dist += weight[ws + j] * tmp * tmp;
       }
-      if (dist<best_dist || i==0) {
-        best_dist=dist;
-        best_id=i;
+      if (dist < best_dist || i == 0) {
+        best_dist = dist;
+        best_id = i;
       }
     }
-    for (j=0; j<nbDim; j++)
-      x[xs+j] -= cdbk[best_id*nbDim+j];
+    for (j = 0; j < nbDim; j++)
+      x[xs + j] -= cdbk[best_id * nbDim + j];
     return best_id;
   }
 }

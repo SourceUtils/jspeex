@@ -52,7 +52,7 @@ public class NbCodec
   // Constants
   //---------------------------------------------------------------------------
   /** Very small initial value for some of the buffers. */
-  public static final float VERY_SMALL = (float) 0e-30;
+  public static final float VERY_SMALL = (float) 0e-15;
   /** The Narrowband Frame Size gives the size in bits of a Narrowband frame for a given narrowband submode. */
   public static final int[] NB_FRAME_SIZE = {5, 43, 119, 160, 220, 300, 364, 492, 79, 1, 1, 1, 1, 1, 1, 1};
   /** The Narrowband Submodes gives the number of submodes possible for the Narrowband codec. */
@@ -157,9 +157,9 @@ public class NbCodec
     first = 1;
     // Codec parameters, should eventually have several "modes"
     this.frameSize    = frameSize;
-    this.windowSize   = frameSize*3/2;
+    this.windowSize   = frameSize * 3 / 2;
     this.subframeSize = subframeSize;
-    this.nbSubframes  = frameSize/subframeSize;
+    this.nbSubframes  = frameSize / subframeSize;
     this.lpcSize      = lpcSize;
     this.bufSize      = bufSize;
     min_pitch  = 17;
@@ -177,17 +177,17 @@ public class NbCodec
     excIdx = bufSize - windowSize;
     innov  = new float[frameSize];
 
-    lpc         = new float[lpcSize+1];
+    lpc         = new float[lpcSize + 1];
     qlsp        = new float[lpcSize];
     old_qlsp    = new float[lpcSize];
     interp_qlsp = new float[lpcSize];
-    interp_qlpc = new float[lpcSize+1];
-    mem_sp      = new float[5*lpcSize]; // TODO - check why 5 (why not 2 or 1)
+    interp_qlpc = new float[lpcSize + 1];
+    mem_sp      = new float[5 * lpcSize]; //TODO - check why 5 (why not 2 or 1)
     pi_gain     = new float[nbSubframes];
 
-    awk1 = new float[lpcSize+1];
-    awk2 = new float[lpcSize+1];
-    awk3 = new float[lpcSize+1];
+    awk1 = new float[lpcSize + 1];
+    awk2 = new float[lpcSize + 1];
+    awk3 = new float[lpcSize + 1];
 
     voc_m1 = voc_m2 = voc_mean = 0;
     voc_offset = 0;    

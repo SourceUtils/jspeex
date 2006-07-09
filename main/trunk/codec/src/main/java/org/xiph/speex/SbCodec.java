@@ -193,8 +193,8 @@ public class SbCodec
   {
     int i;
     float[] excTmp = new float[fullFrameSize];
-    for (i=0;i<frameSize;i++)
-      excTmp[2*i]=2*excBuf[excIdx+i];
+    for (i = 0; i < frameSize; i++)
+      excTmp[2 * i] = 2.0f * excBuf[excIdx + i];
     return excTmp;
   }
 

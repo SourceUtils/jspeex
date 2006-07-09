@@ -118,7 +118,7 @@ public class Lpc
     int i, j;
     float r, error = ac[0];
     if (ac[0] == 0) {
-      for (i=0; i<p; i++)
+      for (i = 0; i < p; i++)
         ref[i] = 0;
       return 0;
     }
@@ -129,10 +129,10 @@ public class Lpc
       ref[i] = r /= error;
       /*  Update LPC coefficients and total error. */
       lpc[i] = r;
-      for (j = 0; j < i/2; j++) {
+      for (j = 0; j < i / 2; j++) {
         float tmp  = lpc[j];
-        lpc[j]     += r * lpc[i-1-j];
-        lpc[i-1-j] += r * tmp;
+        lpc[j]         += r * lpc[i - 1 - j];
+        lpc[i - 1 - j] += r * tmp;
       }
       if ((i % 2) != 0)
         lpc[j] += lpc[j] * r;
@@ -160,8 +160,8 @@ public class Lpc
     float d;
     int i;
     while (lag-- > 0) {
-      for (i=lag, d=0; i<n; i++)
-        d += x[i] * x[i-lag];
+      for (i = lag, d = 0; i < n; i++)
+        d += x[i] * x[i - lag];
       ac[lag] = d;
     }
   }

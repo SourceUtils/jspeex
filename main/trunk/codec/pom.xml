@@ -51,6 +51,28 @@
   <artifactId>jspeex-codec</artifactId>
   <packaging>jar</packaging>
   <name>JSpeex Codec</name>
+
+  <build>
+    <finalName>jspeex-${project.version}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>JSpeexEnc</mainClass>
+              <packageName>org.xiph.speex</packageName>
+            </manifest>
+            <manifestEntries>
+              <url>${project.url}</url>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

@@ -227,10 +227,10 @@ public class SbEncoder
     lowenc.encode(bits, x0d);
 
     /* High-band buffering / sync with low band */
-    for (i=0;i<windowSize-frameSize;i++)
+    for (i=0; i<windowSize-frameSize; i++)
       high[i] = high[frameSize+i];
-    for (i=0;i<frameSize;i++)
-      high[windowSize-frameSize+i]=x1d[i];
+    for (i=0; i<frameSize; i++)
+      high[windowSize-frameSize+i] = x1d[i];
 
     System.arraycopy(excBuf, frameSize, excBuf, 0, bufSize-frameSize);
 
@@ -239,10 +239,10 @@ public class SbEncoder
     low_innov   = lowenc.getInnov();
 
     int low_mode = lowenc.getMode();
-    if (low_mode==0)
-      dtx=1;
+    if (low_mode == 0)
+      dtx = 1;
     else
-      dtx=0;
+      dtx = 0;
 
     /* Start encoding the high-band */
     for (i=0; i<windowSize; i++)
@@ -260,7 +260,7 @@ public class SbEncoder
     /* Levinson-Durbin */
     Lpc.wld(lpc, autocorr, rc, lpcSize); // tmperr
     System.arraycopy(lpc, 0, lpc, 1, lpcSize);
-    lpc[0]=1;
+    lpc[0] = 1;
 
     /* LPC to LSPs (x-domain) transform */
     int roots = Lsp.lpc2lsp (lpc, lpcSize, lsp, 15, 0.2f);
@@ -284,53 +284,53 @@ public class SbEncoder
 
     /*VBR stuff*/
     if ((vbr_enabled != 0 || vad_enabled != 0) && dtx == 0) {
-      float e_low=0, e_high=0;
+      float e_low = 0, e_high = 0;
       float ratio;
       if (abr_enabled != 0) {
         float qual_change=0;
         if (abr_drift2 * abr_drift > 0) {
           /* Only adapt if long-term and short-term drift are the same sign */
-          qual_change = -.00001f*abr_drift/(1+abr_count);
-          if (qual_change>.1f)
-            qual_change=.1f;
-          if (qual_change<-.1f)
-            qual_change=-.1f;
+          qual_change = -.00001f * abr_drift / (1 + abr_count);
+          if (qual_change > .1f)
+            qual_change = .1f;
+          if (qual_change < -.1f)
+            qual_change = -.1f;
         }
         vbr_quality += qual_change;
-        if (vbr_quality>10)
-          vbr_quality=10;
-        if (vbr_quality<0)
-          vbr_quality=0;
+        if (vbr_quality > 10)
+          vbr_quality = 10;
+        if (vbr_quality < 0)
+          vbr_quality = 0;
       }
 
-      for (i=0;i<frameSize;i++) {
+      for (i=0; i<frameSize; i++) {
         e_low  += x0d[i]* x0d[i];
         e_high += high[i]* high[i];
       }
-      ratio = (float) Math.log((1+e_high)/(1+e_low));
+      ratio = (float) Math.log((1 + e_high) / (1 + e_low));
       relative_quality = lowenc.getRelativeQuality();
 
-      if (ratio<-4)
-        ratio=-4;
-      if (ratio>2)
-        ratio=2;
+      if (ratio < -4)
+        ratio = -4;
+      if (ratio > 2)
+        ratio = 2;
       /*if (ratio>-2)*/
       if (vbr_enabled != 0) {
         int modeid;
-        modeid = nb_modes-1;
-        relative_quality+=1.0*(ratio+2);
-        if (relative_quality<-1) {
-          relative_quality=-1;
+        modeid = nb_modes - 1;
+        relative_quality += 1.0f * (ratio + 2f);
+        if (relative_quality < -1) {
+          relative_quality = -1;
         }
         while (modeid != 0) {
           int v1;
           float thresh;
-          v1=(int)Math.floor(vbr_quality);
-          if (v1==10)
+          v1 = (int) Math.floor(vbr_quality);
+          if (v1 == 10)
             thresh = Vbr.hb_thresh[modeid][v1];
           else
-            thresh = (vbr_quality-v1)   * Vbr.hb_thresh[modeid][v1+1] + 
-                     (1+v1-vbr_quality) * Vbr.hb_thresh[modeid][v1];
+            thresh = (vbr_quality - v1)     * Vbr.hb_thresh[modeid][v1+1] + 
+                     (1 + v1 - vbr_quality) * Vbr.hb_thresh[modeid][v1];
           if (relative_quality >= thresh)
             break;
           modeid--;
@@ -340,20 +340,20 @@ public class SbEncoder
         {
           int bitrate;
           bitrate = getBitRate();
-          abr_drift+=(bitrate-abr_enabled);
-          abr_drift2 = .95f*abr_drift2 + .05f*(bitrate-abr_enabled);
-          abr_count += 1.0;
+          abr_drift += (bitrate - abr_enabled);
+          abr_drift2 = .95f * abr_drift2 + .05f * (bitrate - abr_enabled);
+          abr_count += 1.0f;
         }
       }
       else {
         /* VAD only */
         int modeid;
-        if (relative_quality<2.0)
-          modeid=1;
+        if (relative_quality < 2.0)
+          modeid = 1;
         else
-          modeid=submodeSelect;
+          modeid = submodeSelect;
         /*speex_encoder_ctl(state, SPEEX_SET_MODE, &mode);*/
-        submodeID=modeid;
+        submodeID = modeid;
 
       }
       /*fprintf (stderr, "%f %f\n", ratio, low_qual);*/
@@ -372,8 +372,8 @@ public class SbEncoder
         excBuf[excIdx+i]=swBuf[i]=VERY_SMALL;
 
       for (i=0; i<lpcSize; i++)
-        mem_sw[i]=0;
-      first=1;
+        mem_sw[i] = 0;
+      first = 1;
 
       /* Final signal synthesis from excitation */
       Filters.iir_mem2(excBuf, excIdx, interp_qlpc, high, 0, subframeSize, lpcSize, mem_sp);
@@ -383,7 +383,7 @@ public class SbEncoder
       filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
 
       for (i=0; i<fullFrameSize; i++)
-        in[i]=2*(y0[i]-y1[i]);
+        in[i] = 2 * (y0[i] - y1[i]);
 
       if (dtx != 0)
          return 0;
@@ -406,25 +406,25 @@ public class SbEncoder
     syn_resp = new float[subframeSize];
     innov    = new float[subframeSize];
 
-    for (int sub=0; sub<nbSubframes; sub++) {
+    for (int sub = 0; sub < nbSubframes; sub++) {
       float tmp, filter_ratio;
       int exc, sp, sw, resp;
       int offset;
-      float rl, rh, eh=0, el=0;
-      int fold;
+      float rl, rh, eh = 0, el = 0;
+//      int fold;
 
-      offset = subframeSize*sub;
-      sp=offset;
-      exc=excIdx+offset;
-      resp=offset;
-      sw=offset;
+      offset = subframeSize * sub;
+      sp = offset;
+      exc = excIdx + offset;
+      resp = offset;
+      sw = offset;
 
       /* LSP interpolation (quantized and unquantized) */
-      tmp = (1.0f + sub)/nbSubframes;
+      tmp = (1.0f + sub) / nbSubframes;
       for (i=0; i<lpcSize; i++)
-        interp_lsp[i] = (1-tmp)*old_lsp[i] + tmp*lsp[i];
+        interp_lsp[i] = (1 - tmp) * old_lsp[i] + tmp * lsp[i];
       for (i=0; i<lpcSize; i++)
-        interp_qlsp[i] = (1-tmp)*old_qlsp[i] + tmp*qlsp[i];
+        interp_qlsp[i] = (1 - tmp) * old_qlsp[i] + tmp * qlsp[i];
 
       Lsp.enforce_margin(interp_lsp, lpcSize, .05f);
       Lsp.enforce_margin(interp_qlsp, lpcSize, .05f);
@@ -443,52 +443,52 @@ public class SbEncoder
 
       /* Compute mid-band (4000 Hz for wideband) response of low-band and high-band
          filters */
-      rl=rh=0;
-      tmp=1;
-      pi_gain[sub]=0;
+      rl = rh = 0;
+      tmp = 1;
+      pi_gain[sub] = 0;
       for (i=0; i<=lpcSize; i++) {
-         rh += tmp*interp_qlpc[i];
+         rh += tmp * interp_qlpc[i];
          tmp = -tmp;
-         pi_gain[sub]+=interp_qlpc[i];
+         pi_gain[sub] += interp_qlpc[i];
       }
       rl = low_pi_gain[sub];
-      rl=1/(Math.abs(rl)+.01f);
-      rh=1/(Math.abs(rh)+.01f);
+      rl = 1 / (Math.abs(rl) + .01f);
+      rh = 1 / (Math.abs(rh) + .01f);
       /* Compute ratio, will help predict the gain */
-      filter_ratio=Math.abs(.01f+rh)/(.01f+Math.abs(rl));
+      filter_ratio = Math.abs(.01f + rh) / (.01f + Math.abs(rl));
 
-      fold = filter_ratio<5 ? 1 : 0;
+//      fold = filter_ratio<5 ? 1 : 0;
       /*printf ("filter_ratio %f\n", filter_ratio);*/
-      fold=0;
+//      fold=0;
 
       /* Compute "real excitation" */
       Filters.fir_mem2(high, sp, interp_qlpc, excBuf, exc, subframeSize, lpcSize, mem_sp2);
       /* Compute energy of low-band and high-band excitation */
       for (i=0; i<subframeSize; i++)
-         eh+=excBuf[exc+i]*excBuf[exc+i];
+         eh += excBuf[exc + i] * excBuf[exc + i];
 
       if (submodes[submodeID].innovation == null) {/* 1 for spectral folding excitation, 0 for stochastic */
         float g;
         /*speex_bits_pack(bits, 1, 1);*/
         for (i=0; i<subframeSize; i++)
-          el+=low_innov[offset+i]*low_innov[offset+i];
+          el += low_innov[offset + i] * low_innov[offset + i];
 
         /* Gain to use if we want to use the low-band excitation for high-band */
-        g=eh/(.01f+el);
-        g=(float) Math.sqrt(g);
+        g = eh / (.01f + el);
+        g = (float) Math.sqrt(g);
 
         g *= filter_ratio;
         /*print_vec(&g, 1, "gain factor");*/
         /* Gain quantization */
         {
-          int quant = (int) Math.floor(.5 + 10 + 8.0 * Math.log((g+.0001)));
+          int quant = (int) Math.floor(.5 + 10 + 8.0 * Math.log((g + .0001)));
           /*speex_warning_int("tata", quant);*/
-          if (quant<0)
-            quant=0;
-          if (quant>31)
-            quant=31;
+          if (quant < 0)
+            quant = 0;
+          if (quant > 31)
+            quant = 31;
           bits.pack(quant, 5);
-          g=(float)(.1*Math.exp(quant/9.4));
+          g=(float)(.1 * Math.exp(quant / 9.4));
         }
         /*printf ("folding gain: %f\n", g);*/
         g /= filter_ratio;
@@ -497,59 +497,59 @@ public class SbEncoder
         float gc, scale, scale_1;
 
         for (i=0; i<subframeSize; i++)
-          el+=low_exc[offset+i]*low_exc[offset+i];
+          el += low_exc[offset + i] * low_exc[offset + i];
         /*speex_bits_pack(bits, 0, 1);*/
 
         gc = (float) (Math.sqrt(1+eh)*filter_ratio/Math.sqrt((1+el)*subframeSize));
         {
-          int qgc = (int)Math.floor(.5+3.7*(Math.log(gc)+2));
-          if (qgc<0)
-            qgc=0;
-          if (qgc>15)
-            qgc=15;
+          int qgc = (int)Math.floor(.5 + 3.7 * (Math.log(gc) + 2));
+          if (qgc < 0)
+            qgc = 0;
+          if (qgc > 15)
+            qgc = 15;
           bits.pack(qgc, 4);
-          gc = (float) Math.exp((1/3.7)*qgc-2);
+          gc = (float) Math.exp((1 / 3.7) * qgc - 2);
         }
 
-        scale = gc*(float)Math.sqrt(1+el)/filter_ratio;
-        scale_1 = 1/scale;
+        scale = gc * (float)Math.sqrt(1 + el) / filter_ratio;
+        scale_1 = 1 / scale;
 
         for (i=0; i<subframeSize; i++)
-          excBuf[exc+i]=0;
-        excBuf[exc]=1;
+          excBuf[exc + i] = 0;
+        excBuf[exc] = 1;
         Filters.syn_percep_zero(excBuf, exc, interp_qlpc, bw_lpc1, bw_lpc2, syn_resp, subframeSize, lpcSize);
 
         /* Reset excitation */
         for (i=0; i<subframeSize; i++)
-          excBuf[exc+i]=0;
+          excBuf[exc + i] = 0;
         
         /* Compute zero response (ringing) of A(z/g1) / ( A(z/g2) * Aq(z) ) */
         for (i=0; i<lpcSize; i++)
-          mem[i]=mem_sp[i];
+          mem[i] = mem_sp[i];
         Filters.iir_mem2(excBuf, exc, interp_qlpc, excBuf, exc, subframeSize, lpcSize, mem);
 
         for (i=0; i<lpcSize; i++)
-          mem[i]=mem_sw[i];
+          mem[i] = mem_sw[i];
         Filters.filter_mem2(excBuf, exc, bw_lpc1, bw_lpc2, res, resp, subframeSize, lpcSize, mem, 0);
 
         /* Compute weighted signal */
         for (i=0; i<lpcSize; i++)
-          mem[i]=mem_sw[i];
+          mem[i] = mem_sw[i];
         Filters.filter_mem2(high, sp, bw_lpc1, bw_lpc2, swBuf, sw, subframeSize, lpcSize, mem, 0);
 
         /* Compute target signal */
         for (i=0; i<subframeSize; i++)
-          target[i]=swBuf[sw+i]-res[resp+i];
+          target[i] = swBuf[sw + i] - res[resp+i];
 
         for (i=0; i<subframeSize; i++)
-          excBuf[exc+i]=0;
+          excBuf[exc+i] = 0;
 
         for (i=0; i<subframeSize; i++)
-          target[i]*=scale_1;
+          target[i] *= scale_1;
         
         /* Reset excitation */
         for (i=0; i<subframeSize; i++)
-          innov[i]=0;
+          innov[i] = 0;
 
         /*print_vec(target, st->subframeSize, "\ntarget");*/
         submodes[submodeID].innovation.quant(target, interp_qlpc, bw_lpc1, bw_lpc2, 
@@ -558,19 +558,19 @@ public class SbEncoder
         /*print_vec(target, st->subframeSize, "after");*/
 
         for (i=0; i<subframeSize; i++)
-          excBuf[exc+i] += innov[i]*scale;
+          excBuf[exc+i] += innov[i] * scale;
 
         if (submodes[submodeID].double_codebook != 0) {
           float[] innov2 = new float[subframeSize];
           for (i=0; i<subframeSize; i++)
-            innov2[i]=0;
+            innov2[i] = 0;
           for (i=0; i<subframeSize; i++)
-            target[i]*=2.5;
+            target[i] *= 2.5f;
           submodes[submodeID].innovation.quant(target, interp_qlpc, bw_lpc1, bw_lpc2, 
                                                lpcSize, subframeSize, innov2, 0, syn_resp, 
                                                bits, (complexity+1)>>1);
           for (i=0; i<subframeSize; i++)
-            innov2[i]*=scale*(1/2.5);
+            innov2[i] *= scale * (1f / 2.5f);
           for (i=0; i<subframeSize; i++)
             excBuf[exc+i] += innov2[i];
         }
@@ -578,7 +578,7 @@ public class SbEncoder
 
       /*Keep the previous memory*/
       for (i=0; i<lpcSize; i++)
-        mem[i]=mem_sp[i];
+        mem[i] = mem_sp[i];
       /* Final signal synthesis from excitation */
       Filters.iir_mem2(excBuf, exc, interp_qlpc, high, sp, subframeSize, lpcSize, mem_sp);
                
@@ -592,13 +592,13 @@ public class SbEncoder
     filters.fir_mem_up(high, h1, y1, fullFrameSize, QMF_ORDER, g1_mem);
 
     for (i=0; i<fullFrameSize; i++)
-      in[i]=2*(y0[i]-y1[i]);
+      in[i] = 2 * (y0[i] - y1[i]);
 //#endif
     for (i=0; i<lpcSize; i++)
       old_lsp[i] = lsp[i];
     for (i=0; i<lpcSize; i++)
       old_qlsp[i] = qlsp[i];
-    first=0;
+    first = 0;
     return 1;
   }
   
@@ -647,12 +647,12 @@ public class SbEncoder
   {
     vbr_quality = quality;
     float qual = quality + 0.6f;
-    if (qual>10)
-      qual=10;
+    if (qual > 10)
+      qual = 10;
     lowenc.setVbrQuality(qual);
-    int q = (int)Math.floor(.5+quality);
-    if (q>10)
-      q=10;
+    int q = (int)Math.floor(.5 + quality);
+    if (q > 10)
+      q = 10;
     setQuality(q);
   }
   
@@ -660,7 +660,7 @@ public class SbEncoder
    * Sets whether or not to use Variable Bit Rate encoding.
    * @param vbr
    */
-  public void    setVbr(final boolean vbr)
+  public void setVbr(final boolean vbr)
   {
 //    super.setVbr(vbr);
     vbr_enabled = vbr ? 1 : 0;
@@ -671,17 +671,17 @@ public class SbEncoder
    * Sets the Average Bit Rate.
    * @param abr
    */
-  public void    setAbr(final int abr)
+  public void setAbr(final int abr)
   {
     lowenc.setVbr(true);
 //    super.setAbr(abr);
-    abr_enabled = (abr!=0) ? 1 : 0;
+    abr_enabled = (abr != 0) ? 1 : 0;
     vbr_enabled = 1;
     {
-      int i=10, rate, target;
+      int i = 10, rate, target;
       float vbr_qual;
       target = abr;
-      while (i>=0)
+      while (i >= 0)
       {
         setQuality(i);
         rate = getBitRate();
@@ -689,13 +689,13 @@ public class SbEncoder
           break;
         i--;
       }
-      vbr_qual=i;
-      if (vbr_qual<0)
-        vbr_qual=0;
+      vbr_qual = i;
+      if (vbr_qual < 0)
+        vbr_qual = 0;
       setVbrQuality(vbr_qual);
-      abr_count=0;
-      abr_drift=0;
-      abr_drift2=0;
+      abr_count = 0;
+      abr_drift = 0;
+      abr_drift2 = 0;
     }
   }
 
@@ -706,9 +706,11 @@ public class SbEncoder
   public int getBitRate()
   {
     if (submodes[submodeID] != null)
-      return lowenc.getBitRate() + sampling_rate*submodes[submodeID].bits_per_frame/frameSize;
+      return lowenc.getBitRate() +
+             sampling_rate * submodes[submodeID].bits_per_frame / frameSize;
     else
-      return lowenc.getBitRate() + sampling_rate*(SB_SUBMODE_BITS+1)/frameSize;
+      return lowenc.getBitRate() +
+             sampling_rate * (SB_SUBMODE_BITS + 1) / frameSize;
   }
   
   /**
@@ -728,7 +730,7 @@ public class SbEncoder
    */
   public int getLookAhead()
   {
-    return 2*lowenc.getLookAhead() + QMF_ORDER - 1;
+    return 2 * lowenc.getLookAhead() + QMF_ORDER - 1;
   }
 
   /**
@@ -768,7 +770,7 @@ public class SbEncoder
    */
   public void setBitRate(final int bitrate)
   {
-    for (int i=10; i>=0; i--) {
+    for (int i = 10; i>= 0; i--) {
       setQuality(i);
       if (getBitRate() <= bitrate)
         return;

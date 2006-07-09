@@ -129,6 +129,6 @@ public class Inband
     throws StreamCorruptedException
   {
     int req_size = bits.unpack(4);
-    bits.advance(5+8*req_size);
+    bits.advance(5 + 8 * req_size);
   }
 }

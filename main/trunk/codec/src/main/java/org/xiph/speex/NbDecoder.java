@@ -527,7 +527,7 @@ public class NbDecoder
     if (pitch_gain>.95f)
       pitch_gain=.95f;
 
-    pitch_gain *= fact;
+    pitch_gain = pitch_gain * fact + VERY_SMALL;
    
     /* Shift all buffers by one frame */
     System.arraycopy(frmBuf, frameSize, frmBuf, 0, bufSize-frameSize);
@@ -578,12 +578,14 @@ public class NbDecoder
 //          /*rand();*/
 //#else
           /*excBuf[extIdx+i] = pitch_gain*excBuf[extIdx+i-last_pitch] + fact*innov[i+offset];*/
-          excBuf[extIdx+i] = pitch_gain*excBuf[extIdx+i-last_pitch] + fact*((float)Math.sqrt(1-pitch_gain))*3*innov_gain*((random.nextFloat())-0.5f);
+          excBuf[extIdx+i] = pitch_gain * (excBuf[extIdx + i - last_pitch] + VERY_SMALL) +
+                             fact * ((float)Math.sqrt(1 - pitch_gain)) *
+                             3 * innov_gain * ((random.nextFloat()) - 0.5f);
 //#endif
         }
       }
       for (i=0;i<subframeSize;i++)
-        frmBuf[spIdx+i]=excBuf[extIdx+i];
+        frmBuf[spIdx+i] = excBuf[extIdx+i] + VERY_SMALL;
 
       /* Signal synthesis */
       if (enhanced) {
