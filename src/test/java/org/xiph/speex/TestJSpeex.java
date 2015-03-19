@@ -36,12 +36,12 @@
 
 package org.xiph.speex;
 
-import java.util.Arrays;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 /**
  * JUnit Tests for JSpeex

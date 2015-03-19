@@ -36,26 +36,14 @@
 
 package org.xiph.speex.spi;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.SequenceInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.net.URL;
-
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.sound.sampled.spi.AudioFileReader;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xiph.speex.OggCrc;
+
+import javax.sound.sampled.*;
+import javax.sound.sampled.spi.AudioFileReader;
+import java.io.*;
+import java.net.URL;
 
 /**
  * Provider for Speex audio file reading services.
