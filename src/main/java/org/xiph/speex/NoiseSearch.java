@@ -36,23 +36,23 @@
 
 /* $Id$ */
 
-/* Copyright (C) 2002 Jean-Marc Valin 
+/* Copyright (C) 2002 Jean-Marc Valin
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
-   
+
    - Redistributions of source code must retain the above copyright
    notice, this list of conditions and the following disclaimer.
-   
+
    - Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-   
+
    - Neither the name of the Xiph.org Foundation nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-   
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -70,53 +70,52 @@ package org.xiph.speex;
 
 /**
  * Noise codebook search
- * 
+ *
  * @author Jim Lawrence, helloNetwork.com
  * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class NoiseSearch
-  extends CbSearch
-{
-  /**
-   * Codebook Search Quantification (Noise).
-   * @param target   target vector
-   * @param ak       LPCs for this subframe
-   * @param awk1     Weighted LPCs for this subframe
-   * @param awk2     Weighted LPCs for this subframe
-   * @param p        number of LPC coeffs
-   * @param nsf      number of samples in subframe
-   * @param exc      excitation array.
-   * @param es       position in excitation array.
-   * @param r
-   * @param bits     Speex bits buffer.
-   * @param complexity
-   */
-  public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
-                          int p, int nsf, float[] exc, int es, float[] r,
-                          Bits bits, int complexity)
-  {
-    int i;
-    float[] tmp=new float[nsf];
-    Filters.residue_percep_zero(target, 0, ak, awk1, awk2, tmp, nsf, p);
+        extends CbSearch {
+    /**
+     * Codebook Search Quantification (Noise).
+     *
+     * @param target     target vector
+     * @param ak         LPCs for this subframe
+     * @param awk1       Weighted LPCs for this subframe
+     * @param awk2       Weighted LPCs for this subframe
+     * @param p          number of LPC coeffs
+     * @param nsf        number of samples in subframe
+     * @param exc        excitation array.
+     * @param es         position in excitation array.
+     * @param r
+     * @param bits       Speex bits buffer.
+     * @param complexity
+     */
+    public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
+                            int p, int nsf, float[] exc, int es, float[] r,
+                            Bits bits, int complexity) {
+        int i;
+        float[] tmp = new float[nsf];
+        Filters.residue_percep_zero(target, 0, ak, awk1, awk2, tmp, nsf, p);
 
-    for (i = 0; i < nsf; i++)
-      exc[es + i] += tmp[i];
-    for (i = 0; i < nsf; i++)
-      target[i] = 0;
-  }
-
-  /**
-   * Codebook Search Unquantification (Noise).
-   * @param exc - excitation array.
-   * @param es - position in excitation array.
-   * @param nsf - number of samples in subframe.
-   * @param bits - Speex bits buffer.
-   */
-  public final void unquant(float[] exc, int es, int nsf, Bits bits)
-  {
-    for (int i=0; i<nsf; i++) {
-      exc[es+i] += (float) (3.0 * (Math.random() - .5));
+        for (i = 0; i < nsf; i++)
+            exc[es + i] += tmp[i];
+        for (i = 0; i < nsf; i++)
+            target[i] = 0;
     }
-  }
+
+    /**
+     * Codebook Search Unquantification (Noise).
+     *
+     * @param exc  - excitation array.
+     * @param es   - position in excitation array.
+     * @param nsf  - number of samples in subframe.
+     * @param bits - Speex bits buffer.
+     */
+    public final void unquant(float[] exc, int es, int nsf, Bits bits) {
+        for (int i = 0; i < nsf; i++) {
+            exc[es + i] += (float) (3.0 * (Math.random() - .5));
+        }
+    }
 }

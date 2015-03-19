@@ -36,23 +36,23 @@
 
 /* $Id$ */
 
-/* Copyright (C) 2002 Jean-Marc Valin 
+/* Copyright (C) 2002 Jean-Marc Valin
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
-   
+
    - Redistributions of source code must retain the above copyright
    notice, this list of conditions and the following disclaimer.
-   
+
    - Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-   
+
    - Neither the name of the Xiph.org Foundation nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-   
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -73,72 +73,80 @@ import java.io.StreamCorruptedException;
 /**
  * Speex Decoder inteface, used as a base for the Narrowband and sideband
  * decoders.
- * 
+ *
  * @author Jim Lawrence, helloNetwork.com
  * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
-public interface Decoder
-{
-  /**
-   * Decode the given input bits.
-   * @param bits - Speex bits buffer.
-   * @param out - the decoded mono audio frame.
-   * @return 1 if a terminator was found, 0 if not.
-   * @throws StreamCorruptedException If there is an error detected in the
-   * data stream.
-   */
-  public int decode(Bits bits, float[] out)
-    throws StreamCorruptedException;
-  
-  /**
-   * Decode the given bits to stereo.
-   * @param data - float array of size 2*frameSize, that contains the mono
-   * audio samples in the first half. When the function has completed, the
-   * array will contain the interlaced stereo audio samples.
-   * @param frameSize - the size of a frame of mono audio samples.
-   */
-  public void decodeStereo(float[] data, int frameSize);
+public interface Decoder {
+    /**
+     * Decode the given input bits.
+     *
+     * @param bits - Speex bits buffer.
+     * @param out  - the decoded mono audio frame.
+     * @return 1 if a terminator was found, 0 if not.
+     * @throws StreamCorruptedException If there is an error detected in the
+     *                                  data stream.
+     */
+    public int decode(Bits bits, float[] out)
+            throws StreamCorruptedException;
 
-  /**
-   * Enables or disables perceptual enhancement.
-   * @param enhanced
-   */
-  public void setPerceptualEnhancement(boolean enhanced);
-  
-  /**
-   * Returns whether perceptual enhancement is enabled or disabled.
-   * @return whether perceptual enhancement is enabled or disabled.
-   */
-  public boolean getPerceptualEnhancement();
+    /**
+     * Decode the given bits to stereo.
+     *
+     * @param data      - float array of size 2*frameSize, that contains the mono
+     *                  audio samples in the first half. When the function has completed, the
+     *                  array will contain the interlaced stereo audio samples.
+     * @param frameSize - the size of a frame of mono audio samples.
+     */
+    public void decodeStereo(float[] data, int frameSize);
 
-  /**
-   * Returns the size of a frame.
-   * @return the size of a frame.
-   */
-  public int  getFrameSize();
+    /**
+     * Enables or disables perceptual enhancement.
+     *
+     * @param enhanced
+     */
+    public void setPerceptualEnhancement(boolean enhanced);
 
-  /**
-   * Returns whether or not we are using Discontinuous Transmission encoding.
-   * @return whether or not we are using Discontinuous Transmission encoding.
-   */
-  public boolean getDtx();
+    /**
+     * Returns whether perceptual enhancement is enabled or disabled.
+     *
+     * @return whether perceptual enhancement is enabled or disabled.
+     */
+    public boolean getPerceptualEnhancement();
 
-  /**
-   * Returns the Pitch Gain array.
-   * @return the Pitch Gain array.
-   */
-  public float[] getPiGain();
+    /**
+     * Returns the size of a frame.
+     *
+     * @return the size of a frame.
+     */
+    public int getFrameSize();
 
-  /**
-   * Returns the excitation array.
-   * @return the excitation array.
-   */
-  public float[] getExc();
-  
-  /**
-   * Returns the innovation array.
-   * @return the innovation array.
-   */
-  public float[] getInnov();
+    /**
+     * Returns whether or not we are using Discontinuous Transmission encoding.
+     *
+     * @return whether or not we are using Discontinuous Transmission encoding.
+     */
+    public boolean getDtx();
+
+    /**
+     * Returns the Pitch Gain array.
+     *
+     * @return the Pitch Gain array.
+     */
+    public float[] getPiGain();
+
+    /**
+     * Returns the excitation array.
+     *
+     * @return the excitation array.
+     */
+    public float[] getExc();
+
+    /**
+     * Returns the innovation array.
+     *
+     * @return the innovation array.
+     */
+    public float[] getInnov();
 }

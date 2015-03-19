@@ -47,68 +47,65 @@ import junit.framework.TestSuite;
  * @version $Revision$
  */
 public class TestInputStreams
-  extends TestCase
-{
-  /**
-   * Constructor
-   * @param arg0
-   */
-  public TestInputStreams(String arg0) {
-    super(arg0);
-  }
-  
-  /**
-   * Command line entrance.
-   * @param args
-   */
-  public static void main(String[] args)
-  {
-    junit.textui.TestRunner.run(TestInputStreams.suite());
-  }
-  
-  ///////////////////////////////////////////////////////////////////////////
-  // TestCase classes to override
-  ///////////////////////////////////////////////////////////////////////////
+        extends TestCase {
+    /**
+     * Constructor
+     *
+     * @param arg0
+     */
+    public TestInputStreams(String arg0) {
+        super(arg0);
+    }
 
-  /**
-   * 
-   */
-  protected void setUp()
-  {
-  }
-  
-  /**
-   * 
-   */
-  protected void tearDown()
-  {
-  }
-  
-  /**
-   * 
-   */
+    /**
+     * Command line entrance.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TestInputStreams.suite());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // TestCase classes to override
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     *
+     */
+    protected void setUp() {
+    }
+
+    /**
+     *
+     */
+    protected void tearDown() {
+    }
+
+    /**
+     *
+     */
 //  protected void runTest()
 //  {
 //  }
-  
-  /**
-   * Builds the Test Suite.
-   * @return the Test Suite.
-   */
-  public static Test suite()
-  {
-    return new TestSuite(TestInputStreams.class);
-  }
-  
-  ///////////////////////////////////////////////////////////////////////////
-  // Tests
-  ///////////////////////////////////////////////////////////////////////////
-  
-  /**
-   * Test
-   */
-  public void testSuccess()
-  {
-    assertTrue("It failed", true);
-  }
+
+    /**
+     * Builds the Test Suite.
+     *
+     * @return the Test Suite.
+     */
+    public static Test suite() {
+        return new TestSuite(TestInputStreams.class);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Tests
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Test
+     */
+    public void testSuccess() {
+        assertTrue("It failed", true);
+    }
 }

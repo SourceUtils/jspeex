@@ -50,120 +50,115 @@ import javax.sound.sampled.AudioSystem;
  * @version $Revision$
  */
 public class TestJSpeexSPI
-  extends TestCase
-{
-  /**
-   * Constructor
-   * @param arg0
-   */
-  public TestJSpeexSPI(String arg0) {
-    super(arg0);
-  }
+        extends TestCase {
+    /**
+     * Constructor
+     *
+     * @param arg0
+     */
+    public TestJSpeexSPI(String arg0) {
+        super(arg0);
+    }
 
-  /**
-   * Command line entrance.
-   * @param args
-   */
-  public static void main(String[] args)
-  {
-    junit.textui.TestRunner.run(TestJSpeexSPI.suite());
-  }
+    /**
+     * Command line entrance.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TestJSpeexSPI.suite());
+    }
 
-  ///////////////////////////////////////////////////////////////////////////
-  // TestCase classes to override
-  ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // TestCase classes to override
+    ///////////////////////////////////////////////////////////////////////////
 
-  /**
-   *
-   */
-  protected void setUp()
-  {
-  }
+    /**
+     *
+     */
+    protected void setUp() {
+    }
 
-  /**
-   *
-   */
-  protected void tearDown()
-  {
-  }
+    /**
+     *
+     */
+    protected void tearDown() {
+    }
 
-  /**
-   *
-   */
+    /**
+     *
+     */
 //  protected void runTest()
 //  {
 //  }
 
-  /**
-   * Builds the Test Suite.
-   * @return the Test Suite.
-   */
-  public static Test suite()
-  {
-    return new TestSuite(TestJSpeexSPI.class);
-  }
+    /**
+     * Builds the Test Suite.
+     *
+     * @return the Test Suite.
+     */
+    public static Test suite() {
+        return new TestSuite(TestJSpeexSPI.class);
+    }
 
-  ///////////////////////////////////////////////////////////////////////////
-  // Tests
-  ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // Tests
+    ///////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Test
-   */
-  public void testSuccess()
-  {
-    assertTrue("It failed", true);
-  }
+    /**
+     * Test
+     */
+    public void testSuccess() {
+        assertTrue("It failed", true);
+    }
 
-  /**
-   * Test
-   */
-  public void testFileSupport()
-  {
-    assertTrue("Speex File Format not supported by JavaSound",
-               AudioSystem.isFileTypeSupported(SpeexFileFormatType.SPEEX));
-  }
+    /**
+     * Test
+     */
+    public void testFileSupport() {
+        assertTrue("Speex File Format not supported by JavaSound",
+                AudioSystem.isFileTypeSupported(SpeexFileFormatType.SPEEX));
+    }
 
-  /**
-   * Test
-   */
-  public void testConversionSupport()
-  {
-    assertTrue("Conversion to Speex Q0 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q0,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q1 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q1,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q2 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q2,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q3 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q3,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q4 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q4,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q5 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q5,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q6 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q6,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q7 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q7,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q8 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q8,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q9 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q9,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion to Speex Q10 not supported by JavaSound",
-               AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q10,
-                                                 new AudioFormat(8000, 16, 1, true, false)));
-    assertTrue("Conversion from Speex not supported by JavaSound",
-               AudioSystem.isConversionSupported(AudioFormat.Encoding.PCM_SIGNED,
-                                                 new AudioFormat(SpeexEncoding.SPEEX, 8000, -1, 1, -1, -1, false)));
-  }
+    /**
+     * Test
+     */
+    public void testConversionSupport() {
+        assertTrue("Conversion to Speex Q0 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q0,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q1 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q1,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q2 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q2,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q3 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q3,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q4 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q4,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q5 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q5,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q6 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q6,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q7 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q7,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q8 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q8,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q9 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q9,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion to Speex Q10 not supported by JavaSound",
+                AudioSystem.isConversionSupported(SpeexEncoding.SPEEX_Q10,
+                        new AudioFormat(8000, 16, 1, true, false)));
+        assertTrue("Conversion from Speex not supported by JavaSound",
+                AudioSystem.isConversionSupported(AudioFormat.Encoding.PCM_SIGNED,
+                        new AudioFormat(SpeexEncoding.SPEEX, 8000, -1, 1, -1, -1, false)));
+    }
 }

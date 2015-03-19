@@ -48,67 +48,66 @@ import java.io.FileOutputStream;
  * @version $Revision$
  */
 public class RawWriter
-  extends AudioFileWriter
-{
-  private OutputStream out;
+        extends AudioFileWriter {
+    private OutputStream out;
 
-  /**
-   * Closes the output file.
-   * @exception IOException if there was an exception closing the Audio Writer.
-   */
-  public void close()
-    throws IOException 
-  {
-    out.close(); 
-  }
-  
-  /**
-   * Open the output file. 
-   * @param file - file to open.
-   * @exception IOException if there was an exception opening the Audio Writer.
-   */
-  public void open(final File file)
-    throws IOException
-  {
-    file.delete(); 
-    out = new FileOutputStream(file);
-  }
+    /**
+     * Closes the output file.
+     *
+     * @throws IOException if there was an exception closing the Audio Writer.
+     */
+    public void close()
+            throws IOException {
+        out.close();
+    }
 
-  /**
-   * Open the output file. 
-   * @param filename - file to open.
-   * @exception IOException if there was an exception opening the Audio Writer.
-   */
-  public void open(final String filename)
-    throws IOException 
-  {
-    open(new File(filename)); 
-  }
+    /**
+     * Open the output file.
+     *
+     * @param file - file to open.
+     * @throws IOException if there was an exception opening the Audio Writer.
+     */
+    public void open(final File file)
+            throws IOException {
+        file.delete();
+        out = new FileOutputStream(file);
+    }
 
-  /**
-   * Writes the header pages that start the Ogg Speex file. 
-   * Prepares file for data to be written.
-   * @param comment description to be included in the header.
-   * @exception IOException
-   */
-  public void writeHeader(final String comment)
-    throws IOException
-  {
-    // a raw audio file has no header
-  }
+    /**
+     * Open the output file.
+     *
+     * @param filename - file to open.
+     * @throws IOException if there was an exception opening the Audio Writer.
+     */
+    public void open(final String filename)
+            throws IOException {
+        open(new File(filename));
+    }
 
-  /**
-   * Writes a packet of audio. 
-   * @param data audio data
-   * @param offset the offset from which to start reading the data.
-   * @param len the length of data to read.
-   * @exception IOException
-   */
-  public void writePacket(final byte[] data,
-                          final int offset,
-                          final int len)
-    throws IOException 
-  {
-    out.write(data, offset, len);
-  }
+    /**
+     * Writes the header pages that start the Ogg Speex file.
+     * Prepares file for data to be written.
+     *
+     * @param comment description to be included in the header.
+     * @throws IOException
+     */
+    public void writeHeader(final String comment)
+            throws IOException {
+        // a raw audio file has no header
+    }
+
+    /**
+     * Writes a packet of audio.
+     *
+     * @param data   audio data
+     * @param offset the offset from which to start reading the data.
+     * @param len    the length of data to read.
+     * @throws IOException
+     */
+    public void writePacket(final byte[] data,
+                            final int offset,
+                            final int len)
+            throws IOException {
+        out.write(data, offset, len);
+    }
 }

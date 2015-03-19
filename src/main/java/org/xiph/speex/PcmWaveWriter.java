@@ -43,16 +43,16 @@ import java.io.RandomAccessFile;
 
 /**
  * Writes basic PCM wave files from binary audio data.
- *
+ * <p/>
  * <p>Here's an example that writes 2 seconds of silence
  * <pre>
  * PcmWaveWriter s_wsw = new PcmWaveWriter(2, 44100);
  * byte[] silence = new byte[16*2*44100];
  * wsw.Open("C:\\out.wav");
- * wsw.WriteHeader(); 
+ * wsw.WriteHeader();
  * wsw.WriteData(silence, 0, silence.length);
  * wsw.WriteData(silence, 0, silence.length);
- * wsw.Close(); 
+ * wsw.Close();
  * </pre>
  *
  * @author Jim Lawrence, helloNetwork.com
@@ -60,280 +60,291 @@ import java.io.RandomAccessFile;
  * @version $Revision$
  */
 public class PcmWaveWriter
-  extends AudioFileWriter
-{
-  /** Wave type code of PCM */
-  public static final short WAVE_FORMAT_PCM   = (short) 0x01;
-  /** Wave type code of Speex */
-  public static final short WAVE_FORMAT_SPEEX = (short) 0xa109;
+        extends AudioFileWriter {
+    /**
+     * Wave type code of PCM
+     */
+    public static final short WAVE_FORMAT_PCM = (short) 0x01;
+    /**
+     * Wave type code of Speex
+     */
+    public static final short WAVE_FORMAT_SPEEX = (short) 0xa109;
 
-  /**
-   * Table describing the number of frames per packet in a Speex Wave file,
-   * depending on its mode-1 (1=NB, 2=WB, 3=UWB), channels-1 (1=mono, 2=stereo)
-   * and the quality setting (0 to 10).
-   * See end of file for exerpt from SpeexACM code for more explanations.
-   */
-  public static final int[][][] WAVE_FRAME_SIZES = new int[][][]
-    {{{8, 8, 8, 1, 1, 2, 2, 2, 2, 2, 2},   // NB mono
-      {2, 1, 1, 7, 7, 8, 8, 8, 8, 3, 3}},  // NB stereo
-     {{8, 8, 8, 2, 1, 1, 2, 2, 2, 2, 2},   // WB mono
-      {1, 2, 2, 8, 7, 6, 3, 3, 3, 3, 3}},  // WB stereo
-     {{8, 8, 8, 1, 2, 2, 1, 1, 1, 1, 1},   // UWB mono
-      {2, 1, 1, 7, 8, 3, 6, 6, 5, 5, 5}}}; // UWB stereo
+    /**
+     * Table describing the number of frames per packet in a Speex Wave file,
+     * depending on its mode-1 (1=NB, 2=WB, 3=UWB), channels-1 (1=mono, 2=stereo)
+     * and the quality setting (0 to 10).
+     * See end of file for exerpt from SpeexACM code for more explanations.
+     */
+    public static final int[][][] WAVE_FRAME_SIZES = new int[][][]
+            {{{8, 8, 8, 1, 1, 2, 2, 2, 2, 2, 2},   // NB mono
+                    {2, 1, 1, 7, 7, 8, 8, 8, 8, 3, 3}},  // NB stereo
+                    {{8, 8, 8, 2, 1, 1, 2, 2, 2, 2, 2},   // WB mono
+                            {1, 2, 2, 8, 7, 6, 3, 3, 3, 3, 3}},  // WB stereo
+                    {{8, 8, 8, 1, 2, 2, 1, 1, 1, 1, 1},   // UWB mono
+                            {2, 1, 1, 7, 8, 3, 6, 6, 5, 5, 5}}}; // UWB stereo
 
-  /**
-   * Table describing the number of bit per Speex frame, depending on its
-   * mode-1 (1=NB, 2=WB, 3=UWB), channels-1 (1=mono, 2=stereo) and the quality
-   * setting (0 to 10).
-   * See end of file for exerpt from SpeexACM code for more explanations.
-   */
-  public static final int[][][] WAVE_BITS_PER_FRAME = new int[][][]
-    {{{ 43,  79, 119, 160, 160, 220, 220, 300, 300, 364, 492},   // NB mono
-      { 60,  96, 136, 177, 177, 237, 237, 317, 317, 381, 509}},  // NB stereo
-     {{ 79, 115, 155, 196, 256, 336, 412, 476, 556, 684, 844},   // WB mono
-      { 96, 132, 172, 213, 273, 353, 429, 493, 573, 701, 861}},  // WB stereo
-     {{ 83, 151, 191, 232, 292, 372, 448, 512, 592, 720, 880},   // UWB mono
-      {100, 168, 208, 249, 309, 389, 465, 529, 609, 737, 897}}}; // UWB stereo
+    /**
+     * Table describing the number of bit per Speex frame, depending on its
+     * mode-1 (1=NB, 2=WB, 3=UWB), channels-1 (1=mono, 2=stereo) and the quality
+     * setting (0 to 10).
+     * See end of file for exerpt from SpeexACM code for more explanations.
+     */
+    public static final int[][][] WAVE_BITS_PER_FRAME = new int[][][]
+            {{{43, 79, 119, 160, 160, 220, 220, 300, 300, 364, 492},   // NB mono
+                    {60, 96, 136, 177, 177, 237, 237, 317, 317, 381, 509}},  // NB stereo
+                    {{79, 115, 155, 196, 256, 336, 412, 476, 556, 684, 844},   // WB mono
+                            {96, 132, 172, 213, 273, 353, 429, 493, 573, 701, 861}},  // WB stereo
+                    {{83, 151, 191, 232, 292, 372, 448, 512, 592, 720, 880},   // UWB mono
+                            {100, 168, 208, 249, 309, 389, 465, 529, 609, 737, 897}}}; // UWB stereo
 
-  private RandomAccessFile raf; 
-  /** Defines the encoder mode (0=NB, 1=WB and 2-UWB). */
-  private int     mode;
-  /** */
-  private int     quality;
-  /** Defines the sampling rate of the audio input. */
-  private int     sampleRate;
-  /** Defines the number of channels of the audio input (1=mono, 2=stereo). */
-  private int     channels;
-  /** Defines the number of frames per speex packet. */
-  private int     nframes;
-  /** Defines whether or not to use VBR (Variable Bit Rate). */
-  private boolean vbr;
-  /** */
-  private int size;
-  /** */
-  private boolean isPCM;
-  
-  /**
-   * Constructor. 
-   */
-  public PcmWaveWriter()
-  {
-    size = 0;
-  }
+    private RandomAccessFile raf;
+    /**
+     * Defines the encoder mode (0=NB, 1=WB and 2-UWB).
+     */
+    private int mode;
+    /** */
+    private int quality;
+    /**
+     * Defines the sampling rate of the audio input.
+     */
+    private int sampleRate;
+    /**
+     * Defines the number of channels of the audio input (1=mono, 2=stereo).
+     */
+    private int channels;
+    /**
+     * Defines the number of frames per speex packet.
+     */
+    private int nframes;
+    /**
+     * Defines whether or not to use VBR (Variable Bit Rate).
+     */
+    private boolean vbr;
+    /** */
+    private int size;
+    /** */
+    private boolean isPCM;
 
-  /**
-   * Constructor. 
-   * @param sampleRate the number of samples per second.
-   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
-   */
-  public PcmWaveWriter(final int sampleRate, final int channels)
-  {
-    this();
-    setPCMFormat(sampleRate, channels);
-  }
+    /**
+     * Constructor.
+     */
+    public PcmWaveWriter() {
+        size = 0;
+    }
 
-  /**
-   * Constructor. 
-   * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
-   * @param quality
-   * @param sampleRate the number of samples per second.
-   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
-   * @param nframes    the number of frames per speex packet.
-   * @param vbr
-   */
-  public PcmWaveWriter(final int mode,
-                       final int quality,
-                       final int sampleRate,
-                       final int channels,
-                       final int nframes,
-                       final boolean vbr)
-  {
-    this();
-    setSpeexFormat(mode, quality, sampleRate, channels, nframes, vbr);
-  }
+    /**
+     * Constructor.
+     *
+     * @param sampleRate the number of samples per second.
+     * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+     */
+    public PcmWaveWriter(final int sampleRate, final int channels) {
+        this();
+        setPCMFormat(sampleRate, channels);
+    }
 
-  /**
-   * Sets the output format for a PCM Wave file.
-   * Must be called before WriteHeader().
-   * @param sampleRate the number of samples per second.
-   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
-   */
-  private void setPCMFormat(final int sampleRate, final int channels)
-  {
-    this.channels   = channels;
-    this.sampleRate = sampleRate;
-    isPCM = true;
-  }
+    /**
+     * Constructor.
+     *
+     * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
+     * @param quality
+     * @param sampleRate the number of samples per second.
+     * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+     * @param nframes    the number of frames per speex packet.
+     * @param vbr
+     */
+    public PcmWaveWriter(final int mode,
+                         final int quality,
+                         final int sampleRate,
+                         final int channels,
+                         final int nframes,
+                         final boolean vbr) {
+        this();
+        setSpeexFormat(mode, quality, sampleRate, channels, nframes, vbr);
+    }
 
-  /**
-   * Sets the output format for a Speex Wave file.
-   * Must be called before WriteHeader().
-   * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
-   * @param quality    
-   * @param sampleRate the number of samples per second.
-   * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
-   * @param nframes    the number of frames per speex packet.
-   * @param vbr
-   */
-  private void setSpeexFormat(final int mode,
-                              final int quality,
-                              final int sampleRate,
-                              final int channels,
-                              final int nframes,
-                              final boolean vbr)
-  {
-    this.mode       = mode;
-    this.quality    = quality;
-    this.sampleRate = sampleRate;
-    this.channels   = channels;
-    this.nframes    = nframes;
-    this.vbr        = vbr;
-    isPCM = false;
-  }
-  
-  /**
-   * Closes the output file.
-   * MUST be called to have a correct stream. 
-   * @exception IOException if there was an exception closing the Audio Writer.
-   */
-  public void close()
-    throws IOException 
-  {
+    /**
+     * Sets the output format for a PCM Wave file.
+     * Must be called before WriteHeader().
+     *
+     * @param sampleRate the number of samples per second.
+     * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+     */
+    private void setPCMFormat(final int sampleRate, final int channels) {
+        this.channels = channels;
+        this.sampleRate = sampleRate;
+        isPCM = true;
+    }
+
+    /**
+     * Sets the output format for a Speex Wave file.
+     * Must be called before WriteHeader().
+     *
+     * @param mode       the mode of the encoder (0=NB, 1=WB, 2=UWB).
+     * @param quality
+     * @param sampleRate the number of samples per second.
+     * @param channels   the number of audio channels (1=mono, 2=stereo, ...).
+     * @param nframes    the number of frames per speex packet.
+     * @param vbr
+     */
+    private void setSpeexFormat(final int mode,
+                                final int quality,
+                                final int sampleRate,
+                                final int channels,
+                                final int nframes,
+                                final boolean vbr) {
+        this.mode = mode;
+        this.quality = quality;
+        this.sampleRate = sampleRate;
+        this.channels = channels;
+        this.nframes = nframes;
+        this.vbr = vbr;
+        isPCM = false;
+    }
+
+    /**
+     * Closes the output file.
+     * MUST be called to have a correct stream.
+     *
+     * @throws IOException if there was an exception closing the Audio Writer.
+     */
+    public void close()
+            throws IOException {
     /* update the total file length field from RIFF chunk */
-    raf.seek(4);
-    int fileLength = (int) raf.length() - 8;
-    writeInt(raf, fileLength);
-    
+        raf.seek(4);
+        int fileLength = (int) raf.length() - 8;
+        writeInt(raf, fileLength);
+
     /* update the data chunk length size */
-    raf.seek(40);
-    writeInt(raf, size);
-    
+        raf.seek(40);
+        writeInt(raf, size);
+
     /* close the output file */
-    raf.close(); 
-  }
-  
-  /**
-   * Open the output file. 
-   * @param file - file to open.
-   * @exception IOException if there was an exception opening the Audio Writer.
-   */
-  public void open(final File file)
-    throws IOException
-  {
-    file.delete(); 
-    raf = new RandomAccessFile(file, "rw");
-    size = 0;   
-  }
+        raf.close();
+    }
 
-  /**
-   * Open the output file. 
-   * @param filename filename to open.
-   * @exception IOException if there was an exception opening the Audio Writer.
-   */
-  public void open(final String filename)
-    throws IOException 
-  {
-    open(new File(filename)); 
-  }
-    
-  /**
-   * Writes the initial data chunks that start the wave file. 
-   * Prepares file for data samples to written.
-   * @param comment ignored by the WAV header.
-   * @exception IOException
-   */
-  public void writeHeader(final String comment)
-    throws IOException
-  {
+    /**
+     * Open the output file.
+     *
+     * @param file - file to open.
+     * @throws IOException if there was an exception opening the Audio Writer.
+     */
+    public void open(final File file)
+            throws IOException {
+        file.delete();
+        raf = new RandomAccessFile(file, "rw");
+        size = 0;
+    }
+
+    /**
+     * Open the output file.
+     *
+     * @param filename filename to open.
+     * @throws IOException if there was an exception opening the Audio Writer.
+     */
+    public void open(final String filename)
+            throws IOException {
+        open(new File(filename));
+    }
+
+    /**
+     * Writes the initial data chunks that start the wave file.
+     * Prepares file for data samples to written.
+     *
+     * @param comment ignored by the WAV header.
+     * @throws IOException
+     */
+    public void writeHeader(final String comment)
+            throws IOException {
     /* writes the RIFF chunk indicating wave format */
-    byte[] chkid = "RIFF".getBytes(); 
-    raf.write(chkid, 0, chkid.length);
-    writeInt(raf, 0); /* total length must be blank */
-    chkid = "WAVE".getBytes(); 
-    raf.write(chkid, 0, chkid.length);
-    
+        byte[] chkid = "RIFF".getBytes();
+        raf.write(chkid, 0, chkid.length);
+        writeInt(raf, 0); /* total length must be blank */
+        chkid = "WAVE".getBytes();
+        raf.write(chkid, 0, chkid.length);
+
     /* format subchunk: of size 16 */
-    chkid = "fmt ".getBytes(); 
-    raf.write(chkid, 0, chkid.length);
-    if (isPCM) {
-      writeInt(raf, 16);                            // Size of format chunk
-      writeShort(raf, WAVE_FORMAT_PCM);             // Format tag: PCM
-      writeShort(raf, (short)channels);             // Number of channels
-      writeInt(raf, sampleRate);                    // Sampling frequency
-      writeInt(raf, sampleRate*channels*2);         // Average bytes per second
-      writeShort(raf, (short) (channels*2));        // Blocksize of data
-      writeShort(raf, (short) 16);                  // Bits per sample
-    }
-    else {
-      int length = comment.length();
-      writeInt(raf, (short) (18+2+80+length));      // Size of format chunk
-      writeShort(raf, WAVE_FORMAT_SPEEX);           // Format tag: Speex
-      writeShort(raf, (short)channels);             // Number of channels
-      writeInt(raf, sampleRate);                    // Sampling frequency
-      writeInt(raf, (calculateEffectiveBitrate(mode, channels, quality) + 7) >> 3); // Average bytes per second
-      writeShort(raf, (short) calculateBlockSize(mode, channels, quality)); // Blocksize of data
-      writeShort(raf, (short) quality);             // Bits per sample
-      writeShort(raf, (short) (2+80+length));       // The count in bytes of the extra size
-      raf.writeByte(0xff & 1);                      // ACM major version number
-      raf.writeByte(0xff & 0);                      // ACM minor version number
-      raf.write(buildSpeexHeader(sampleRate, mode, channels, vbr, nframes));
-      raf.writeBytes(comment);
-    }
-    
+        chkid = "fmt ".getBytes();
+        raf.write(chkid, 0, chkid.length);
+        if (isPCM) {
+            writeInt(raf, 16);                            // Size of format chunk
+            writeShort(raf, WAVE_FORMAT_PCM);             // Format tag: PCM
+            writeShort(raf, (short) channels);             // Number of channels
+            writeInt(raf, sampleRate);                    // Sampling frequency
+            writeInt(raf, sampleRate * channels * 2);         // Average bytes per second
+            writeShort(raf, (short) (channels * 2));        // Blocksize of data
+            writeShort(raf, (short) 16);                  // Bits per sample
+        } else {
+            int length = comment.length();
+            writeInt(raf, (short) (18 + 2 + 80 + length));      // Size of format chunk
+            writeShort(raf, WAVE_FORMAT_SPEEX);           // Format tag: Speex
+            writeShort(raf, (short) channels);             // Number of channels
+            writeInt(raf, sampleRate);                    // Sampling frequency
+            writeInt(raf, (calculateEffectiveBitrate(mode, channels, quality) + 7) >> 3); // Average bytes per second
+            writeShort(raf, (short) calculateBlockSize(mode, channels, quality)); // Blocksize of data
+            writeShort(raf, (short) quality);             // Bits per sample
+            writeShort(raf, (short) (2 + 80 + length));       // The count in bytes of the extra size
+            raf.writeByte(0xff & 1);                      // ACM major version number
+            raf.writeByte(0xff & 0);                      // ACM minor version number
+            raf.write(buildSpeexHeader(sampleRate, mode, channels, vbr, nframes));
+            raf.writeBytes(comment);
+        }
+
     /* write the start of data chunk */
-    chkid = "data".getBytes(); 
-    raf.write(chkid, 0, chkid.length);
-    writeInt(raf, 0);
-  }
-  
-  /**
-   * Writes a packet of audio. 
-   * @param data audio data
-   * @param offset the offset from which to start reading the data.
-   * @param len the length of data to read.
-   * @exception IOException
-   */
-  public void writePacket(final byte[] data,
-                          final int offset,
-                          final int len)
-    throws IOException 
-  {
-    raf.write(data, offset, len);
-    size+= len;
-  }
+        chkid = "data".getBytes();
+        raf.write(chkid, 0, chkid.length);
+        writeInt(raf, 0);
+    }
 
-  /**
-   * Calculates effective bitrate (considering padding).
-   * See end of file for exerpt from SpeexACM code for more explanations.
-   * @param mode
-   * @param channels
-   * @param quality
-   * @return effective bitrate (considering padding).
-   */
-  private static final int calculateEffectiveBitrate(final int mode,
-                                                     final int channels,
-                                                     final int quality)
-  {
-    return ((((WAVE_FRAME_SIZES[mode-1][channels-1][quality] *
-               WAVE_BITS_PER_FRAME[mode-1][channels-1][quality]) + 7) >> 3) *
-            50 * 8) / WAVE_BITS_PER_FRAME[mode-1][channels-1][quality];
-  }
+    /**
+     * Writes a packet of audio.
+     *
+     * @param data   audio data
+     * @param offset the offset from which to start reading the data.
+     * @param len    the length of data to read.
+     * @throws IOException
+     */
+    public void writePacket(final byte[] data,
+                            final int offset,
+                            final int len)
+            throws IOException {
+        raf.write(data, offset, len);
+        size += len;
+    }
 
-  /**
-   * Calculates block size (considering padding).
-   * See end of file for exerpt from SpeexACM code for more explanations.
-   * @param mode
-   * @param channels
-   * @param quality
-   * @return block size (considering padding).
-   */
-  private static final int calculateBlockSize(final int mode,
-                                              final int channels,
-                                              final int quality)
-  {
-    return (((WAVE_FRAME_SIZES[mode-1][channels-1][quality] *
-              WAVE_BITS_PER_FRAME[mode-1][channels-1][quality]) + 7) >> 3);
-  }
+    /**
+     * Calculates effective bitrate (considering padding).
+     * See end of file for exerpt from SpeexACM code for more explanations.
+     *
+     * @param mode
+     * @param channels
+     * @param quality
+     * @return effective bitrate (considering padding).
+     */
+    private static final int calculateEffectiveBitrate(final int mode,
+                                                       final int channels,
+                                                       final int quality) {
+        return ((((WAVE_FRAME_SIZES[mode - 1][channels - 1][quality] *
+                WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality]) + 7) >> 3) *
+                50 * 8) / WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality];
+    }
+
+    /**
+     * Calculates block size (considering padding).
+     * See end of file for exerpt from SpeexACM code for more explanations.
+     *
+     * @param mode
+     * @param channels
+     * @param quality
+     * @return block size (considering padding).
+     */
+    private static final int calculateBlockSize(final int mode,
+                                                final int channels,
+                                                final int quality) {
+        return (((WAVE_FRAME_SIZES[mode - 1][channels - 1][quality] *
+                WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality]) + 7) >> 3);
+    }
 }
 // The following is taken from the SpeexACM 1.0.1.1 Source code (codec.c file).
 

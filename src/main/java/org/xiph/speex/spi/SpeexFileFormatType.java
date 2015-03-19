@@ -40,25 +40,24 @@ import javax.sound.sampled.AudioFileFormat;
 
 /**
  * FileFormatTypes used by the Speex audio decoder.
- * 
+ *
  * @author Marc Gimpel, Wimba S.A. (mgimpel@horizonwimba.com)
  * @version $Revision$
  */
 public class SpeexFileFormatType
-  extends AudioFileFormat.Type
-{
-  /**
-   * Specifies an OGG Speex file.
-   */
-  public static final AudioFileFormat.Type SPEEX =new SpeexFileFormatType("SPEEX", "spx");
+        extends AudioFileFormat.Type {
+    /**
+     * Specifies an OGG Speex file.
+     */
+    public static final AudioFileFormat.Type SPEEX = new SpeexFileFormatType("SPEEX", "spx");
 
-  /**
-   * Constructs a file type.
-   * @param name - the name of the Speex File Format.
-   * @param extension - the file extension for this Speex File Format.
-   */
-  public SpeexFileFormatType(final String name, final String extension)
-  {
-    super(name, extension);
-  }
+    /**
+     * Constructs a file type.
+     *
+     * @param name      - the name of the Speex File Format.
+     * @param extension - the file extension for this Speex File Format.
+     */
+    public SpeexFileFormatType(final String name, final String extension) {
+        super(name, extension);
+    }
 }
