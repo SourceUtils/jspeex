@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.StreamCorruptedException;
 
 /**
@@ -151,7 +153,7 @@ public class SbDecoder
      * @throws StreamCorruptedException If there is an error detected in the
      *                                  data stream.
      */
-    public int decode(final Bits bits, final float[] out)
+    public int decode(@Nullable final Bits bits, final float[] out)
             throws StreamCorruptedException {
         int i, sub, wideband, ret;
         float[] low_pi_gain, low_exc, low_innov;

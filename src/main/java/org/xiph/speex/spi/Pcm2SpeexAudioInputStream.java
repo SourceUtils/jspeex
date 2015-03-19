@@ -42,6 +42,8 @@ import java.io.InputStream;
 import java.io.StreamCorruptedException;
 import javax.sound.sampled.AudioFormat;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xiph.speex.AudioFileWriter;
 import org.xiph.speex.OggCrc;
 import org.xiph.speex.Encoder;
@@ -112,6 +114,7 @@ public class Pcm2SpeexAudioInputStream
     /**
      * The comment String that will appear in the Ogg comment packet.
      */
+    @Nullable
     private String comment = null;
     /**
      * A counter for the number of PCM samples that have been encoded.
@@ -150,7 +153,7 @@ public class Pcm2SpeexAudioInputStream
      * @param length the length in sample frames of the data in this stream.
      */
     public Pcm2SpeexAudioInputStream(final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length) {
         this(UNKNOWN, UNKNOWN, in, format, length, DEFAULT_BUFFER_SIZE);
     }
@@ -167,7 +170,7 @@ public class Pcm2SpeexAudioInputStream
     public Pcm2SpeexAudioInputStream(final int mode,
                                      final int quality,
                                      final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length) {
         this(mode, quality, in, format, length, DEFAULT_BUFFER_SIZE);
     }
@@ -182,7 +185,7 @@ public class Pcm2SpeexAudioInputStream
      * @throws IllegalArgumentException if size <= 0.
      */
     public Pcm2SpeexAudioInputStream(final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length,
                                      final int size) {
         this(UNKNOWN, UNKNOWN, in, format, length, size);
@@ -202,7 +205,7 @@ public class Pcm2SpeexAudioInputStream
     public Pcm2SpeexAudioInputStream(int mode,
                                      int quality,
                                      final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length,
                                      final int size) {
         super(in, format, length, size);
@@ -354,7 +357,7 @@ public class Pcm2SpeexAudioInputStream
         while (true) {
             if ((prebuf.length - prepos) < framesPerPacket * frameSize * packetsPerOggPage) { // grow prebuf
                 int nsz = prepos + framesPerPacket * frameSize * packetsPerOggPage;
-                byte[] nbuf = new byte[nsz];
+                @NotNull byte[] nbuf = new byte[nsz];
                 System.arraycopy(prebuf, 0, nbuf, 0, precount);
                 prebuf = nbuf;
             }
@@ -380,7 +383,7 @@ public class Pcm2SpeexAudioInputStream
                     int size = encoder.getProcessedDataByteSize();
                     while ((buf.length - oggCount) < size) { // grow buffer
                         int nsz = buf.length * 2;
-                        byte[] nbuf = new byte[nsz];
+                        @NotNull byte[] nbuf = new byte[nsz];
                         System.arraycopy(buf, 0, nbuf, 0, oggCount);
                         buf = nbuf;
                     }
@@ -419,7 +422,7 @@ public class Pcm2SpeexAudioInputStream
                             int size = encoder.getProcessedDataByteSize();
                             while ((buf.length - oggCount) < size) { // grow buffer
                                 int nsz = buf.length * 2;
-                                byte[] nbuf = new byte[nsz];
+                                @NotNull byte[] nbuf = new byte[nsz];
                                 System.arraycopy(buf, 0, nbuf, 0, oggCount);
                                 buf = nbuf;
                             }
@@ -551,7 +554,7 @@ public class Pcm2SpeexAudioInputStream
                                     final int headertype) {
         while ((buf.length - count) < (27 + packets)) { // grow buffer
             int nsz = buf.length * 2;
-            byte[] nbuf = new byte[nsz];
+            @NotNull byte[] nbuf = new byte[nsz];
             System.arraycopy(buf, 0, nbuf, 0, count);
             buf = nbuf;
         }
@@ -589,7 +592,7 @@ public class Pcm2SpeexAudioInputStream
             // grow buffer (108 = 28 + 80 = size of Ogg Header Frame)
             //             (28 + length + 8 = size of Comment Frame)
             int nsz = buf.length * 2;
-            byte[] nbuf = new byte[nsz];
+            @NotNull byte[] nbuf = new byte[nsz];
             System.arraycopy(buf, 0, nbuf, 0, count);
             buf = nbuf;
         }

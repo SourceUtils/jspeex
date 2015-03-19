@@ -68,6 +68,9 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.StreamCorruptedException;
 
 /**
@@ -204,7 +207,7 @@ public class SpeexDecoder {
      * @param offset
      * @return the number of samples processed and just read.
      */
-    public int getProcessedData(final short[] data, final int offset) {
+    public int getProcessedData(@NotNull final short[] data, final int offset) {
         if (outputSize <= 0) {
             return outputSize;
         }
@@ -232,7 +235,7 @@ public class SpeexDecoder {
      * @param len    - the length of data to read (Speex frame size).
      * @throws StreamCorruptedException If the input stream is invalid.
      */
-    public void processData(final byte[] data,
+    public void processData(@Nullable final byte[] data,
                             final int offset,
                             final int len)
             throws StreamCorruptedException {

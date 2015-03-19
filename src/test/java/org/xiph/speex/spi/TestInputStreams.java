@@ -39,6 +39,7 @@ package org.xiph.speex.spi;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * JUnit Tests for JSpeex SPI InputStreams
@@ -94,6 +95,7 @@ public class TestInputStreams
      *
      * @return the Test Suite.
      */
+    @NotNull
     public static Test suite() {
         return new TestSuite(TestInputStreams.class);
     }

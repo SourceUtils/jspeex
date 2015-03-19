@@ -37,6 +37,7 @@
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 import org.xiph.speex.WaveToolbox;
 
 import java.io.File;
@@ -104,6 +105,7 @@ public class TestJSpeexCodec
      *
      * @return the Test Suite.
      */
+    @NotNull
     public static Test suite() {
         return new TestSuite(TestJSpeexCodec.class);
     }
@@ -285,14 +287,14 @@ public class TestJSpeexCodec
             fail("Unable to generate input audio file");
         }
         // Encode Audio
-        JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
+        @NotNull JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
         try {
             enc.encode();
         } catch (IOException e) {
             fail("Unable to encode audio file");
         }
         // Decode Audio
-        JSpeexDec dec = buildDecoder(filename);
+        @NotNull JSpeexDec dec = buildDecoder(filename);
         try {
             dec.decode();
         } catch (IOException e) {
@@ -326,14 +328,14 @@ public class TestJSpeexCodec
             fail("Unable to generate input audio file");
         }
         // Encode Audio
-        JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
+        @NotNull JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
         try {
             enc.encode();
         } catch (IOException e) {
             fail("Unable to encode audio file");
         }
         // Decode Audio
-        JSpeexDec dec = buildDecoder(filename);
+        @NotNull JSpeexDec dec = buildDecoder(filename);
         try {
             dec.decode();
         } catch (IOException e) {
@@ -368,14 +370,14 @@ public class TestJSpeexCodec
             fail("Unable to generate input audio file");
         }
         // Encode Audio
-        JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
+        @NotNull JSpeexEnc enc = buildEncoder(filename, mode, sampleRate, channels, vbr);
         try {
             enc.encode();
         } catch (IOException e) {
             fail("Unable to encode audio file");
         }
         // Decode Audio
-        JSpeexDec dec = buildDecoder(filename);
+        @NotNull JSpeexDec dec = buildDecoder(filename);
         try {
             dec.decode();
         } catch (IOException e) {
@@ -392,12 +394,13 @@ public class TestJSpeexCodec
      * @param channels
      * @return JSpeex Encoder for the given filename.
      */
+    @NotNull
     protected static JSpeexEnc buildEncoder(final String filename,
                                             final int mode,
                                             final int sampleRate,
                                             final int channels,
                                             final boolean vbr) {
-        JSpeexEnc enc = new JSpeexEnc();
+        @NotNull JSpeexEnc enc = new JSpeexEnc();
         enc.srcFile = filename + ".wav";
         enc.destFile = filename + ".spx";
         enc.srcFormat = JSpeexEnc.FILE_FORMAT_WAVE;
@@ -422,8 +425,9 @@ public class TestJSpeexCodec
      * @param filename filename without extention of file to decode.
      * @return JSpeex Decoder for the given filename.
      */
+    @NotNull
     protected static JSpeexDec buildDecoder(final String filename) {
-        JSpeexDec dec = new JSpeexDec();
+        @NotNull JSpeexDec dec = new JSpeexDec();
         dec.srcFile = filename + ".spx";
         dec.destFile = filename + "-encdec.wav";
         dec.srcFormat = JSpeexDec.FILE_FORMAT_OGG;

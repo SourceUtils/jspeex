@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * LSP Quantisation and Unquantisation (high)
  *
@@ -88,11 +90,11 @@ public class HighLspQuant
     public final void quant(final float[] lsp,
                             final float[] qlsp,
                             final int order,
-                            final Bits bits) {
+                            @NotNull final Bits bits) {
         int i;
         float tmp1, tmp2;
         int id;
-        float[] quant_weight = new float[MAX_LSP_SIZE];
+        @NotNull float[] quant_weight = new float[MAX_LSP_SIZE];
 
         for (i = 0; i < order; i++)
             qlsp[i] = lsp[i];
@@ -131,7 +133,7 @@ public class HighLspQuant
      */
     public final void unquant(final float[] lsp,
                               final int order,
-                              final Bits bits) {
+                              @NotNull final Bits bits) {
         for (int i = 0; i < order; i++) {
             lsp[i] = .3125f * i + .75f;
         }

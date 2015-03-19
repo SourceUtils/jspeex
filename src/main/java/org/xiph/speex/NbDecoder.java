@@ -68,6 +68,9 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.StreamCorruptedException;
 import java.util.Random;
 
@@ -103,6 +106,7 @@ public class NbDecoder
     private float last_ol_gain;       /** Open-loop gain for previous frame */
 
     /** */
+    @NotNull
     protected Random random = new Random();
     /** */
     protected Stereo stereo;
@@ -153,10 +157,10 @@ public class NbDecoder
      * @throws StreamCorruptedException If there is an error detected in the
      *                                  data stream.
      */
-    public int decode(final Bits bits, final float[] out)
+    public int decode(@Nullable final Bits bits, final float[] out)
             throws StreamCorruptedException {
         int i, sub, pitch, ol_pitch = 0, m;
-        float[] pitch_gain = new float[3];
+        @NotNull float[] pitch_gain = new float[3];
         float ol_gain = 0.0f, ol_pitch_coef = 0.0f;
         int best_pitch = 40;
         float best_pitch_gain = 0;

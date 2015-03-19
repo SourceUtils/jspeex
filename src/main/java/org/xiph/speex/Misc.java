@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Miscellaneous functions
  *
@@ -50,11 +52,12 @@ public class Misc {
      * @param subFrameSize
      * @return an Asymmetric "pseudo-Hamming" window.
      */
+    @NotNull
     public static float[] window(final int windowSize, final int subFrameSize) {
         int i;
         int part1 = subFrameSize * 7 / 2;
         int part2 = subFrameSize * 5 / 2;
-        float[] window = new float[windowSize];
+        @NotNull float[] window = new float[windowSize];
         for (i = 0; i < part1; i++)
             window[i] = (float) (0.54 - 0.46 * Math.cos(Math.PI * i / part1));
         for (i = 0; i < part2; i++)
@@ -69,8 +72,9 @@ public class Misc {
      * @param lagFactor
      * @return the window for autocorrelation.
      */
+    @NotNull
     public static float[] lagWindow(final int lpcSize, final float lagFactor) {
-        float[] lagWindow = new float[lpcSize + 1];
+        @NotNull float[] lagWindow = new float[lpcSize + 1];
         for (int i = 0; i < lpcSize + 1; i++)
             lagWindow[i] = (float) Math.exp(-0.5 * (2 * Math.PI * lagFactor * i) *
                     (2 * Math.PI * lagFactor * i));

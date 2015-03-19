@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Long Term Prediction Quantisation and Unquantisation (3Tap)
  *
@@ -112,9 +114,9 @@ public class Ltp3Tap
      */
     public final int quant(float[] target, float[] sw, int sws, float[] ak, float[] awk1, float[] awk2,
                            float[] exc, int es, int start, int end, float pitch_coef, int p,
-                           int nsf, Bits bits, float[] exc2, int e2s, float[] r, int complexity) {
+                           int nsf, @NotNull Bits bits, float[] exc2, int e2s, float[] r, int complexity) {
         int i, j;
-        int[] cdbk_index = new int[1];
+        @NotNull int[] cdbk_index = new int[1];
         int pitch = 0;
         int best_gain_index = 0;
         float[] best_exc;
@@ -185,7 +187,7 @@ public class Ltp3Tap
      * @return pitch
      */
     public final int unquant(float[] exc, int es, int start, float pitch_coef,
-                             int nsf, float[] gain_val, Bits bits,
+                             int nsf, float[] gain_val, @NotNull Bits bits,
                              int count_lost, int subframe_offset, float last_pitch_gain) {
         int i, pitch, gain_index;
 
@@ -286,8 +288,8 @@ public class Ltp3Tap
         int i, j;
         float[][] x;
 //    float[][] e;
-        float[] corr = new float[3];
-        float[][] A = new float[3][3];
+        @NotNull float[] corr = new float[3];
+        @NotNull float[][] A = new float[3][3];
         int gain_cdbk_size;
         float err1, err2;
 
@@ -326,7 +328,7 @@ public class Ltp3Tap
                 A[i][j] = A[j][i] = inner_prod(x[i], 0, x[j], 0, nsf);
 
         {
-            float[] C = new float[9];
+            @NotNull float[] C = new float[9];
             int ptr = 0;
             int best_cdbk = 0;
             float best_sum = 0;

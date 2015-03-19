@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Split shape codebook search
  *
@@ -146,7 +148,7 @@ public class SplitShapeSearch
      */
     public final void quant(float[] target, float[] ak, float[] awk1, float[] awk2,
                             int p, int nsf, float[] exc, int es, float[] r,
-                            Bits bits, int complexity) {
+                            @NotNull Bits bits, int complexity) {
         int i, j, k, m, n, q;
         float[] resp;
         float[] ndist, odist;
@@ -346,7 +348,7 @@ public class SplitShapeSearch
      * @param nsf  - number of samples in subframe.
      * @param bits - Speex bits buffer.
      */
-    public final void unquant(float[] exc, int es, int nsf, Bits bits) {
+    public final void unquant(float[] exc, int es, int nsf, @NotNull Bits bits) {
         int i, j;
 
     /* Decode codewords and gains */

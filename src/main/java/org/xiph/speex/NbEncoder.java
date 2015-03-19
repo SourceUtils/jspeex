@@ -67,6 +67,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Narrowband Speex Encoder
  *
@@ -280,7 +282,7 @@ public class NbEncoder
      * @param in   - the raw mono audio frame to encode.
      * @return return 1 if successful.
      */
-    public int encode(final Bits bits, final float[] in) {
+    public int encode(@NotNull final Bits bits, final float[] in) {
         int i;
         float[] res, target, mem;
         float[] syn_resp;
@@ -368,8 +370,8 @@ public class NbEncoder
                     vbr_enabled != 0 || vad_enabled != 0 ||
                     submodes[submodeID].forced_pitch_gain != 0 ||
                     submodes[submodeID].lbr_pitch != -1) {
-                int[] nol_pitch = new int[6];
-                float[] nol_pitch_coef = new float[6];
+                @NotNull int[] nol_pitch = new int[6];
+                @NotNull float[] nol_pitch_coef = new float[6];
 
                 Filters.bw_lpc(gamma1, interp_lpc, bw_lpc1, lpcSize);
                 Filters.bw_lpc(gamma2, interp_lpc, bw_lpc2, lpcSize);
@@ -781,7 +783,7 @@ public class NbEncoder
 
         /* In some (rare) modes, we do a second search (more bits) to reduce noise even more */
                 if (submodes[submodeID].double_codebook != 0) {
-                    float[] innov2 = new float[subframeSize];
+                    @NotNull float[] innov2 = new float[subframeSize];
 //          for (i = 0; i < subframeSize; i++)
 //            innov2[i] = 0;
                     for (i = 0; i < subframeSize; i++)

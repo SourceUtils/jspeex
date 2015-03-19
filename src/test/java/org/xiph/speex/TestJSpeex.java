@@ -41,6 +41,7 @@ import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * JUnit Tests for JSpeex
@@ -157,6 +158,7 @@ public class TestJSpeex
      *
      * @return the Test Suite.
      */
+    @NotNull
     public static Test suite() {
         return new TestSuite(TestJSpeex.class);
     }
@@ -178,10 +180,11 @@ public class TestJSpeex
      * @param size
      * @return
      */
-    protected byte[] shiftArray(byte[] source, int bitoffset, int size) {
+    @NotNull
+    protected byte[] shiftArray(@NotNull byte[] source, int bitoffset, int size) {
         int byteoffset = bitoffset / 8;
         int bitshift = bitoffset % 8;
-        byte[] dest = new byte[size];
+        @NotNull byte[] dest = new byte[size];
         for (int i = 0; i <= size - 1; i++) {
             dest[i] = (byte) ((source[byteoffset++] & 0xFF) << bitshift);
             if (byteoffset < source.length) {
@@ -197,8 +200,9 @@ public class TestJSpeex
      * @param size
      * @return
      */
-    protected byte[] subArray(byte[] source, int offset, int size) {
-        byte[] dest = new byte[size];
+    @NotNull
+    protected byte[] subArray(@NotNull byte[] source, int offset, int size) {
+        @NotNull byte[] dest = new byte[size];
         System.arraycopy(source, offset, dest, 0, size);
         return dest;
     }
@@ -404,9 +408,9 @@ public class TestJSpeex
                               int quality,
                               int sampleRate,
                               int channels,
-                              float[] source,
+                              @NotNull float[] source,
                               byte[] expected) {
-        SpeexEncoder speexEncoder = new SpeexEncoder();
+        @NotNull SpeexEncoder speexEncoder = new SpeexEncoder();
         speexEncoder.init(mode, quality, sampleRate, channels);
         //speexEncoder.getEncoder().setComplexity(3);
         //speexEncoder.getEncoder().setBitRate(bitrate);
@@ -419,7 +423,7 @@ public class TestJSpeex
         assertEquals("Encoded data is not of the expected size",
                 checkSize(mode, quality, channels, speexEncoder),
                 actualsize);
-        byte[] speex = new byte[actualsize];
+        @NotNull byte[] speex = new byte[actualsize];
         speexEncoder.getProcessedData(speex, 0);
         assertTrue("Encoded data appears wrong",
                 Arrays.equals(expected, speex));
@@ -437,7 +441,7 @@ public class TestJSpeex
     protected int checkSize(int mode,
                             int quality,
                             int channels,
-                            SpeexEncoder speexEncoder) {
+                            @NotNull SpeexEncoder speexEncoder) {
         assertEquals("Number of channels don't match",
                 channels, speexEncoder.getChannels());
         int bitsize = 0;

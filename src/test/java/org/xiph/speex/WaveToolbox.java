@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -80,11 +82,12 @@ public class WaveToolbox {
      * @param sampleCount the number of audio samples.
      * @return a wav header based on the given parameters.
      */
+    @NotNull
     public static byte[] generateWaveHeader(final int channels,
                                             final int sampleRate,
                                             final int sampleCount) {
         int headerSize = 44;
-        byte[] header = new byte[headerSize];
+        @NotNull byte[] header = new byte[headerSize];
         writeString(header, 0, "RIFF");
         writeInt(header, 4, 2 * channels * sampleCount + headerSize - 8);
         writeString(header, 8, "WAVE");
@@ -108,14 +111,15 @@ public class WaveToolbox {
      * @param stddev      standard deviation of the gaussian white noise.
      * @return
      */
+    @NotNull
     public static int[] generateWhiteNoise(final int sampleCount,
                                            final int stddev) {
         if (sampleCount < 0) {
             return new int[0];
         }
-        Random random = new Random();
+        @NotNull Random random = new Random();
         // Generate White Noise.
-        int[] signal = new int[sampleCount];
+        @NotNull int[] signal = new int[sampleCount];
         for (int i = 0; i < sampleCount; i++) {
             signal[i] = (int) (random.nextGaussian() * stddev);
             if (signal[i] > 32767)
@@ -134,6 +138,7 @@ public class WaveToolbox {
      * @param periode     the periode (in samples) of the sine wave.
      * @return an integer array representing a sine wave.
      */
+    @NotNull
     private static int[] generateSine(final int sampleCount,
                                       final int amplitude,
                                       final int periode) {
@@ -148,7 +153,7 @@ public class WaveToolbox {
             frequency = 1.0 / ((double) periode);
         }
         double phaseIncrement = 2.0 * Math.PI * frequency;
-        int[] signal = new int[sampleCount];
+        @NotNull int[] signal = new int[sampleCount];
         for (int i = 0; i < sampleCount; i++) {
             signal[i] = (int) (amplitude * Math.sin(phase));
             // check saturation
@@ -171,16 +176,16 @@ public class WaveToolbox {
      * @param stddev      standard deviation of the gaussian white noise.
      * @throws IOException
      */
-    public static void generateWhiteNoiseWaveFile(final String filename,
+    public static void generateWhiteNoiseWaveFile(@NotNull final String filename,
                                                   final int channels,
                                                   final int sampleRate,
                                                   final int sampleCount,
                                                   final int stddev)
             throws IOException {
-        FileOutputStream fos = new FileOutputStream(filename);
+        @NotNull FileOutputStream fos = new FileOutputStream(filename);
         fos.write(generateWaveHeader(channels, sampleRate, sampleCount));
-        int[] signal = generateWhiteNoise(channels * sampleCount, stddev);
-        byte[] data = new byte[2 * channels * sampleCount];
+        @NotNull int[] signal = generateWhiteNoise(channels * sampleCount, stddev);
+        @NotNull byte[] data = new byte[2 * channels * sampleCount];
         mapInt2Pcm16bit(signal, 0, data, 0, channels * sampleCount);
         fos.write(data);
         fos.flush();
@@ -199,7 +204,7 @@ public class WaveToolbox {
      * @param periode     the periode (in samples) of the sine wave.
      * @throws IOException
      */
-    public static void generateSineWaveFile(final String filename,
+    public static void generateSineWaveFile(@NotNull final String filename,
                                             final int channels,
                                             final int sampleRate,
                                             final int sampleCount,
@@ -207,10 +212,10 @@ public class WaveToolbox {
                                             final int periode)
             throws IOException {
         new File(filename).getParentFile().mkdirs();
-        FileOutputStream fos = new FileOutputStream(filename);
+        @NotNull FileOutputStream fos = new FileOutputStream(filename);
         fos.write(generateWaveHeader(channels, sampleRate, sampleCount));
-        int[] signal = generateSine(channels * sampleCount, amplitude, periode);
-        byte[] data = new byte[2 * channels * sampleCount];
+        @NotNull int[] signal = generateSine(channels * sampleCount, amplitude, periode);
+        @NotNull byte[] data = new byte[2 * channels * sampleCount];
         mapInt2Pcm16bit(signal, 0, data, 0, channels * sampleCount);
         fos.write(data);
         fos.flush();
@@ -226,14 +231,14 @@ public class WaveToolbox {
      * @param sampleCount the number of audio samples.
      * @throws IOException
      */
-    public static void generateSilenceWaveFile(final String filename,
+    public static void generateSilenceWaveFile(@NotNull final String filename,
                                                final int channels,
                                                final int sampleRate,
                                                final int sampleCount)
             throws IOException {
-        FileOutputStream fos = new FileOutputStream(filename);
+        @NotNull FileOutputStream fos = new FileOutputStream(filename);
         fos.write(generateWaveHeader(channels, sampleRate, sampleCount));
-        byte[] data = new byte[2 * channels * sampleCount];
+        @NotNull byte[] data = new byte[2 * channels * sampleCount];
         fos.write(data);
         fos.flush();
         fos.close();
@@ -300,10 +305,10 @@ public class WaveToolbox {
      * @param offset the offset from which to start writing in the array.
      * @param val    the value to write.
      */
-    public static void writeString(final byte[] data,
+    public static void writeString(@NotNull final byte[] data,
                                    final int offset,
-                                   final String val) {
-        byte[] str = val.getBytes();
+                                   @NotNull final String val) {
+        @NotNull byte[] str = val.getBytes();
         System.arraycopy(str, 0, data, offset, str.length);
     }
 
@@ -317,9 +322,9 @@ public class WaveToolbox {
      * @param offsetOutput offset in bytes from which to start writing the output.
      * @param length       number of samples to convert.
      */
-    public static void mapInt2Pcm16bit(final int[] samples,
+    public static void mapInt2Pcm16bit(@NotNull final int[] samples,
                                        final int offsetInput,
-                                       final byte[] pcmBytes,
+                                       @NotNull final byte[] pcmBytes,
                                        int offsetOutput,
                                        final int length) {
         if (samples.length - offsetInput < length) {
@@ -352,9 +357,9 @@ public class WaveToolbox {
      * @param offsetOutput offset in samples from which to start writing the output.
      * @param length       number of samples to convert.
      */
-    public static void mapPcm16bit2Int(final byte[] pcmBytes,
+    public static void mapPcm16bit2Int(@NotNull final byte[] pcmBytes,
                                        final int offsetInput,
-                                       final int[] samples,
+                                       @NotNull final int[] samples,
                                        final int offsetOutput,
                                        final int length) {
         if (pcmBytes.length - offsetInput < 2 * length) {

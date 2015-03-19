@@ -65,6 +65,7 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import org.jetbrains.annotations.NotNull;
 import org.xiph.speex.*;
 
 import java.io.*;
@@ -198,9 +199,9 @@ public class JSpeexEnc {
      * @param args Command line parameters.
      * @throws IOException
      */
-    public static void main(final String[] args)
+    public static void main(@NotNull final String[] args)
             throws IOException {
-        JSpeexEnc encoder = new JSpeexEnc();
+        @NotNull JSpeexEnc encoder = new JSpeexEnc();
         if (encoder.parseArgs(args)) {
             encoder.encode();
         }
@@ -212,7 +213,7 @@ public class JSpeexEnc {
      * @param args Command line parameters.
      * @return true if the parsed arguments are sufficient to run the encoder.
      */
-    public boolean parseArgs(final String[] args) {
+    public boolean parseArgs(@NotNull final String[] args) {
         // make sure we have command args
         if (args.length < 2) {
             if (args.length == 1 && (args[0].equalsIgnoreCase("-v") || args[0].equalsIgnoreCase("--version"))) {
@@ -367,21 +368,21 @@ public class JSpeexEnc {
      * @param destPath
      * @throws IOException
      */
-    public void encode(final File srcPath, final File destPath)
+    public void encode(@NotNull final File srcPath, final File destPath)
             throws IOException {
-        byte[] temp = new byte[2560]; // stereo UWB requires one to read 2560b
+        @NotNull byte[] temp = new byte[2560]; // stereo UWB requires one to read 2560b
         final int HEADERSIZE = 8;
-        final String RIFF = "RIFF";
-        final String WAVE = "WAVE";
-        final String FORMAT = "fmt ";
-        final String DATA = "data";
+        @NotNull final String RIFF = "RIFF";
+        @NotNull final String WAVE = "WAVE";
+        @NotNull final String FORMAT = "fmt ";
+        @NotNull final String DATA = "data";
         final int WAVE_FORMAT_PCM = 0x0001;
         // Display info
         if (printlevel <= INFO) version();
         if (printlevel <= DEBUG) System.out.println("");
         if (printlevel <= DEBUG) System.out.println("Input File: " + srcPath);
         // Open the input stream
-        DataInputStream dis = new DataInputStream(new FileInputStream(srcPath));
+        @NotNull DataInputStream dis = new DataInputStream(new FileInputStream(srcPath));
         // Prepare input stream
         if (srcFormat == FILE_FORMAT_WAVE) {
             // read the WAVE header
@@ -394,7 +395,7 @@ public class JSpeexEnc {
             }
             // Read other header chunks
             dis.readFully(temp, 0, HEADERSIZE);
-            String chunk = new String(temp, 0, 4);
+            @NotNull String chunk = new String(temp, 0, 4);
             int size = readInt(temp, 4);
             while (!chunk.equals(DATA)) {
                 dis.readFully(temp, 0, size);
@@ -470,7 +471,7 @@ public class JSpeexEnc {
                 mode = 2; // Ultra-wideband
         }
         // Construct a new encoder
-        SpeexEncoder speexEncoder = new SpeexEncoder();
+        @NotNull SpeexEncoder speexEncoder = new SpeexEncoder();
         speexEncoder.init(mode, quality, sampleRate, channels);
         if (complexity > 0) {
             speexEncoder.getEncoder().setComplexity(complexity);

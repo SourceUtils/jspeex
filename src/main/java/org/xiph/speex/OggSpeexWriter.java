@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -196,7 +198,7 @@ public class OggSpeexWriter
      * @param file - file to open.
      * @throws IOException if there was an exception opening the Audio Writer.
      */
-    public void open(final File file)
+    public void open(@NotNull final File file)
             throws IOException {
         file.delete();
         out = new FileOutputStream(file);
@@ -208,7 +210,7 @@ public class OggSpeexWriter
      * @param filename - file to open.
      * @throws IOException if there was an exception opening the Audio Writer.
      */
-    public void open(final String filename)
+    public void open(@NotNull final String filename)
             throws IOException {
         open(new File(filename));
     }
@@ -220,7 +222,7 @@ public class OggSpeexWriter
      * @param comment description to be included in the header.
      * @throws IOException
      */
-    public void writeHeader(final String comment)
+    public void writeHeader(@NotNull final String comment)
             throws IOException {
         int chksum;
         byte[] header;
@@ -253,7 +255,7 @@ public class OggSpeexWriter
      * @param len    - the length of data to read.
      * @throws IOException
      */
-    public void writePacket(final byte[] data,
+    public void writePacket(@NotNull final byte[] data,
                             final int offset,
                             final int len)
             throws IOException {

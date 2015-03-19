@@ -39,6 +39,7 @@ package org.xiph.speex.spi;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.jetbrains.annotations.NotNull;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -97,6 +98,7 @@ public class TestJSpeexSPI
      *
      * @return the Test Suite.
      */
+    @NotNull
     public static Test suite() {
         return new TestSuite(TestJSpeexSPI.class);
     }

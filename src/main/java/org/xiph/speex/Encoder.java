@@ -67,6 +67,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Speex Encoder interface, used as a base for the Narrowband and sideband
  * encoders.
@@ -130,6 +132,7 @@ public interface Encoder {
      *
      * @return the excitation array.
      */
+    @NotNull
     public float[] getExc();
 
     /**

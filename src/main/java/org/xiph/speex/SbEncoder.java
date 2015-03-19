@@ -67,6 +67,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Wideband Speex Encoder
  *
@@ -265,7 +267,7 @@ public class SbEncoder
      * @param in   - the raw mono audio frame to encode.
      * @return 1 if successful.
      */
-    public int encode(final Bits bits, final float[] in) {
+    public int encode(@NotNull final Bits bits, final float[] in) {
         int i;
         float[] mem, innov, syn_resp;
         float[] low_pi_gain, low_exc, low_innov;
@@ -607,7 +609,7 @@ public class SbEncoder
                     excBuf[exc + i] += innov[i] * scale;
 
                 if (submodes[submodeID].double_codebook != 0) {
-                    float[] innov2 = new float[subframeSize];
+                    @NotNull float[] innov2 = new float[subframeSize];
                     for (i = 0; i < subframeSize; i++)
                         innov2[i] = 0;
                     for (i = 0; i < subframeSize; i++)

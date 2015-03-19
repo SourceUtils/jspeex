@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Filters
  *
@@ -270,7 +272,7 @@ public class Filters {
                                              final int N,
                                              final int ord) {
         int i;
-        float[] mem = new float[ord];
+        @NotNull float[] mem = new float[ord];
 //    for (i = 0; i < ord; i++)
 //      mem[i]=0;
         filter_mem2(xx, xxs, awk1, ak, y, 0, N, ord, mem, 0);
@@ -300,7 +302,7 @@ public class Filters {
                                                  final int N,
                                                  final int ord) {
         int i;
-        float[] mem = new float[ord];
+        @NotNull float[] mem = new float[ord];
 //    for (i = 0; i < ord; i++)
 //      mem[i] = 0;
         filter_mem2(xx, xxs, ak, awk1, y, 0, N, ord, mem, 0);

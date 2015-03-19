@@ -37,6 +37,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -230,7 +232,7 @@ public class PcmWaveWriter
      * @param file - file to open.
      * @throws IOException if there was an exception opening the Audio Writer.
      */
-    public void open(final File file)
+    public void open(@NotNull final File file)
             throws IOException {
         file.delete();
         raf = new RandomAccessFile(file, "rw");
@@ -243,7 +245,7 @@ public class PcmWaveWriter
      * @param filename filename to open.
      * @throws IOException if there was an exception opening the Audio Writer.
      */
-    public void open(final String filename)
+    public void open(@NotNull final String filename)
             throws IOException {
         open(new File(filename));
     }
@@ -255,10 +257,10 @@ public class PcmWaveWriter
      * @param comment ignored by the WAV header.
      * @throws IOException
      */
-    public void writeHeader(final String comment)
+    public void writeHeader(@NotNull final String comment)
             throws IOException {
     /* writes the RIFF chunk indicating wave format */
-        byte[] chkid = "RIFF".getBytes();
+        @NotNull byte[] chkid = "RIFF".getBytes();
         raf.write(chkid, 0, chkid.length);
         writeInt(raf, 0); /* total length must be blank */
         chkid = "WAVE".getBytes();
@@ -305,7 +307,7 @@ public class PcmWaveWriter
      * @param len    the length of data to read.
      * @throws IOException
      */
-    public void writePacket(final byte[] data,
+    public void writePacket(@NotNull final byte[] data,
                             final int offset,
                             final int len)
             throws IOException {

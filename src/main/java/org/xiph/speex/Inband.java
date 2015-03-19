@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.StreamCorruptedException;
 
 /**
@@ -62,7 +64,7 @@ public class Inband {
      * @param bits - Speex bits buffer.
      * @throws StreamCorruptedException If stream seems corrupted.
      */
-    public void speexInbandRequest(final Bits bits)
+    public void speexInbandRequest(@NotNull final Bits bits)
             throws StreamCorruptedException {
         int code = bits.unpack(4);
         switch (code) {
@@ -125,7 +127,7 @@ public class Inband {
      * @param bits - Speex bits buffer.
      * @throws StreamCorruptedException If stream seems corrupted.
      */
-    public void userInbandRequest(final Bits bits)
+    public void userInbandRequest(@NotNull final Bits bits)
             throws StreamCorruptedException {
         int req_size = bits.unpack(4);
         bits.advance(5 + 8 * req_size);

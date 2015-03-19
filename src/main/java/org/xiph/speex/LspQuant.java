@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Abstract class that is the base for the various LSP Quantisation and
  * Unquantisation methods.
@@ -122,7 +124,7 @@ public abstract class LspQuant
      */
     protected void unpackPlus(final float[] lsp,
                               final int[] tab,
-                              final Bits bits,
+                              @NotNull final Bits bits,
                               final float k,
                               final int ti,
                               final int li) {

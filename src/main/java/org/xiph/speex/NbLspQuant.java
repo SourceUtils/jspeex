@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * LSP Quantisation and Unquantisation (narrowband)
  *
@@ -85,11 +87,11 @@ public class NbLspQuant
      * @param order
      * @param bits  - Speex bits buffer.
      */
-    public final void quant(float[] lsp, float[] qlsp, int order, Bits bits) {
+    public final void quant(float[] lsp, float[] qlsp, int order, @NotNull Bits bits) {
         int i;
         float tmp1, tmp2;
         int id;
-        float[] quant_weight = new float[MAX_LSP_SIZE];
+        @NotNull float[] quant_weight = new float[MAX_LSP_SIZE];
 
         for (i = 0; i < order; i++)
             qlsp[i] = lsp[i];
@@ -137,7 +139,7 @@ public class NbLspQuant
      * @param order
      * @param bits  - Speex bits buffer.
      */
-    public final void unquant(float[] lsp, int order, Bits bits) {
+    public final void unquant(float[] lsp, int order, @NotNull Bits bits) {
         for (int i = 0; i < order; i++) {
             lsp[i] = .25f * i + .25f;
         }

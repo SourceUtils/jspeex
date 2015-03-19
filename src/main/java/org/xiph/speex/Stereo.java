@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Stereo
  *
@@ -106,7 +108,7 @@ public class Stereo {
      * @param data
      * @param frameSize
      */
-    public static void encode(final Bits bits,
+    public static void encode(@NotNull final Bits bits,
                               final float[] data,
                               final int frameSize) {
         int i, tmp;
@@ -181,7 +183,7 @@ public class Stereo {
      *
      * @param bits - Speex bits buffer.
      */
-    public void init(Bits bits) {
+    public void init(@NotNull Bits bits) {
         float sign = 1;
         int tmp;
         if (bits.unpack(1) != 0)

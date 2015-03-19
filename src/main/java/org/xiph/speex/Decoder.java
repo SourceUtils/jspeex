@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.StreamCorruptedException;
 
 /**
@@ -141,6 +143,7 @@ public interface Decoder {
      *
      * @return the excitation array.
      */
+    @NotNull
     public float[] getExc();
 
     /**

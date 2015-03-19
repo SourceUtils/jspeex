@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Noise codebook search
  *
@@ -96,7 +98,7 @@ public class NoiseSearch
                             int p, int nsf, float[] exc, int es, float[] r,
                             Bits bits, int complexity) {
         int i;
-        float[] tmp = new float[nsf];
+        @NotNull float[] tmp = new float[nsf];
         Filters.residue_percep_zero(target, 0, ak, awk1, awk2, tmp, nsf, p);
 
         for (i = 0; i < nsf; i++)

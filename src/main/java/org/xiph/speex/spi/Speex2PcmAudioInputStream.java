@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.StreamCorruptedException;
 import javax.sound.sampled.AudioFormat;
 
+import org.jetbrains.annotations.NotNull;
 import org.xiph.speex.Bits;
 import org.xiph.speex.Decoder;
 import org.xiph.speex.NbDecoder;
@@ -122,7 +123,7 @@ public class Speex2PcmAudioInputStream
      * @param length the length in sample frames of the data in this stream.
      */
     public Speex2PcmAudioInputStream(final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length) {
         this(in, format, length, DEFAULT_BUFFER_SIZE);
     }
@@ -137,7 +138,7 @@ public class Speex2PcmAudioInputStream
      * @throws IllegalArgumentException if size <= 0.
      */
     public Speex2PcmAudioInputStream(final InputStream in,
-                                     final AudioFormat format,
+                                     @NotNull final AudioFormat format,
                                      final long length,
                                      final int size) {
         super(in, format, length, size);
@@ -288,7 +289,7 @@ public class Speex2PcmAudioInputStream
                         prepos += n;
                         while ((buf.length - count) < outputData.length) { // grow buffer
                             int nsz = buf.length * 2;
-                            byte[] nbuf = new byte[nsz];
+                            @NotNull byte[] nbuf = new byte[nsz];
                             System.arraycopy(buf, 0, nbuf, 0, count);
                             buf = nbuf;
                         }
@@ -315,7 +316,7 @@ public class Speex2PcmAudioInputStream
                             prepos += n;
                             while ((buf.length - count) < outputData.length) { // grow buffer
                                 int nsz = buf.length * 2;
-                                byte[] nbuf = new byte[nsz];
+                                @NotNull byte[] nbuf = new byte[nsz];
                                 System.arraycopy(buf, 0, nbuf, 0, count);
                                 buf = nbuf;
                             }

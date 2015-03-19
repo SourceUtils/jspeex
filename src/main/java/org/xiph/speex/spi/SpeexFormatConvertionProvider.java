@@ -36,6 +36,8 @@
 
 package org.xiph.speex.spi;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.spi.FormatConversionProvider;
@@ -81,8 +83,9 @@ public class SpeexFormatConvertionProvider
      * @return array of source format encodings.
      * The array will always have a length of at least 1.
      */
+    @NotNull
     public AudioFormat.Encoding[] getSourceEncodings() {
-        AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX,
+        @NotNull AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX,
                 AudioFormat.Encoding.PCM_SIGNED};
         return encodings;
     }
@@ -94,8 +97,9 @@ public class SpeexFormatConvertionProvider
      * @return array of target format encodings.
      * The array will always have a length of at least 1.
      */
+    @NotNull
     public AudioFormat.Encoding[] getTargetEncodings() {
-        AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
+        @NotNull AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
                 SpeexEncoding.SPEEX_Q1,
                 SpeexEncoding.SPEEX_Q2,
                 SpeexEncoding.SPEEX_Q3,
@@ -129,9 +133,10 @@ public class SpeexFormatConvertionProvider
      * @param sourceFormat format of the incoming data.
      * @return array of supported target format encodings.
      */
-    public AudioFormat.Encoding[] getTargetEncodings(final AudioFormat sourceFormat) {
+    @NotNull
+    public AudioFormat.Encoding[] getTargetEncodings(@NotNull final AudioFormat sourceFormat) {
         if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED)) {
-            AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
+            @NotNull AudioFormat.Encoding[] encodings = {SpeexEncoding.SPEEX_Q0,
                     SpeexEncoding.SPEEX_Q1,
                     SpeexEncoding.SPEEX_Q2,
                     SpeexEncoding.SPEEX_Q3,
@@ -155,10 +160,10 @@ public class SpeexFormatConvertionProvider
                     SpeexEncoding.SPEEX_VBR10};
             return encodings;
         } else if (sourceFormat.getEncoding() instanceof SpeexEncoding) {
-            AudioFormat.Encoding[] encodings = {AudioFormat.Encoding.PCM_SIGNED};
+            @NotNull AudioFormat.Encoding[] encodings = {AudioFormat.Encoding.PCM_SIGNED};
             return encodings;
         } else {
-            AudioFormat.Encoding[] encodings = {};
+            @NotNull AudioFormat.Encoding[] encodings = {};
             return encodings;
         }
     }
@@ -172,16 +177,17 @@ public class SpeexFormatConvertionProvider
      * @param sourceFormat   format of the incoming data.
      * @return array of supported target formats.
      */
+    @NotNull
     public AudioFormat[] getTargetFormats(final AudioFormat.Encoding targetEncoding,
-                                          final AudioFormat sourceFormat) {
+                                          @NotNull final AudioFormat sourceFormat) {
         if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
                 targetEncoding instanceof SpeexEncoding) {
             if (sourceFormat.getChannels() > 2 || sourceFormat.getChannels() <= 0 ||
                     sourceFormat.isBigEndian()) {
-                AudioFormat[] formats = {};
+                @NotNull AudioFormat[] formats = {};
                 return formats;
             } else {
-                AudioFormat[] formats = {new AudioFormat(targetEncoding,
+                @NotNull AudioFormat[] formats = {new AudioFormat(targetEncoding,
                         sourceFormat.getSampleRate(),
                         -1, // sample size in bits
                         sourceFormat.getChannels(),
@@ -192,14 +198,14 @@ public class SpeexFormatConvertionProvider
             }
         } else if (sourceFormat.getEncoding() instanceof SpeexEncoding &&
                 targetEncoding.equals(AudioFormat.Encoding.PCM_SIGNED)) {
-            AudioFormat[] formats = {new AudioFormat(sourceFormat.getSampleRate(),
+            @NotNull AudioFormat[] formats = {new AudioFormat(sourceFormat.getSampleRate(),
                     16, // sample size in bits
                     sourceFormat.getChannels(),
                     true, // signed
                     false)}; // little endian (for PCM wav)
             return formats;
         } else {
-            AudioFormat[] formats = {};
+            @NotNull AudioFormat[] formats = {};
             return formats;
         }
     }
@@ -215,10 +221,11 @@ public class SpeexFormatConvertionProvider
      * @throws IllegalArgumentException - if the format combination supplied
      *                                  is not supported.
      */
+    @NotNull
     public AudioInputStream getAudioInputStream(final AudioFormat.Encoding targetEncoding,
-                                                final AudioInputStream sourceStream) {
+                                                @NotNull final AudioInputStream sourceStream) {
         if (isConversionSupported(targetEncoding, sourceStream.getFormat())) {
-            AudioFormat[] formats = getTargetFormats(targetEncoding,
+            @NotNull AudioFormat[] formats = getTargetFormats(targetEncoding,
                     sourceStream.getFormat());
             if (formats != null && formats.length > 0) {
                 AudioFormat sourceFormat = sourceStream.getFormat();
@@ -254,10 +261,11 @@ public class SpeexFormatConvertionProvider
      * @throws IllegalArgumentException - if the format combination supplied
      *                                  is not supported.
      */
-    public AudioInputStream getAudioInputStream(final AudioFormat targetFormat,
-                                                final AudioInputStream sourceStream) {
+    @NotNull
+    public AudioInputStream getAudioInputStream(@NotNull final AudioFormat targetFormat,
+                                                @NotNull final AudioInputStream sourceStream) {
         if (isConversionSupported(targetFormat, sourceStream.getFormat())) {
-            AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(),
+            @NotNull AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(),
                     sourceStream.getFormat());
             if (formats != null && formats.length > 0) {
                 AudioFormat sourceFormat = sourceStream.getFormat();

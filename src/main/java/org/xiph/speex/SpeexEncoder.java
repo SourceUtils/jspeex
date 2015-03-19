@@ -67,6 +67,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Main Speex Encoder class.
  * This class encodes the given PCM 16bit samples into Speex packets.
@@ -183,7 +185,7 @@ public class SpeexEncoder {
      * @param offset
      * @return the number of bytes of encoded data just read.
      */
-    public int getProcessedData(final byte[] data, final int offset) {
+    public int getProcessedData(@NotNull final byte[] data, final int offset) {
         int size = bits.getBufferSize();
         System.arraycopy(bits.getBuffer(), 0, data, offset, size);
         bits.init();
@@ -207,7 +209,7 @@ public class SpeexEncoder {
      * @param len
      * @return true if successful.
      */
-    public boolean processData(final byte[] data,
+    public boolean processData(@NotNull final byte[] data,
                                final int offset,
                                final int len) {
         // converty raw bytes into float samples
@@ -275,9 +277,9 @@ public class SpeexEncoder {
      * @param offsetOutput
      * @param length
      */
-    public static void mapPcm16bitLittleEndian2Float(final byte[] pcm16bitBytes,
+    public static void mapPcm16bitLittleEndian2Float(@NotNull final byte[] pcm16bitBytes,
                                                      final int offsetInput,
-                                                     final float[] samples,
+                                                     @NotNull final float[] samples,
                                                      final int offsetOutput,
                                                      final int length) {
         if (pcm16bitBytes.length - offsetInput < 2 * length) {

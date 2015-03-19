@@ -36,6 +36,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.DataOutput;
 import java.io.File;
 import java.io.IOException;
@@ -122,10 +124,10 @@ public abstract class AudioFileWriter {
      * @param packetSizes
      * @return the amount of data written to the buffer.
      */
-    public static int writeOggPageHeader(byte[] buf, int offset, int headerType,
+    public static int writeOggPageHeader(@NotNull byte[] buf, int offset, int headerType,
                                          long granulepos, int streamSerialNumber,
                                          int pageCount, int packetCount,
-                                         byte[] packetSizes) {
+                                         @NotNull byte[] packetSizes) {
         writeString(buf, offset, "OggS");             //  0 -  3: capture_pattern
         buf[offset + 4] = 0;                            //       4: stream_structure_version
         buf[offset + 5] = (byte) headerType;            //       5: header_type_flag
@@ -151,10 +153,11 @@ public abstract class AudioFileWriter {
      * @param packetSizes
      * @return an Ogg Page Header.
      */
+    @NotNull
     public static byte[] buildOggPageHeader(int headerType, long granulepos,
                                             int streamSerialNumber, int pageCount,
-                                            int packetCount, byte[] packetSizes) {
-        byte[] data = new byte[packetCount + 27];
+                                            int packetCount, @NotNull byte[] packetSizes) {
+        @NotNull byte[] data = new byte[packetCount + 27];
         writeOggPageHeader(data, 0, headerType, granulepos, streamSerialNumber,
                 pageCount, packetCount, packetSizes);
         return data;
@@ -191,7 +194,7 @@ public abstract class AudioFileWriter {
      * @param nframes
      * @return the amount of data written to the buffer.
      */
-    public static int writeSpeexHeader(byte[] buf, int offset, int sampleRate,
+    public static int writeSpeexHeader(@NotNull byte[] buf, int offset, int sampleRate,
                                        int mode, int channels, boolean vbr,
                                        int nframes) {
         writeString(buf, offset, "Speex   ");    //  0 -  7: speex_string
@@ -223,9 +226,10 @@ public abstract class AudioFileWriter {
      * @param nframes
      * @return a Speex Header.
      */
+    @NotNull
     public static byte[] buildSpeexHeader(int sampleRate, int mode, int channels,
                                           boolean vbr, int nframes) {
-        byte[] data = new byte[80];
+        @NotNull byte[] data = new byte[80];
         writeSpeexHeader(data, 0, sampleRate, mode, channels, vbr, nframes);
         return data;
     }
@@ -238,7 +242,7 @@ public abstract class AudioFileWriter {
      * @param comment the comment.
      * @return the amount of data written to the buffer.
      */
-    public static int writeSpeexComment(byte[] buf, int offset, String comment) {
+    public static int writeSpeexComment(@NotNull byte[] buf, int offset, @NotNull String comment) {
         int length = comment.length();
         writeInt(buf, offset, length);       // vendor comment size
         writeString(buf, offset + 4, comment); // vendor comment
@@ -252,8 +256,9 @@ public abstract class AudioFileWriter {
      * @param comment the comment.
      * @return a Speex Comment.
      */
-    public static byte[] buildSpeexComment(String comment) {
-        byte[] data = new byte[comment.length() + 8];
+    @NotNull
+    public static byte[] buildSpeexComment(@NotNull String comment) {
+        @NotNull byte[] data = new byte[comment.length() + 8];
         writeSpeexComment(data, 0, comment);
         return data;
     }
@@ -265,7 +270,7 @@ public abstract class AudioFileWriter {
      * @param v   value to write.
      * @throws IOException
      */
-    public static void writeShort(DataOutput out, short v)
+    public static void writeShort(@NotNull DataOutput out, short v)
             throws IOException {
         out.writeByte((0xff & v));
         out.writeByte((0xff & (v >>> 8)));
@@ -278,7 +283,7 @@ public abstract class AudioFileWriter {
      * @param v   value to write.
      * @throws IOException
      */
-    public static void writeInt(DataOutput out, int v)
+    public static void writeInt(@NotNull DataOutput out, int v)
             throws IOException {
         out.writeByte(0xff & v);
         out.writeByte(0xff & (v >>> 8));
@@ -293,7 +298,7 @@ public abstract class AudioFileWriter {
      * @param v  - the value to write.
      * @throws IOException
      */
-    public static void writeShort(OutputStream os, short v)
+    public static void writeShort(@NotNull OutputStream os, short v)
             throws IOException {
         os.write((0xff & v));
         os.write((0xff & (v >>> 8)));
@@ -306,7 +311,7 @@ public abstract class AudioFileWriter {
      * @param v  - the value to write.
      * @throws IOException
      */
-    public static void writeInt(OutputStream os, int v)
+    public static void writeInt(@NotNull OutputStream os, int v)
             throws IOException {
         os.write(0xff & v);
         os.write(0xff & (v >>> 8));
@@ -321,7 +326,7 @@ public abstract class AudioFileWriter {
      * @param v  - the value to write.
      * @throws IOException
      */
-    public static void writeLong(OutputStream os, long v)
+    public static void writeLong(@NotNull OutputStream os, long v)
             throws IOException {
         os.write((int) (0xff & v));
         os.write((int) (0xff & (v >>> 8)));
@@ -384,8 +389,8 @@ public abstract class AudioFileWriter {
      * @param offset the offset from which to start writing in the array.
      * @param v      the value to write.
      */
-    public static void writeString(byte[] data, int offset, String v) {
-        byte[] str = v.getBytes();
+    public static void writeString(@NotNull byte[] data, int offset, @NotNull String v) {
+        @NotNull byte[] str = v.getBytes();
         System.arraycopy(str, 0, data, offset, str.length);
     }
 }

@@ -53,6 +53,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.sound.sampled.spi.AudioFileReader;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xiph.speex.OggCrc;
 
 /**
@@ -93,9 +95,10 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioFileFormat getAudioFileFormat(final File file)
+    @NotNull
+    public AudioFileFormat getAudioFileFormat(@NotNull final File file)
             throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = null;
+        @Nullable InputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
             return getAudioFileFormat(inputStream, (int) file.length());
@@ -115,7 +118,8 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioFileFormat getAudioFileFormat(final URL url)
+    @NotNull
+    public AudioFileFormat getAudioFileFormat(@NotNull final URL url)
             throws UnsupportedAudioFileException, IOException {
         InputStream inputStream = url.openStream();
         try {
@@ -136,7 +140,8 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioFileFormat getAudioFileFormat(final InputStream stream)
+    @NotNull
+    public AudioFileFormat getAudioFileFormat(@NotNull final InputStream stream)
             throws UnsupportedAudioFileException, IOException {
         return getAudioFileFormat(stream, AudioSystem.NOT_SPECIFIED);
     }
@@ -153,7 +158,8 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    protected AudioFileFormat getAudioFileFormat(final InputStream stream,
+    @NotNull
+    protected AudioFileFormat getAudioFileFormat(@NotNull final InputStream stream,
                                                  final int medialength)
             throws UnsupportedAudioFileException, IOException {
         return getAudioFileFormat(stream, null, medialength);
@@ -171,8 +177,9 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    protected AudioFileFormat getAudioFileFormat(final InputStream bitStream,
-                                                 ByteArrayOutputStream baos,
+    @NotNull
+    protected AudioFileFormat getAudioFileFormat(@NotNull final InputStream bitStream,
+                                                 @Nullable ByteArrayOutputStream baos,
                                                  final int mediaLength)
             throws UnsupportedAudioFileException, IOException {
         AudioFormat format;
@@ -193,10 +200,10 @@ public class SpeexAudioFileReader
             int channels = 0;
             int frameSize = AudioSystem.NOT_SPECIFIED;
             float frameRate = AudioSystem.NOT_SPECIFIED;
-            byte[] header = new byte[128];
+            @NotNull byte[] header = new byte[128];
             int segments = 0;
             int bodybytes = 0;
-            DataInputStream dis = new DataInputStream(bitStream);
+            @NotNull DataInputStream dis = new DataInputStream(bitStream);
             if (baos == null)
                 baos = new ByteArrayOutputStream(128);
             int origchksum;
@@ -286,9 +293,10 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioInputStream getAudioInputStream(final File file)
+    @NotNull
+    public AudioInputStream getAudioInputStream(@NotNull final File file)
             throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = new FileInputStream(file);
+        @NotNull InputStream inputStream = new FileInputStream(file);
         try {
             return getAudioInputStream(inputStream, (int) file.length());
         } catch (UnsupportedAudioFileException e) {
@@ -311,7 +319,8 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioInputStream getAudioInputStream(final URL url)
+    @NotNull
+    public AudioInputStream getAudioInputStream(@NotNull final URL url)
             throws UnsupportedAudioFileException, IOException {
         InputStream inputStream = url.openStream();
         try {
@@ -337,7 +346,8 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    public AudioInputStream getAudioInputStream(final InputStream stream)
+    @NotNull
+    public AudioInputStream getAudioInputStream(@NotNull final InputStream stream)
             throws UnsupportedAudioFileException, IOException {
         return getAudioInputStream(stream, AudioSystem.NOT_SPECIFIED);
     }
@@ -355,15 +365,16 @@ public class SpeexAudioFileReader
      *                                       a valid audio file data recognized by the system.
      * @throws IOException                   if an I/O exception occurs.
      */
-    protected AudioInputStream getAudioInputStream(final InputStream inputStream,
+    @NotNull
+    protected AudioInputStream getAudioInputStream(@NotNull final InputStream inputStream,
                                                    final int medialength)
             throws UnsupportedAudioFileException, IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
-        AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream,
+        @NotNull ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
+        @NotNull AudioFileFormat audioFileFormat = getAudioFileFormat(inputStream,
                 baos,
                 medialength);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        SequenceInputStream sequenceInputStream = new SequenceInputStream(bais, inputStream);
+        @NotNull ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        @NotNull SequenceInputStream sequenceInputStream = new SequenceInputStream(bais, inputStream);
         return new AudioInputStream(sequenceInputStream,
                 audioFileFormat.getFormat(),
                 audioFileFormat.getFrameLength());

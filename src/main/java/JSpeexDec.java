@@ -66,6 +66,8 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.xiph.speex.*;
 
 import java.io.*;
@@ -143,6 +145,7 @@ public class JSpeexDec {
     /**
      * Random number generator for packet loss simulation.
      */
+    @NotNull
     protected static Random random = new Random();
     /**
      * Speex Decoder
@@ -206,9 +209,9 @@ public class JSpeexDec {
      * @param args Command line parameters.
      * @throws IOException
      */
-    public static void main(final String[] args)
+    public static void main(@NotNull final String[] args)
             throws IOException {
-        JSpeexDec decoder = new JSpeexDec();
+        @NotNull JSpeexDec decoder = new JSpeexDec();
         if (decoder.parseArgs(args)) {
             decoder.decode();
         }
@@ -220,7 +223,7 @@ public class JSpeexDec {
      * @param args Command line parameters.
      * @return true if the parsed arguments are sufficient to run the decoder.
      */
-    public boolean parseArgs(final String[] args) {
+    public boolean parseArgs(@NotNull final String[] args) {
         // make sure we have command args
         if (args.length < 2) {
             if (args.length == 1 && (args[0].equals("-v") || args[0].equals("--version"))) {
@@ -381,20 +384,20 @@ public class JSpeexDec {
      * @param destPath
      * @throws IOException
      */
-    public void decode(final File srcPath, final File destPath)
+    public void decode(@NotNull final File srcPath, final File destPath)
             throws IOException {
-        byte[] header = new byte[2048];
-        byte[] payload = new byte[65536];
-        byte[] decdat = new byte[44100 * 2 * 2];
+        @NotNull byte[] header = new byte[2048];
+        @NotNull byte[] payload = new byte[65536];
+        @NotNull byte[] decdat = new byte[44100 * 2 * 2];
         final int WAV_HEADERSIZE = 8;
         final short WAVE_FORMAT_SPEEX = (short) 0xa109;
-        final String RIFF = "RIFF";
-        final String WAVE = "WAVE";
-        final String FORMAT = "fmt ";
-        final String DATA = "data";
+        @NotNull final String RIFF = "RIFF";
+        @NotNull final String WAVE = "WAVE";
+        @NotNull final String FORMAT = "fmt ";
+        @NotNull final String DATA = "data";
         final int OGG_HEADERSIZE = 27;
         final int OGG_SEGOFFSET = 26;
-        final String OGGID = "OggS";
+        @NotNull final String OGGID = "OggS";
         int segments = 0;
         int curseg = 0;
         int bodybytes = 0;
@@ -407,9 +410,9 @@ public class JSpeexDec {
         // construct a new decoder
         speexDecoder = new SpeexDecoder();
         // open the input stream
-        DataInputStream dis = new DataInputStream(new FileInputStream(srcPath));
+        @NotNull DataInputStream dis = new DataInputStream(new FileInputStream(srcPath));
 
-        AudioFileWriter writer = null;
+        @Nullable AudioFileWriter writer = null;
         int origchksum;
         int chksum;
         try {
@@ -520,7 +523,7 @@ public class JSpeexDec {
                             }
                             // Read other header chunks
                             dis.readFully(header, 0, WAV_HEADERSIZE);
-                            String chunk = new String(header, 0, 4);
+                            @NotNull String chunk = new String(header, 0, 4);
                             int size = readInt(header, 4);
                             while (!chunk.equals(DATA)) {
                                 dis.readFully(header, 0, size);
@@ -677,7 +680,7 @@ public class JSpeexDec {
      * @param bytes
      * @return
      */
-    private boolean readSpeexHeader(final byte[] packet,
+    private boolean readSpeexHeader(@NotNull final byte[] packet,
                                     final int offset,
                                     final int bytes) {
         if (bytes != 80) {

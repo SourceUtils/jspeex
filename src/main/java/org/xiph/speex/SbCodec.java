@@ -37,6 +37,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Sideband Codec.
  * This class contains all the basic structures needed by the Sideband
@@ -142,14 +144,15 @@ public class SbCodec
      *
      * @return the wideband submodes.
      */
+    @NotNull
     protected static SubMode[] buildWbSubModes() {
     /* Initialize Long Term Predictions */
-        HighLspQuant highLU = new HighLspQuant();
+        @NotNull HighLspQuant highLU = new HighLspQuant();
     /* Initialize Codebook Searches */
-        SplitShapeSearch ssCbHighLbrSearch = new SplitShapeSearch(40, 10, 4, hexc_10_32_table, 5, 0);
-        SplitShapeSearch ssCbHighSearch = new SplitShapeSearch(40, 8, 5, hexc_table, 7, 1);
+        @NotNull SplitShapeSearch ssCbHighLbrSearch = new SplitShapeSearch(40, 10, 4, hexc_10_32_table, 5, 0);
+        @NotNull SplitShapeSearch ssCbHighSearch = new SplitShapeSearch(40, 8, 5, hexc_table, 7, 1);
     /* Initialize wide-band modes */
-        SubMode[] wbSubModes = new SubMode[SB_SUBMODES];
+        @NotNull SubMode[] wbSubModes = new SubMode[SB_SUBMODES];
         wbSubModes[1] = new SubMode(0, 0, 1, 0, highLU, null, null, .75f, .75f, -1, 36);
         wbSubModes[2] = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighLbrSearch, .85f, .6f, -1, 112);
         wbSubModes[3] = new SubMode(0, 0, 1, 0, highLU, null, ssCbHighSearch, .75f, .7f, -1, 192);
@@ -162,10 +165,11 @@ public class SbCodec
      *
      * @return the ultra-wideband submodes.
      */
+    @NotNull
     protected static SubMode[] buildUwbSubModes() {
     /* Initialize Long Term Predictions */
-        HighLspQuant highLU = new HighLspQuant();
-        SubMode[] uwbSubModes = new SubMode[SB_SUBMODES];
+        @NotNull HighLspQuant highLU = new HighLspQuant();
+        @NotNull SubMode[] uwbSubModes = new SubMode[SB_SUBMODES];
         uwbSubModes[1] = new SubMode(0, 0, 1, 0, highLU, null, null, .75f, .75f, -1, 2);
         return uwbSubModes;
     }
@@ -195,9 +199,10 @@ public class SbCodec
      *
      * @return the excitation array.
      */
+    @NotNull
     public float[] getExc() {
         int i;
-        float[] excTmp = new float[fullFrameSize];
+        @NotNull float[] excTmp = new float[fullFrameSize];
         for (i = 0; i < frameSize; i++)
             excTmp[2 * i] = 2.0f * excBuf[excIdx + i];
         return excTmp;
@@ -208,6 +213,7 @@ public class SbCodec
      *
      * @return the innovation array.
      */
+    @NotNull
     public float[] getInnov() {
         return getExc();
     }

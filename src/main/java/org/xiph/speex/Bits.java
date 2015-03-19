@@ -68,6 +68,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Speex bit packing and unpacking class.
  *
@@ -187,7 +189,7 @@ public class Bits {
             // System.err.println("Buffer too small to pack bits");
       /* Expand the buffer as needed. */
             int size = bytes.length * 2;
-            byte[] tmp = new byte[size];
+            @NotNull byte[] tmp = new byte[size];
             System.arraycopy(bytes, 0, tmp, 0, bytes.length);
             bytes = tmp;
         }

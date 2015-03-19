@@ -36,6 +36,8 @@
 
 package org.xiph.speex.spi;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -64,6 +66,7 @@ public class SpeexAudioFileWriter
      *
      * @return array of file types. If no file types are supported, an array of length 0 is returned.
      */
+    @NotNull
     public AudioFileFormat.Type[] getAudioFileTypes() {
         return SPEEX_FORMAT;
     }
@@ -77,7 +80,8 @@ public class SpeexAudioFileWriter
      * @return array of file types. If no file types are supported, an array of
      * length 0 is returned.
      */
-    public AudioFileFormat.Type[] getAudioFileTypes(final AudioInputStream stream) {
+    @NotNull
+    public AudioFileFormat.Type[] getAudioFileTypes(@NotNull final AudioInputStream stream) {
         if (stream.getFormat().getEncoding() instanceof SpeexEncoding) {
             return SPEEX_FORMAT;
         } else {
@@ -103,11 +107,11 @@ public class SpeexAudioFileWriter
      * @see #isFileTypeSupported(AudioFileFormat.Type, AudioInputStream)
      * @see #getAudioFileTypes()
      */
-    public int write(final AudioInputStream stream,
+    public int write(@NotNull final AudioInputStream stream,
                      final AudioFileFormat.Type fileType,
-                     final OutputStream out)
+                     @NotNull final OutputStream out)
             throws IOException {
-        AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
+        @NotNull AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
         if (formats != null && formats.length > 0) {
             return write(stream, out);
         } else {
@@ -129,13 +133,13 @@ public class SpeexAudioFileWriter
      * @see #isFileTypeSupported(javax.sound.sampled.AudioFileFormat.Type)
      * @see #getAudioFileTypes()
      */
-    public int write(final AudioInputStream stream,
+    public int write(@NotNull final AudioInputStream stream,
                      final AudioFileFormat.Type fileType,
-                     final File out)
+                     @NotNull final File out)
             throws IOException {
-        AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
+        @NotNull AudioFileFormat.Type[] formats = getAudioFileTypes(stream);
         if (formats != null && formats.length > 0) {
-            FileOutputStream fos = new FileOutputStream(out);
+            @NotNull FileOutputStream fos = new FileOutputStream(out);
             return write(stream, fos);
         } else {
             throw new IllegalArgumentException("cannot write given file type");
@@ -152,10 +156,10 @@ public class SpeexAudioFileWriter
      * @return the number of bytes written to the output stream.
      * @throws IOException - if an I/O exception occurs.
      */
-    private int write(final AudioInputStream stream,
-                      final OutputStream out)
+    private int write(@NotNull final AudioInputStream stream,
+                      @NotNull final OutputStream out)
             throws IOException {
-        byte[] data = new byte[2048];
+        @NotNull byte[] data = new byte[2048];
         int read = 0;
         int temp;
         while ((temp = stream.read(data, 0, 2048)) > 0) {

@@ -37,6 +37,8 @@
 
 package org.xiph.speex;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Narrowband Codec.
  * This class contains all the basic structures needed by the Narrowband
@@ -286,26 +288,27 @@ public class NbCodec
     /**
      * Build narrowband submodes
      */
+    @NotNull
     private static SubMode[] buildNbSubModes() {
     /* Initialize Long Term Predictions */
-        Ltp3Tap ltpNb = new Ltp3Tap(gain_cdbk_nb, 7, 7);
-        Ltp3Tap ltpVlbr = new Ltp3Tap(gain_cdbk_lbr, 5, 0);
-        Ltp3Tap ltpLbr = new Ltp3Tap(gain_cdbk_lbr, 5, 7);
-        Ltp3Tap ltpMed = new Ltp3Tap(gain_cdbk_lbr, 5, 7);
-        LtpForcedPitch ltpFP = new LtpForcedPitch();
+        @NotNull Ltp3Tap ltpNb = new Ltp3Tap(gain_cdbk_nb, 7, 7);
+        @NotNull Ltp3Tap ltpVlbr = new Ltp3Tap(gain_cdbk_lbr, 5, 0);
+        @NotNull Ltp3Tap ltpLbr = new Ltp3Tap(gain_cdbk_lbr, 5, 7);
+        @NotNull Ltp3Tap ltpMed = new Ltp3Tap(gain_cdbk_lbr, 5, 7);
+        @NotNull LtpForcedPitch ltpFP = new LtpForcedPitch();
     /* Initialize Codebook Searches */
-        NoiseSearch noiseSearch = new NoiseSearch();
-        SplitShapeSearch ssNbVlbrSearch = new SplitShapeSearch(40, 10, 4, exc_10_16_table, 4, 0);
-        SplitShapeSearch ssNbLbrSearch = new SplitShapeSearch(40, 10, 4, exc_10_32_table, 5, 0);
-        SplitShapeSearch ssNbSearch = new SplitShapeSearch(40, 5, 8, exc_5_64_table, 6, 0);
-        SplitShapeSearch ssNbMedSearch = new SplitShapeSearch(40, 8, 5, exc_8_128_table, 7, 0);
-        SplitShapeSearch ssSbSearch = new SplitShapeSearch(40, 5, 8, exc_5_256_table, 8, 0);
-        SplitShapeSearch ssNbUlbrSearch = new SplitShapeSearch(40, 20, 2, exc_20_32_table, 5, 0);
+        @NotNull NoiseSearch noiseSearch = new NoiseSearch();
+        @NotNull SplitShapeSearch ssNbVlbrSearch = new SplitShapeSearch(40, 10, 4, exc_10_16_table, 4, 0);
+        @NotNull SplitShapeSearch ssNbLbrSearch = new SplitShapeSearch(40, 10, 4, exc_10_32_table, 5, 0);
+        @NotNull SplitShapeSearch ssNbSearch = new SplitShapeSearch(40, 5, 8, exc_5_64_table, 6, 0);
+        @NotNull SplitShapeSearch ssNbMedSearch = new SplitShapeSearch(40, 8, 5, exc_8_128_table, 7, 0);
+        @NotNull SplitShapeSearch ssSbSearch = new SplitShapeSearch(40, 5, 8, exc_5_256_table, 8, 0);
+        @NotNull SplitShapeSearch ssNbUlbrSearch = new SplitShapeSearch(40, 20, 2, exc_20_32_table, 5, 0);
     /* Initialize Line Spectral Pair Quantizers */
-        NbLspQuant nbLspQuant = new NbLspQuant();
-        LbrLspQuant lbrLspQuant = new LbrLspQuant();
+        @NotNull NbLspQuant nbLspQuant = new NbLspQuant();
+        @NotNull LbrLspQuant lbrLspQuant = new LbrLspQuant();
     /* Initialize narrow-band modes */
-        SubMode[] nbSubModes = new SubMode[NB_SUBMODES];
+        @NotNull SubMode[] nbSubModes = new SubMode[NB_SUBMODES];
     /* 2150 bps "vocoder-like" mode for comfort noise */
         nbSubModes[1] = new SubMode(0, 1, 0, 0, lbrLspQuant, ltpFP, noiseSearch, .7f, .7f, -1, 43);
     /* 5.95 kbps very low bit-rate mode */
@@ -359,8 +362,9 @@ public class NbCodec
      *
      * @return the excitation array.
      */
+    @NotNull
     public float[] getExc() {
-        float[] excTmp = new float[frameSize];
+        @NotNull float[] excTmp = new float[frameSize];
         System.arraycopy(excBuf, excIdx, excTmp, 0, frameSize);
         return excTmp;
     }

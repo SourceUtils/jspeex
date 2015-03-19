@@ -36,6 +36,9 @@
 
 package org.xiph.speex.spi;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import java.io.IOException;
@@ -62,12 +65,14 @@ public abstract class FilteredAudioInputStream
     /**
      * The underlying inputStream.
      */
+    @Nullable
     protected InputStream in;
 
     /**
      * The internal buffer array where the data is stored. When necessary,
      * it may be replaced by another array of a different size.
      */
+    @Nullable
     protected byte[] buf;
 
     /**
@@ -135,6 +140,7 @@ public abstract class FilteredAudioInputStream
     /**
      * The internal buffer array where the unfiltered data is temporarily stored.
      */
+    @Nullable
     protected byte[] prebuf;
 
     /**
@@ -183,7 +189,7 @@ public abstract class FilteredAudioInputStream
      * @throws IllegalArgumentException if size <= 0 or presize <= 0.
      */
     public FilteredAudioInputStream(final InputStream in,
-                                    final AudioFormat format,
+                                    @NotNull final AudioFormat format,
                                     final long length) {
         this(in, format, length, DEFAULT_BUFFER_SIZE);
     }
@@ -201,7 +207,7 @@ public abstract class FilteredAudioInputStream
      * @throws IllegalArgumentException if size <= 0.
      */
     public FilteredAudioInputStream(final InputStream in,
-                                    final AudioFormat format,
+                                    @NotNull final AudioFormat format,
                                     final long length,
                                     final int size) {
         this(in, format, length, size, size);
@@ -221,7 +227,7 @@ public abstract class FilteredAudioInputStream
      * @throws IllegalArgumentException if size <= 0 or presize <= 0.
      */
     public FilteredAudioInputStream(final InputStream in,
-                                    final AudioFormat format,
+                                    @NotNull final AudioFormat format,
                                     final long length,
                                     final int size,
                                     final int presize) {
@@ -284,7 +290,7 @@ public abstract class FilteredAudioInputStream
                 int nsz = pos * 2;
                 if (nsz > marklimit)
                     nsz = marklimit;
-                byte[] nbuf = new byte[nsz];
+                @NotNull byte[] nbuf = new byte[nsz];
                 System.arraycopy(buf, 0, nbuf, 0, pos);
                 buf = nbuf;
             }
@@ -344,7 +350,7 @@ public abstract class FilteredAudioInputStream
      * the stream has been reached.
      * @throws IOException if an I/O error occurs.
      */
-    public synchronized int read(final byte[] b,
+    public synchronized int read(@NotNull final byte[] b,
                                  final int off,
                                  final int len)
             throws IOException {
@@ -439,7 +445,7 @@ public abstract class FilteredAudioInputStream
      */
     public synchronized void mark(final int readlimit) {
         if (readlimit > buf.length - pos) { // not enough room
-            byte[] newbuf;
+            @Nullable byte[] newbuf;
             if (readlimit <= buf.length) {
                 newbuf = buf; // just shift buffer
             } else {
