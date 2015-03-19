@@ -85,7 +85,7 @@ public class SbDecoder
     /** */
     protected Decoder lowdec;
     /** */
-    protected Stereo stereo;
+    protected final Stereo stereo;
     /** */
     protected boolean enhanced;
 

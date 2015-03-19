@@ -80,9 +80,9 @@ public class NbCodec
     // Tools
     //---------------------------------------------------------------------------
     /** */
-    protected Lsp m_lsp;
+    protected final Lsp m_lsp;
     /** */
-    protected Filters filters;
+    protected final Filters filters;
 
     //---------------------------------------------------------------------------
     // Parameters

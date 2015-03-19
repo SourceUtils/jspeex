@@ -89,7 +89,7 @@ public class OggSpeexWriter
     /**
      * Data buffer
      */
-    private byte[] dataBuffer;
+    private final byte[] dataBuffer;
     /**
      * Pointer within the Data buffer
      */
@@ -97,7 +97,7 @@ public class OggSpeexWriter
     /**
      * Header buffer
      */
-    private byte[] headerBuffer;
+    private final byte[] headerBuffer;
     /**
      * Pointer within the Header buffer
      */

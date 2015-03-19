@@ -146,7 +146,7 @@ public class JSpeexDec {
      * Random number generator for packet loss simulation.
      */
     @NotNull
-    protected static Random random = new Random();
+    protected static final Random random = new Random();
     /**
      * Speex Decoder
      */

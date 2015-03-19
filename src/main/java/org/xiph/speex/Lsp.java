@@ -84,7 +84,7 @@ package org.xiph.speex;
  * @version $Revision$
  */
 public class Lsp {
-    private float[] pw;
+    private final float[] pw;
 
     /**
      * Constructor
@@ -112,9 +112,9 @@ public class Lsp {
      * @param m    - order of the polynomial.
      * @return the value of the polynomial at point x.
      */
-    public static final float cheb_poly_eva(final float[] coef,
-                                            float x,
-                                            final int m) {
+    public static float cheb_poly_eva(final float[] coef,
+                                      float x,
+                                      final int m) {
         int i;
         float sum;
         float[] T;

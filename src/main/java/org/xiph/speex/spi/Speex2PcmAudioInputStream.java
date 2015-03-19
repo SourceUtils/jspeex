@@ -36,16 +36,16 @@
 
 package org.xiph.speex.spi;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.StreamCorruptedException;
-import javax.sound.sampled.AudioFormat;
-
 import org.jetbrains.annotations.NotNull;
 import org.xiph.speex.Bits;
 import org.xiph.speex.Decoder;
 import org.xiph.speex.NbDecoder;
 import org.xiph.speex.SbDecoder;
+
+import javax.sound.sampled.AudioFormat;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StreamCorruptedException;
 
 /**
  * Converts an Ogg Speex bitstream into a PCM 16bits/sample audio stream.
@@ -83,7 +83,7 @@ public class Speex2PcmAudioInputStream
     /**
      * Speex bit packing and unpacking class.
      */
-    private Bits bits;
+    private final Bits bits;
     /**
      * Speex Decoder.
      */
@@ -113,7 +113,7 @@ public class Speex2PcmAudioInputStream
     /**
      * Array containing the sizes of Ogg packets in the current page.
      */
-    private byte[] packetSizes;
+    private final byte[] packetSizes;
 
     /**
      * Constructor

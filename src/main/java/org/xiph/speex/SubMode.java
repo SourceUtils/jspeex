@@ -79,47 +79,47 @@ public class SubMode {
     /**
      * Set to -1 for "normal" modes, otherwise encode pitch using a global pitch and allowing a +- lbr_pitch variation (for low not-rates)
      */
-    public int lbr_pitch;
+    public final int lbr_pitch;
     /**
      * Use the same (forced) pitch gain for all sub-frames
      */
-    public int forced_pitch_gain;
+    public final int forced_pitch_gain;
     /**
      * Number of bits to use as sub-frame innovation gain
      */
-    public int have_subframe_gain;
+    public final int have_subframe_gain;
     /**
      * Apply innovation quantization twice for higher quality (and higher bit-rate)
      */
-    public int double_codebook;
+    public final int double_codebook;
     /**
      * LSP quantization/unquantization function
      */
-    public LspQuant lsqQuant;
+    public final LspQuant lsqQuant;
     /**
      * Long-term predictor (pitch) un-quantizer
      */
-    public Ltp ltp;
+    public final Ltp ltp;
     /**
      * Codebook Search un-quantizer
      */
-    public CbSearch innovation;
+    public final CbSearch innovation;
     /**
      * Enhancer constant
      */
-    public float lpc_enh_k1;
+    public final float lpc_enh_k1;
     /**
      * Enhancer constant
      */
-    public float lpc_enh_k2;
+    public final float lpc_enh_k2;
     /**
      * Gain of enhancer comb filter
      */
-    public float comb_gain;
+    public final float comb_gain;
     /**
      * Number of bits per frame after encoding
      */
-    public int bits_per_frame;
+    public final int bits_per_frame;
 
     /**
      * Constructor

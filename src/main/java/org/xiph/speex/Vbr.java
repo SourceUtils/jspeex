@@ -119,10 +119,10 @@ public class Vbr {
             {3.9f, 2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f}  /*  2 kbps */
     };
 
-    private float energy_alpha;
+    private final float energy_alpha;
     private float average_energy;
     private float last_energy;
-    private float[] last_log_energy;
+    private final float[] last_log_energy;
     //  private float accum_sum;
 //  private float last_pitch_coef;
     private float soft_pitch;

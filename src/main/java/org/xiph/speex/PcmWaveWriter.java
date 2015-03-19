@@ -287,8 +287,8 @@ public class PcmWaveWriter
             writeShort(raf, (short) calculateBlockSize(mode, channels, quality)); // Blocksize of data
             writeShort(raf, (short) quality);             // Bits per sample
             writeShort(raf, (short) (2 + 80 + length));       // The count in bytes of the extra size
-            raf.writeByte(0xff & 1);                      // ACM major version number
-            raf.writeByte(0xff & 0);                      // ACM minor version number
+            raf.writeByte(1);                      // ACM major version number
+            raf.writeByte(0);                      // ACM minor version number
             raf.write(buildSpeexHeader(sampleRate, mode, channels, vbr, nframes));
             raf.writeBytes(comment);
         }
@@ -324,9 +324,9 @@ public class PcmWaveWriter
      * @param quality
      * @return effective bitrate (considering padding).
      */
-    private static final int calculateEffectiveBitrate(final int mode,
-                                                       final int channels,
-                                                       final int quality) {
+    private static int calculateEffectiveBitrate(final int mode,
+                                                 final int channels,
+                                                 final int quality) {
         return ((((WAVE_FRAME_SIZES[mode - 1][channels - 1][quality] *
                 WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality]) + 7) >> 3) *
                 50 * 8) / WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality];
@@ -341,9 +341,9 @@ public class PcmWaveWriter
      * @param quality
      * @return block size (considering padding).
      */
-    private static final int calculateBlockSize(final int mode,
-                                                final int channels,
-                                                final int quality) {
+    private static int calculateBlockSize(final int mode,
+                                          final int channels,
+                                          final int quality) {
         return (((WAVE_FRAME_SIZES[mode - 1][channels - 1][quality] *
                 WAVE_BITS_PER_FRAME[mode - 1][channels - 1][quality]) + 7) >> 3);
     }

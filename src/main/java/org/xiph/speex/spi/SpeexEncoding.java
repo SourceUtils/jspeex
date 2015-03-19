@@ -173,11 +173,11 @@ public class SpeexEncoding
     /**
      * Quality setting for the Speex encoding.
      */
-    protected int quality;
+    protected final int quality;
     /**
      * Defines whether or not the encoding is Variable Bit Rate.
      */
-    protected boolean vbr;
+    protected final boolean vbr;
 
     /**
      * Constructs a new encoding.

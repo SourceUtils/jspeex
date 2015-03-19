@@ -107,11 +107,11 @@ public class NbDecoder
 
     /** */
     @NotNull
-    protected Random random = new Random();
+    protected final Random random = new Random();
     /** */
-    protected Stereo stereo;
+    protected final Stereo stereo;
     /** */
-    protected Inband inband;
+    protected final Inband inband;
     /** */
     protected boolean enhanced;
 

@@ -80,13 +80,13 @@ import org.jetbrains.annotations.NotNull;
 public class Ltp3Tap
         extends Ltp {
     /** */
-    private float[] gain;
+    private final float[] gain;
     /** */
-    private int[] gain_cdbk;
+    private final int[] gain_cdbk;
     /** */
-    private int gain_bits;
+    private final int gain_bits;
     /** */
-    private int pitch_bits;
+    private final int pitch_bits;
     /** */
     private float[][] e;
 

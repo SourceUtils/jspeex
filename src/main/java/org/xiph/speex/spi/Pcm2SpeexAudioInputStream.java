@@ -36,18 +36,18 @@
 
 package org.xiph.speex.spi;
 
-import java.util.Random;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StreamCorruptedException;
-import javax.sound.sampled.AudioFormat;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.xiph.speex.AudioFileWriter;
-import org.xiph.speex.OggCrc;
 import org.xiph.speex.Encoder;
+import org.xiph.speex.OggCrc;
 import org.xiph.speex.SpeexEncoder;
+
+import javax.sound.sampled.AudioFormat;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StreamCorruptedException;
+import java.util.Random;
 
 /**
  * Converts a PCM 16bits/sample mono audio stream to Ogg Speex
@@ -92,15 +92,15 @@ public class Pcm2SpeexAudioInputStream
     /**
      * The Speex Encoder class.
      */
-    private SpeexEncoder encoder;
+    private final SpeexEncoder encoder;
     /**
      * The encoder mode (0=NB, 1=WB, 2=UWB).
      */
-    private int mode;
+    private final int mode;
     /**
      * The size in bytes of PCM data that will be encoded into 1 Speex frame.
      */
-    private int frameSize;
+    private final int frameSize;
     /**
      * The number of Speex frames that will be put in each Ogg packet.
      */

@@ -149,7 +149,7 @@ public class JSpeexEnc {
     /**
      * Defines the desired bitrate for the encoded audio.
      */
-    protected int bitrate = -1;
+    protected final int bitrate = -1;
     /**
      * Defines the sampling rate of the audio input.
      */

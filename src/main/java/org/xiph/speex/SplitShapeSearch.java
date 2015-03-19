@@ -83,18 +83,22 @@ public class SplitShapeSearch
     public static final int MAX_COMPLEXITY = 10;
 
     //  private int   subframesize;
-    private int subvect_size;
-    private int nb_subvect;
-    private int[] shape_cb;
-    private int shape_cb_size;
-    private int shape_bits;
-    private int have_sign;
-    private int[] ind;
-    private int[] signs;
+    private final int subvect_size;
+    private final int nb_subvect;
+    private final int[] shape_cb;
+    private final int shape_cb_size;
+    private final int shape_bits;
+    private final int have_sign;
+    private final int[] ind;
+    private final int[] signs;
     // Varibles used by the encoder
-    private float[] t, e, E, r2;
+    private final float[] t;
+    private final float[] e;
+    private final float[] E;
+    private final float[] r2;
     private float[][] ot, nt;
-    private int[][] nind, oind;
+    private final int[][] nind;
+    private final int[][] oind;
 
     /**
      * Constructor

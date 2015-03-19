@@ -47,7 +47,7 @@ import java.io.StreamCorruptedException;
  * @version $Revision$
  */
 public class Inband {
-    private Stereo stereo;
+    private final Stereo stereo;
 
     /**
      * Constructor.

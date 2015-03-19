@@ -149,8 +149,7 @@ public class Bits {
     public void read_from(final byte[] newbytes,
                           final int offset,
                           final int len) {
-        for (int i = 0; i < len; i++)
-            bytes[i] = newbytes[offset + i];
+        System.arraycopy(newbytes, offset, bytes, 0, len);
         bytePtr = 0;
         bitPtr = 0;
     }

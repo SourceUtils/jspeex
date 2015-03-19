@@ -75,7 +75,7 @@ public class OggCrc {
     /**
      * CRC checksum lookup table
      */
-    private static int[] crc_lookup;
+    private static final int[] crc_lookup;
 
     static {
         crc_lookup = new int[256];
@@ -90,7 +90,7 @@ public class OggCrc {
                     r <<= 1;
                 }
             }
-            crc_lookup[i] = (r & 0xffffffff);
+            crc_lookup[i] = r;
         }
     }
 

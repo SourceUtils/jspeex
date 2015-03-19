@@ -178,7 +178,7 @@ public class SpeexFormatConvertionProvider
      * @return array of supported target formats.
      */
     @NotNull
-    public AudioFormat[] getTargetFormats(final AudioFormat.Encoding targetEncoding,
+    public AudioFormat[] getTargetFormats(@NotNull final AudioFormat.Encoding targetEncoding,
                                           @NotNull final AudioFormat sourceFormat) {
         if (sourceFormat.getEncoding().equals(AudioFormat.Encoding.PCM_SIGNED) &&
                 targetEncoding instanceof SpeexEncoding) {

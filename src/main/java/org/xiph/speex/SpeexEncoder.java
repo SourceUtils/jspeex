@@ -83,7 +83,7 @@ public class SpeexEncoder {
     public static final String VERSION = "Java Speex Encoder v0.9.7 ($Revision$)";
 
     private Encoder encoder;
-    private Bits bits;
+    private final Bits bits;
     private float[] rawData;
     private int sampleRate;
     private int channels;

@@ -100,7 +100,7 @@ public class SpeexDecoder {
     private float[] decodedData;
     private short[] outputData;
     private int outputSize;
-    private Bits bits;
+    private final Bits bits;
     private Decoder decoder;
     private int frameSize;
 

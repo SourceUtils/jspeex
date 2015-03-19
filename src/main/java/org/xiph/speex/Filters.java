@@ -79,9 +79,9 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Filters {
     private int last_pitch;
-    private float[] last_pitch_gain;
+    private final float[] last_pitch_gain;
     private float smooth_gain;
-    private float[] xx;
+    private final float[] xx;
 
     /**
      * Constructor.
@@ -108,10 +108,10 @@ public class Filters {
      * @param lpc_out
      * @param order
      */
-    public static final void bw_lpc(final float gamma,
-                                    final float[] lpc_in,
-                                    final float[] lpc_out,
-                                    final int order) {
+    public static void bw_lpc(final float gamma,
+                              final float[] lpc_in,
+                              final float[] lpc_out,
+                              final int order) {
         float tmp = 1;
         for (int i = 0; i < order + 1; i++) {
             lpc_out[i] = tmp * lpc_in[i];
@@ -131,19 +131,19 @@ public class Filters {
      * @param mem
      * @param ms
      */
-    public static final void filter_mem2(final float[] x,
-                                         final int xs,
-                                         final float[] num,
-                                         final float[] den,
-                                         final int N,
-                                         final int ord,
-                                         final float[] mem,
-                                         final int ms) {
+    public static void filter_mem2(final float[] x,
+                                   final int xs,
+                                   final float[] num,
+                                   final float[] den,
+                                   final int N,
+                                   final int ord,
+                                   final float[] mem,
+                                   final int ms) {
         int i, j;
         float xi, yi;
         for (i = 0; i < N; i++) {
             xi = x[xs + i];
-            x[xs + i] = num[0] * xi + mem[ms + 0];
+            x[xs + i] = num[0] * xi + mem[ms];
             yi = x[xs + i];
             for (j = 0; j < ord - 1; j++) {
                 mem[ms + j] = mem[ms + j + 1] + num[j + 1] * xi - den[j + 1] * yi;
@@ -166,16 +166,16 @@ public class Filters {
      * @param mem
      * @param ms
      */
-    public static final void filter_mem2(final float[] x,
-                                         final int xs,
-                                         final float[] num,
-                                         final float[] den,
-                                         final float[] y,
-                                         final int ys,
-                                         final int N,
-                                         final int ord,
-                                         final float[] mem,
-                                         final int ms) {
+    public static void filter_mem2(final float[] x,
+                                   final int xs,
+                                   final float[] num,
+                                   final float[] den,
+                                   final float[] y,
+                                   final int ys,
+                                   final int N,
+                                   final int ord,
+                                   final float[] mem,
+                                   final int ms) {
         int i, j;
         float xi, yi;
         for (i = 0; i < N; i++) {
@@ -201,14 +201,14 @@ public class Filters {
      * @param ord
      * @param mem
      */
-    public static final void iir_mem2(final float[] x,
-                                      final int xs,
-                                      final float[] den,
-                                      final float[] y,
-                                      final int ys,
-                                      final int N,
-                                      final int ord,
-                                      final float[] mem) {
+    public static void iir_mem2(final float[] x,
+                                final int xs,
+                                final float[] den,
+                                final float[] y,
+                                final int ys,
+                                final int N,
+                                final int ord,
+                                final float[] mem) {
         int i, j;
         for (i = 0; i < N; i++) {
             y[ys + i] = x[xs + i] + mem[0];
@@ -231,14 +231,14 @@ public class Filters {
      * @param ord
      * @param mem
      */
-    public static final void fir_mem2(final float[] x,
-                                      final int xs,
-                                      final float[] num,
-                                      final float[] y,
-                                      final int ys,
-                                      final int N,
-                                      final int ord,
-                                      final float[] mem) {
+    public static void fir_mem2(final float[] x,
+                                final int xs,
+                                final float[] num,
+                                final float[] y,
+                                final int ys,
+                                final int N,
+                                final int ord,
+                                final float[] mem) {
         int i, j;
         float xi;
         for (i = 0; i < N; i++) {
@@ -263,14 +263,14 @@ public class Filters {
      * @param N
      * @param ord
      */
-    public static final void syn_percep_zero(final float[] xx,
-                                             final int xxs,
-                                             final float[] ak,
-                                             final float[] awk1,
-                                             final float[] awk2,
-                                             final float[] y,
-                                             final int N,
-                                             final int ord) {
+    public static void syn_percep_zero(final float[] xx,
+                                       final int xxs,
+                                       final float[] ak,
+                                       final float[] awk1,
+                                       final float[] awk2,
+                                       final float[] y,
+                                       final int N,
+                                       final int ord) {
         int i;
         @NotNull float[] mem = new float[ord];
 //    for (i = 0; i < ord; i++)
@@ -293,14 +293,14 @@ public class Filters {
      * @param N
      * @param ord
      */
-    public static final void residue_percep_zero(final float[] xx,
-                                                 final int xxs,
-                                                 final float[] ak,
-                                                 final float[] awk1,
-                                                 final float[] awk2,
-                                                 final float[] y,
-                                                 final int N,
-                                                 final int ord) {
+    public static void residue_percep_zero(final float[] xx,
+                                           final int xxs,
+                                           final float[] ak,
+                                           final float[] awk1,
+                                           final float[] awk2,
+                                           final float[] y,
+                                           final int N,
+                                           final int ord) {
         int i;
         @NotNull float[] mem = new float[ord];
 //    for (i = 0; i < ord; i++)
@@ -455,13 +455,13 @@ public class Filters {
      * @param M
      * @param mem
      */
-    public static final void qmf_decomp(final float[] xx,
-                                        final float[] aa,
-                                        final float[] y1,
-                                        final float[] y2,
-                                        final int N,
-                                        final int M,
-                                        final float[] mem) {
+    public static void qmf_decomp(final float[] xx,
+                                  final float[] aa,
+                                  final float[] y1,
+                                  final float[] y2,
+                                  final int N,
+                                  final int M,
+                                  final float[] mem) {
         int i, j, k, M2;
         float[] a;
         float[] x;

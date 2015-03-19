@@ -226,7 +226,7 @@ public abstract class FilteredAudioInputStream
      * @param presize the prebuffer size.
      * @throws IllegalArgumentException if size <= 0 or presize <= 0.
      */
-    public FilteredAudioInputStream(final InputStream in,
+    public FilteredAudioInputStream(@Nullable final InputStream in,
                                     @NotNull final AudioFormat format,
                                     final long length,
                                     final int size,
