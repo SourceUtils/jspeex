@@ -1,0 +1,25 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'org.xiph.speex'
+version = '0.9.8-SNAPSHOT'
+
+description = """\
+JSpeex is a Java port of the Speex speech codec
+(Open Source/Free Software patent-free audio compression format designed for speech).
+It provides both the decoder and the encoder in pure Java, as well as a JavaSound SPI.
+
+The current version of the JSpeex library is based on the code from Speex 1.0.5.
+"""
+
+sourceCompatibility = 1.5
+targetCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.jetbrains', name: 'annotations', version: '13.0'
+    testCompile group: 'junit', name: 'junit', version: '3.8.1'
+}
